@@ -1,0 +1,76 @@
+package es.lidlplus.libs.lightsaber.checkers
+
+import dagger.model.BindingGraph
+import dagger.spi.DiagnosticReporter
+import es.lidlplus.libs.lightsaber.ReportType
+import es.lidlplus.libs.lightsaber.toKind
+import es.lidlplus.libs.lightsaber.utils.TreeNode
+import es.lidlplus.libs.lightsaber.utils.getDeclaredModules
+import es.lidlplus.libs.lightsaber.utils.getUsedModules
+import javax.lang.model.element.Element
+import javax.lang.model.util.Types
+import javax.tools.Diagnostic
+
+internal fun checkUnusedModules(
+    bindingGraph: BindingGraph,
+    diagnosticReporter: DiagnosticReporter,
+    types: Types,
+    reportType: ReportType,
+) {
+    if (reportType == ReportType.Ignore) return
+
+    val used = bindingGraph.getUsedModules()
+    bindingGraph.componentNodes()
+        .forEach { component ->
+            component.getDeclaredModules(bindingGraph, types)
+                .flatMap { getErrorMessages(used, it, types) }
+                .forEach { errorMessage ->
+                    diagnosticReporter.reportComponent(
+                        reportType.toKind(),
+                        component,
+                        errorMessage,
+                    )
+                }
+        }
+}
+
+private fun getErrorMessages(
+    used: Set<Element>,
+    node: TreeNode<Element>,
+    types: Types,
+    path: List<String> = emptyList(),
+): List<String> {
+    return buildList {
+        if (!used.contains(node.value)) {
+            val prefix = if (path.isEmpty()) {
+                "The @Module `${node.value}`"
+            } else {
+                "The @Module `${node.value}` included by `${path.joinToString(" → ")}`"
+            }
+            val usedChildren = findUsedChildren(used, node)
+            when (usedChildren.size) {
+                0 -> add("$prefix is not used.")
+                1 -> add("$prefix is not used but its child `${usedChildren.single().value}` is used.")
+                else -> add("$prefix is not used but its children ${usedChildren.joinToString { "`${it.value}`" }} are used.")
+            }
+            val newPath = path.plus(node.value.toString())
+            addAll(usedChildren.flatMap { child -> getErrorMessages(used, child, types, newPath) })
+        } else {
+            val newPath = path.plus(node.value.toString())
+            addAll(node.children.flatMap { child -> getErrorMessages(used, child, types, newPath) })
+        }
+    }
+}
+
+private fun findUsedChildren(
+    used: Set<Element>,
+    node: TreeNode<Element>
+): List<TreeNode<Element>> {
+    return node.children.flatMap {
+        if (used.contains(it.value)) {
+            listOf(it)
+        } else {
+            findUsedChildren(used, it)
+        }
+    }
+}
