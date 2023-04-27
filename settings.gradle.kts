@@ -1,4 +1,5 @@
-rootProject.name = "lightsaber-plugin"
+rootProject.name = "lightsaber"
+include("gradle-plugin")
 include("lightsaber")
 
 dependencyResolutionManagement {
