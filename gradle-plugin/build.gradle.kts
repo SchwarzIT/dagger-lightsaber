@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm")
     id("java-gradle-plugin")
-    id("com.vanniktech.maven.publish") version "0.25.2"
+    id("com.vanniktech.maven.publish")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -30,10 +30,10 @@ dependencies {
     implementation(project(":lightsaber"))
 
     compileOnly(gradleApi())
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.21")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
 }
 
 mavenPublishing {

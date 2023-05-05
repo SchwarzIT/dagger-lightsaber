@@ -1,7 +1,7 @@
 plugins {
     id("kotlin")
     id("kotlin-kapt")
-    id("com.vanniktech.maven.publish") version "0.25.2"
+    id("com.vanniktech.maven.publish")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -18,13 +18,13 @@ group = "es.lidlplus.lightsaber"
 version = "0.0.1"
 
 dependencies {
-    implementation("com.google.dagger:dagger-spi:2.44")
-    compileOnly("com.google.auto.service:auto-service:1.0")
-    kapt("com.google.auto.service:auto-service:1.0")
+    implementation("com.google.dagger:dagger-spi:2.46")
+    compileOnly("com.google.auto.service:auto-service:1.0.1")
+    kapt("com.google.auto.service:auto-service:1.0.1")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-    testImplementation("com.google.dagger:dagger-compiler:2.44")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
+    testImplementation("com.google.dagger:dagger-compiler:2.46")
     testImplementation("com.google.testing.compile:compile-testing:0.21.0")
     testImplementation("com.google.truth:truth:1.1.3")
 }
