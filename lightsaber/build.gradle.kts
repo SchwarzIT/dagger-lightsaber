@@ -12,6 +12,11 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+// from https://www.zacsweers.dev/kapts-hidden-test-costs/
+tasks
+    .matching { it.name.startsWith("kapt") && it.name.endsWith("TestKotlin") }
+    .configureEach { enabled = false }
+
 group = "es.lidlplus.lightsaber"
 version = "0.0.1"
 
