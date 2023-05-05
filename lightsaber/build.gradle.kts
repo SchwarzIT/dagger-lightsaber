@@ -18,7 +18,7 @@ tasks
     .matching { it.name.startsWith("kapt") && it.name.endsWith("TestKotlin") }
     .configureEach { enabled = false }
 
-group = "es.lidlplus.lightsaber"
+group = "com.schwarzit.lightsaber"
 version = "0.0.1"
 
 dependencies {

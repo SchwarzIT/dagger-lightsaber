@@ -12,13 +12,13 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-group = "es.lidlplus.lightsaber"
+group = "com.schwarzit.lightsaber"
 version = "0.0.1"
 
 gradlePlugin {
     plugins {
         create("LightSaberPlugin") {
-            id = "lightsaber-plugin"
+            id = "com.schwarzit.lightsaber"
             implementationClass = "es.lidlplus.libs.lightsaber.plugin.LightSaberPlugin"
         }
     }
