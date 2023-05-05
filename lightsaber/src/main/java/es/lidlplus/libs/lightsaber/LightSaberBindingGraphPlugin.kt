@@ -68,6 +68,7 @@ private fun String?.toReportType(): ReportType {
         "warn" -> ReportType.Warning
         "error" -> ReportType.Error
         "ignore" -> ReportType.Ignore
+        null -> ReportType.Error
         else -> error("Unknown type $this")
     }
 }
