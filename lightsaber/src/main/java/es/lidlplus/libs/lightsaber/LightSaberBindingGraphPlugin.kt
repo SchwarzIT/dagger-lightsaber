@@ -60,7 +60,7 @@ internal data class LightSaberConfig(
 internal enum class ReportType {
     Ignore,
     Warning,
-    Error
+    Error,
 }
 
 private fun String?.toReportType(): ReportType {

@@ -2,6 +2,7 @@ plugins {
     id("kotlin")
     id("kotlin-kapt")
     id("com.vanniktech.maven.publish")
+    id("com.diffplug.spotless")
 }
 
 kotlin {
@@ -30,6 +31,12 @@ dependencies {
     testImplementation("com.google.dagger:dagger-compiler:2.46")
     testImplementation("com.google.testing.compile:compile-testing:0.21.0")
     testImplementation("com.google.truth:truth:1.1.3")
+}
+
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+    kotlin {
+        ktlint("0.48.2")
+    }
 }
 
 mavenPublishing {

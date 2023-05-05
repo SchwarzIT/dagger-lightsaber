@@ -12,9 +12,9 @@ internal fun BindingGraph.getUsedModules(): Set<TypeElement> {
         .distinct()
         .flatMap { element ->
             val parentElement = element.enclosingElement
-            if (parentElement.isAnnotatedWith(Module::class)
-                && parentElement is TypeElement
-                && element.simpleName.toString() == "Companion"
+            if (parentElement.isAnnotatedWith(Module::class) &&
+                parentElement is TypeElement &&
+                element.simpleName.toString() == "Companion"
             ) {
                 listOf(element, parentElement)
             } else {

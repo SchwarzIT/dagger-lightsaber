@@ -115,12 +115,12 @@ class UnusedDependenciesKtTest {
         )
         private val dependency = createSource(
             """
-            package test;
+                package test;
 
-            public interface Dependency {
-                String dependency();
-            }
-        """.trimIndent(),
+                public interface Dependency {
+                    String dependency();
+                }
+            """.trimIndent(),
         )
 
         @Test
