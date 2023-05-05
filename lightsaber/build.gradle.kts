@@ -4,10 +4,8 @@ plugins {
     id("com.vanniktech.maven.publish")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+kotlin {
+    jvmToolchain(11)
 }
 
 tasks.withType<Test> {
