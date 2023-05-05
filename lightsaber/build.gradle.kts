@@ -44,9 +44,9 @@ mavenPublishing {
 
     pom {
         name.set("Lightsaber")
-        description.set("A description of what my library does.")
+        description.set("A Dagger 2 plugin to find unused dependencies declared in your Modules and Components.")
         inceptionYear.set("2023")
-        url.set("https://github.com/username/mylibrary/")
+        url.set("https://github.com/username/mylibrary/") // TODO
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
@@ -61,7 +61,7 @@ mavenPublishing {
                 url.set("https://github.com/username/")
             }
         }
-        scm {
+        scm { // TODO
             url.set("https://github.com/username/mylibrary/")
             connection.set("scm:git:git://github.com/username/mylibrary.git")
             developerConnection.set("scm:git:ssh://git@github.com/username/mylibrary.git")

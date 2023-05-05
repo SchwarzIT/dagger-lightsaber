@@ -39,9 +39,9 @@ mavenPublishing {
 
     pom {
         name.set("Lightsaber Gradle Plugin")
-        description.set("A description of what my library does.")
+        description.set("A Gradle plugin to make it easy to configure Lightsaber")
         inceptionYear.set("2023")
-        url.set("https://github.com/username/mylibrary/")
+        url.set("https://github.com/username/mylibrary/") // TODO
         licenses {
             license {
                 name.set("The Apache License, Version 2.0")
@@ -50,13 +50,13 @@ mavenPublishing {
             }
         }
         developers {
-            developer {
+            developer { // TODO
                 id.set("username")
                 name.set("User Name")
                 url.set("https://github.com/username/")
             }
         }
-        scm {
+        scm { // TODO
             url.set("https://github.com/username/mylibrary/")
             connection.set("scm:git:git://github.com/username/mylibrary.git")
             developerConnection.set("scm:git:ssh://git@github.com/username/mylibrary.git")
