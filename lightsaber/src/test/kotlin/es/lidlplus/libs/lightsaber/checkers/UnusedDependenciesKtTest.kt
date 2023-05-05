@@ -1,8 +1,6 @@
 package es.lidlplus.libs.lightsaber.checkers
 
 import com.google.testing.compile.CompilationSubject
-import com.google.testing.compile.Compiler
-import dagger.internal.codegen.ComponentProcessor
 import es.lidlplus.libs.lightsaber.ReportType
 import es.lidlplus.libs.lightsaber.createCompiler
 import es.lidlplus.libs.lightsaber.createSource

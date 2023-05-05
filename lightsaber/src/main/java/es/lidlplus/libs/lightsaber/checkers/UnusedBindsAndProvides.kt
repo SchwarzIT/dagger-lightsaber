@@ -13,7 +13,6 @@ import es.lidlplus.libs.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
-import javax.tools.Diagnostic
 import kotlin.reflect.KClass
 
 internal fun checkUnusedBindsAndProvides(

@@ -10,7 +10,7 @@ class LightSaberBindingGraphPluginTest {
         unusedBindsAndProvides = ReportType.Error,
         unusedDependencies = ReportType.Error,
         unusedModules = ReportType.Error,
-        )
+    )
 
     @Test
     fun emptyComponent() {

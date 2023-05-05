@@ -12,7 +12,6 @@ import es.lidlplus.libs.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
-import javax.tools.Diagnostic
 
 internal fun checkUnusedBindInstance(
     bindingGraph: BindingGraph,

@@ -1,8 +1,6 @@
 package es.lidlplus.libs.lightsaber.checkers
 
 import com.google.testing.compile.CompilationSubject
-import com.google.testing.compile.Compiler
-import dagger.internal.codegen.ComponentProcessor
 import es.lidlplus.libs.lightsaber.ReportType
 import es.lidlplus.libs.lightsaber.createCompiler
 import es.lidlplus.libs.lightsaber.createSource
@@ -12,7 +10,7 @@ import org.junit.jupiter.api.Test
 class UnusedBindsAndProvidesKtTest {
 
     private val compiler = createCompiler(unusedBindsAndProvides = ReportType.Error)
-    
+
     @Test
     fun bindsNotUsed() {
         val component = createSource(

@@ -72,10 +72,8 @@ private fun String?.toReportType(): ReportType {
     }
 }
 
-
-
 internal fun ReportType.toKind(): Diagnostic.Kind {
-    return when(this) {
+    return when (this) {
         ReportType.Ignore -> error("WTF!")
         ReportType.Warning -> Diagnostic.Kind.WARNING
         ReportType.Error -> Diagnostic.Kind.ERROR

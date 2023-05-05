@@ -1,9 +1,9 @@
 package es.lidlplus.libs.lightsaber.utils
 
+import dagger.Module
 import dagger.model.BindingGraph
 import javax.lang.model.element.TypeElement
 import kotlin.jvm.optionals.getOrNull
-import dagger.Module
 
 internal fun BindingGraph.getUsedModules(): Set<TypeElement> {
     return bindings()

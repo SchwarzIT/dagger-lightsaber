@@ -1,7 +1,7 @@
 package es.lidlplus.libs.lightsaber
 
-import dagger.internal.codegen.ComponentProcessor
 import com.google.testing.compile.Compiler
+import dagger.internal.codegen.ComponentProcessor
 
 internal fun createCompiler(
     unusedBindInstance: ReportType = ReportType.Ignore,
@@ -11,12 +11,14 @@ internal fun createCompiler(
 ): Compiler {
     return Compiler.javac()
         .withProcessors(ComponentProcessor.forTesting(LightSaberBindingGraphPlugin()))
-        .withOptions(createOptions(
-            unusedBindInstance = unusedBindInstance,
-            unusedBindsAndProvides = unusedBindsAndProvides,
-            unusedDependencies = unusedDependencies,
-            unusedModules = unusedModules
-        ))
+        .withOptions(
+            createOptions(
+                unusedBindInstance = unusedBindInstance,
+                unusedBindsAndProvides = unusedBindsAndProvides,
+                unusedDependencies = unusedDependencies,
+                unusedModules = unusedModules,
+            ),
+        )
 }
 
 internal fun createOptions(
@@ -34,7 +36,7 @@ internal fun createOptions(
 }
 
 private fun ReportType.toOption(): String {
-    return when(this) {
+    return when (this) {
         ReportType.Ignore -> "ignore"
         ReportType.Warning -> "warn"
         ReportType.Error -> "error"

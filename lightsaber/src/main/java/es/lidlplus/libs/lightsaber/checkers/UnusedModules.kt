@@ -9,7 +9,6 @@ import es.lidlplus.libs.lightsaber.utils.getDeclaredModules
 import es.lidlplus.libs.lightsaber.utils.getUsedModules
 import javax.lang.model.element.Element
 import javax.lang.model.util.Types
-import javax.tools.Diagnostic
 
 internal fun checkUnusedModules(
     bindingGraph: BindingGraph,
@@ -64,7 +63,7 @@ private fun getErrorMessages(
 
 private fun findUsedChildren(
     used: Set<Element>,
-    node: TreeNode<Element>
+    node: TreeNode<Element>,
 ): List<TreeNode<Element>> {
     return node.children.flatMap {
         if (used.contains(it.value)) {

@@ -12,7 +12,7 @@ import javax.lang.model.util.Types
 
 internal fun BindingGraph.ComponentNode.getDeclaredModules(
     bindingGraph: BindingGraph,
-    types: Types
+    types: Types,
 ): List<TreeNode<Element>> {
     val usedModules = bindingGraph.getUsedModules()
     return if (isSubcomponent) {

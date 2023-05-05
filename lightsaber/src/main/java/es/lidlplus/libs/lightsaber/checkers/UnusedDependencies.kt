@@ -9,14 +9,13 @@ import es.lidlplus.libs.lightsaber.utils.getComponentAnnotation
 import es.lidlplus.libs.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.element.Element
 import javax.lang.model.util.Types
-import javax.tools.Diagnostic
 import kotlin.jvm.optionals.getOrElse
 
 internal fun checkUnusedDependencies(
     bindingGraph: BindingGraph,
     diagnosticReporter: DiagnosticReporter,
     types: Types,
-    reportType: ReportType
+    reportType: ReportType,
 ) {
     if (reportType == ReportType.Ignore) return
 
@@ -46,10 +45,12 @@ private fun BindingGraph.getUsedDependencies(): Set<Element> {
                         .getOrElse { error("bindingElement() should never be empty in this context") }
                         .enclosingElement
                 }
+
                 BindingKind.COMPONENT_DEPENDENCY -> {
                     binding.bindingElement()
                         .getOrElse { error("bindingElement() should never be empty in this context") }
                 }
+
                 else -> null
             }
         }
