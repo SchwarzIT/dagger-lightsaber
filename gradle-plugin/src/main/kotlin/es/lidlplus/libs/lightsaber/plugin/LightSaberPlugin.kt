@@ -20,25 +20,40 @@ private fun Project.apply() {
             it.arguments {
                 arg(
                     "LightSaber.UnusedBindInstance",
-                    extension.unusedBindInstance.convention("error").get(),
+                    extension.unusedBindInstance.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
                 arg(
                     "LightSaber.UnusedBindsAndProvides",
-                    extension.unusedBindsAndProvides.convention("error").get(),
+                    extension.unusedBindsAndProvides.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
                 arg(
                     "LightSaber.UnusedDependencies",
-                    extension.unusedDependencies.convention("error").get(),
+                    extension.unusedDependencies.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
-                arg("LightSaber.UnusedModules", extension.unusedModules.convention("error").get())
+                arg(
+                    "LightSaber.UnusedModules",
+                    extension.unusedModules.convention(Severity.Error).map(Severity::toKapt).get(),
+                )
             }
         }
     }
 }
 
 interface LightSaberPluginExtension {
-    val unusedBindInstance: Property<String>
-    val unusedBindsAndProvides: Property<String>
-    val unusedDependencies: Property<String>
-    val unusedModules: Property<String>
+    val unusedBindInstance: Property<Severity>
+    val unusedBindsAndProvides: Property<Severity>
+    val unusedDependencies: Property<Severity>
+    val unusedModules: Property<Severity>
+}
+
+enum class Severity {
+    Error,
+    Warning,
+    Ignore,
+}
+
+private fun Severity.toKapt() = when (this) {
+    Severity.Error -> "error"
+    Severity.Warning -> "warning"
+    Severity.Ignore -> "ignore"
 }
