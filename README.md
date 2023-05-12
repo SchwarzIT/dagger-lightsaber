@@ -2,6 +2,23 @@
 
 Lightsaber is a [Dagger 2][dagger] plugin that flags the unused dependencies declared in your `Module`s and `Component`s.
 
+## What to expect
+
+```
+/path/module/build/tmp/kapt3/stubs/release/com/example/MyComponent.java:6: error: [Lightsaber] The @BindsInstance `context` is not used.
+public abstract interface MyComponent {
+                ^
+```
+
+This plugin contains 4 rules:
+- Unused `@BindInstance`
+- Unused `@Provides` or `@Binds` inside `@Module`s
+- Unused `@Component(dependencies)`
+- Unused `@Module`s
+
+By default, anything flagged by those rules is treated as a compilation error.
+
+
 ## How to use it
 
 There are two ways to use the plugin:
@@ -22,23 +39,7 @@ plugins {
 }
 ```
 
-## What to expect
-
-```
-/path/module/build/tmp/kapt3/stubs/release/com/example/MyComponent.java:6: error: [Lightsaber] The @BindsInstance `context` is not used.
-public abstract interface MyComponent {
-                ^
-```
-
-This plugin contains 4 rules:
-- Unused `@BindInstance`
-- Unused `@Provides` or `@Binds` inside `@Module`s
-- Unused `@Component(dependencies)`
-- Unused `@Module`s
-
-By default, anything flagged by those rules is treated as a compilation error.
-
-You can change that default behaviour from compilation error to warnings or even ignore them completely.
+You can change that default behaviour from compilation error to warnings or even ignore them completely like this:
 
 ### as a dependency
 ```kotlin
