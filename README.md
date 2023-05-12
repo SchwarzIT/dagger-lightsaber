@@ -23,6 +23,13 @@ plugins {
 ```
 
 ## What to expect
+
+```
+/path/module/build/tmp/kapt3/stubs/release/com/example/MyComponent.java:6: error: [Lightsaber] The @BindsInstance `context` is not used.
+public abstract interface MyComponent {
+                ^
+```
+
 This plugin contains 4 rules:
 - Unused `@BindInstance`
 - Unused `@Provides` or `@Binds` inside `@Module`s
@@ -57,6 +64,8 @@ lightsaber {
 }
 ```
 
+*Caution*: The `kapt` gradle plugin has a bug [KT-58326] that if you change its arguments it doesn't re-execute the task. This bug impacts Lightsaber so if you change the configuration for the rules you should execute the compilation with `--rerun-tasks` to ensure that the current configuration is applied.
+
 ## How to build it
 
 Clone the repo and execute:
@@ -66,3 +75,4 @@ Clone the repo and execute:
 ```
 
   [dagger]: https://dagger.dev/
+  [KT-58326]: https://youtrack.jetbrains.com/issue/KT-58326
