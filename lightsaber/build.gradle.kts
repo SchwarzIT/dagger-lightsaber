@@ -19,7 +19,7 @@ tasks
     .configureEach { enabled = false }
 
 group = "com.schwarzit.lightsaber"
-version = "0.0.1"
+version = "0.0.2"
 
 dependencies {
     implementation("com.google.dagger:dagger-spi:2.46")

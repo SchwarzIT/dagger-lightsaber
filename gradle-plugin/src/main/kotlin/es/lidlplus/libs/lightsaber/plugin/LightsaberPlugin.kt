@@ -15,7 +15,7 @@ private fun Project.apply() {
     val extension = extensions.create("lightsaber", LightsaberExtension::class.java)
 
     pluginManager.withPlugin("kotlin-kapt") {
-        dependencies.add("kapt", "com.schwarzit.lightsaber:lightsaber:0.0.1")
+        dependencies.add("kapt", "com.schwarzit.lightsaber:lightsaber:0.0.2")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
                 arg(

@@ -13,7 +13,7 @@ tasks.withType<Test> {
 }
 
 group = "com.schwarzit.lightsaber"
-version = "0.0.1"
+version = "0.0.2"
 
 gradlePlugin {
     plugins {
