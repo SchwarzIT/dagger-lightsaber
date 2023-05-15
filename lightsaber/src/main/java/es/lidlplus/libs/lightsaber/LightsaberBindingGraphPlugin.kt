@@ -12,13 +12,13 @@ import javax.lang.model.util.Types
 import javax.tools.Diagnostic
 
 @AutoService(BindingGraphPlugin::class)
-public class LightSaberBindingGraphPlugin : BindingGraphPlugin {
+public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     override fun pluginName(): String {
-        return "LightSaber"
+        return "Lightsaber"
     }
 
     private lateinit var types: Types
-    private lateinit var config: LightSaberConfig
+    private lateinit var config: LightsaberConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         checkUnusedDependencies(bindingGraph, diagnosticReporter, types, config.unusedDependencies)
@@ -32,25 +32,25 @@ public class LightSaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     override fun initOptions(options: MutableMap<String, String>) {
-        this.config = LightSaberConfig(
-            unusedBindInstance = options["LightSaber.UnusedBindInstance"].toReportType(),
-            unusedBindsAndProvides = options["LightSaber.UnusedBindsAndProvides"].toReportType(),
-            unusedDependencies = options["LightSaber.UnusedDependencies"].toReportType(),
-            unusedModules = options["LightSaber.UnusedModules"].toReportType(),
+        this.config = LightsaberConfig(
+            unusedBindInstance = options["Lightsaber.UnusedBindInstance"].toReportType(),
+            unusedBindsAndProvides = options["Lightsaber.UnusedBindsAndProvides"].toReportType(),
+            unusedDependencies = options["Lightsaber.UnusedDependencies"].toReportType(),
+            unusedModules = options["Lightsaber.UnusedModules"].toReportType(),
         )
     }
 
     override fun supportedOptions(): Set<String> {
         return setOf(
-            "LightSaber.UnusedBindInstance",
-            "LightSaber.UnusedBindsAndProvides",
-            "LightSaber.UnusedDependencies",
-            "LightSaber.UnusedModules",
+            "Lightsaber.UnusedBindInstance",
+            "Lightsaber.UnusedBindsAndProvides",
+            "Lightsaber.UnusedDependencies",
+            "Lightsaber.UnusedModules",
         )
     }
 }
 
-internal data class LightSaberConfig(
+internal data class LightsaberConfig(
     val unusedBindInstance: ReportType,
     val unusedBindsAndProvides: ReportType,
     val unusedDependencies: ReportType,

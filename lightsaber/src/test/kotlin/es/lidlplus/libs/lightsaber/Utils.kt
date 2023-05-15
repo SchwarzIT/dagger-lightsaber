@@ -10,7 +10,7 @@ internal fun createCompiler(
     unusedModules: ReportType = ReportType.Ignore,
 ): Compiler {
     return Compiler.javac()
-        .withProcessors(ComponentProcessor.forTesting(LightSaberBindingGraphPlugin()))
+        .withProcessors(ComponentProcessor.forTesting(LightsaberBindingGraphPlugin()))
         .withOptions(
             createOptions(
                 unusedBindInstance = unusedBindInstance,
@@ -28,10 +28,10 @@ internal fun createOptions(
     unusedModules: ReportType = ReportType.Ignore,
 ): List<String> {
     return listOf(
-        "LightSaber.UnusedBindInstance" to unusedBindInstance.toOption(),
-        "LightSaber.UnusedBindsAndProvides" to unusedBindsAndProvides.toOption(),
-        "LightSaber.UnusedDependencies" to unusedDependencies.toOption(),
-        "LightSaber.UnusedModules" to unusedModules.toOption(),
+        "Lightsaber.UnusedBindInstance" to unusedBindInstance.toOption(),
+        "Lightsaber.UnusedBindsAndProvides" to unusedBindsAndProvides.toOption(),
+        "Lightsaber.UnusedDependencies" to unusedDependencies.toOption(),
+        "Lightsaber.UnusedModules" to unusedModules.toOption(),
     ).map { (first, second) -> "-A$first=$second" } // https://docs.oracle.com/javase/7/docs/technotes/tools/solaris/javac.html
 }
 

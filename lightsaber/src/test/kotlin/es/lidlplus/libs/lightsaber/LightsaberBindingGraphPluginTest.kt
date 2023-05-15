@@ -3,7 +3,7 @@ package es.lidlplus.libs.lightsaber
 import com.google.testing.compile.CompilationSubject
 import org.junit.jupiter.api.Test
 
-class LightSaberBindingGraphPluginTest {
+class LightsaberBindingGraphPluginTest {
 
     private val compiler = createCompiler(
         unusedBindInstance = ReportType.Error,

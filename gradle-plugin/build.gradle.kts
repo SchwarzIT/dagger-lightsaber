@@ -17,9 +17,9 @@ version = "0.0.1"
 
 gradlePlugin {
     plugins {
-        create("LightSaberPlugin") {
+        create("LightsaberPlugin") {
             id = "com.schwarzit.lightsaber"
-            implementationClass = "es.lidlplus.libs.lightsaber.plugin.LightSaberPlugin"
+            implementationClass = "es.lidlplus.libs.lightsaber.plugin.LightsaberPlugin"
         }
     }
 }

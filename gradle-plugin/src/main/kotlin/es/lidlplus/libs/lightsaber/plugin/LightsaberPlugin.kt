@@ -5,33 +5,33 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 
-class LightSaberPlugin : Plugin<Project> {
+class LightsaberPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.apply()
     }
 }
 
 private fun Project.apply() {
-    val extension = extensions.create("lightsaber", LightSaberExtension::class.java)
+    val extension = extensions.create("lightsaber", LightsaberExtension::class.java)
 
     pluginManager.withPlugin("kotlin-kapt") {
         dependencies.add("kapt", "es.lidlplus.lightsaber:lightsaber:0.0.1")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
                 arg(
-                    "LightSaber.UnusedBindInstance",
+                    "Lightsaber.UnusedBindInstance",
                     extension.unusedBindInstance.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
                 arg(
-                    "LightSaber.UnusedBindsAndProvides",
+                    "Lightsaber.UnusedBindsAndProvides",
                     extension.unusedBindsAndProvides.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
                 arg(
-                    "LightSaber.UnusedDependencies",
+                    "Lightsaber.UnusedDependencies",
                     extension.unusedDependencies.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
                 arg(
-                    "LightSaber.UnusedModules",
+                    "Lightsaber.UnusedModules",
                     extension.unusedModules.convention(Severity.Error).map(Severity::toKapt).get(),
                 )
             }
@@ -39,7 +39,7 @@ private fun Project.apply() {
     }
 }
 
-interface LightSaberExtension {
+interface LightsaberExtension {
     val unusedBindInstance: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>

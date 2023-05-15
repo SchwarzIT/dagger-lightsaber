@@ -45,10 +45,10 @@ You can change that default behaviour from compilation error to warnings or even
 ```kotlin
 kapt {
     arguments {
-        arg("LightSaber.UnusedBindInstance", "error") // "warning" or "ignore"
-        arg("LightSaber.UnusedBindsAndProvides", "error") // "warning" or "ignore"
-        arg("LightSaber.UnusedDependencies", "error") // "warning" or "ignore"
-        arg("LightSaber.UnusedModules", "error") // "warning" or "ignore"
+        arg("Lightsaber.UnusedBindInstance", "error") // "warning" or "ignore"
+        arg("Lightsaber.UnusedBindsAndProvides", "error") // "warning" or "ignore"
+        arg("Lightsaber.UnusedDependencies", "error") // "warning" or "ignore"
+        arg("Lightsaber.UnusedModules", "error") // "warning" or "ignore"
     }
 }
 ```
