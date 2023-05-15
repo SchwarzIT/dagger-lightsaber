@@ -31,7 +31,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         this.types = types
     }
 
-    override fun initOptions(options: MutableMap<String, String>) {
+    override fun initOptions(options: Map<String, String>) {
         this.config = LightsaberConfig(
             unusedBindInstance = options["Lightsaber.UnusedBindInstance"].toReportType(),
             unusedBindsAndProvides = options["Lightsaber.UnusedBindsAndProvides"].toReportType(),
