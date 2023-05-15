@@ -12,7 +12,7 @@ class LightSaberPlugin : Plugin<Project> {
 }
 
 private fun Project.apply() {
-    val extension = extensions.create("lightsaber", LightSaberPluginExtension::class.java)
+    val extension = extensions.create("lightsaber", LightSaberExtension::class.java)
 
     pluginManager.withPlugin("kotlin-kapt") {
         dependencies.add("kapt", "es.lidlplus.lightsaber:lightsaber:0.0.1")
@@ -39,7 +39,7 @@ private fun Project.apply() {
     }
 }
 
-interface LightSaberPluginExtension {
+interface LightSaberExtension {
     val unusedBindInstance: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>
