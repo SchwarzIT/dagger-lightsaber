@@ -37,30 +37,26 @@ internal fun checkUnusedBindInstance(
         }
 }
 
-private fun Element.getFactoryMethod(): ExecutableElement {
-    return enclosedElements.single { it.kind == ElementKind.METHOD } as ExecutableElement
+private fun Element.getMethods(): List<ExecutableElement> {
+    return enclosedElements.filter { it.kind == ElementKind.METHOD }.mapNotNull { it as? ExecutableElement }
 }
 
-private fun BindingGraph.ComponentNode.getComponentFactory(): Element? {
+private fun BindingGraph.ComponentNode.getComponentFactory(): List<Element> {
     return componentPath()
         .currentComponent()
         .enclosedElements
-        .singleOrNull {
-            it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class)
-        }
+        .filter { it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) }
 }
 
-@Suppress("IfThenToElvis")
 private fun BindingGraph.ComponentNode.getBindInstances(): Set<Element> {
     val factory = getComponentFactory()
-    return if (factory != null) {
-        factory.getFactoryMethod()
-            .parameters
-            .filter { it.isAnnotatedWith(BindsInstance::class) }
-            .toSet()
-    } else {
-        emptySet()
-    }
+    return factory
+        .flatMap { element ->
+            element.getMethods()
+                .flatMap { it.parameters }
+                .filter { it.isAnnotatedWith(BindsInstance::class) }
+        }
+        .toSet()
 }
 
 private fun BindingGraph.getUsedBindInstances(): Set<Element> {
