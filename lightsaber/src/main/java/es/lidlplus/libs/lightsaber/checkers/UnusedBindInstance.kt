@@ -41,16 +41,19 @@ private fun Element.getMethods(): List<ExecutableElement> {
     return enclosedElements.filter { it.kind == ElementKind.METHOD }.mapNotNull { it as? ExecutableElement }
 }
 
-private fun BindingGraph.ComponentNode.getComponentFactory(): List<Element> {
+private fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List<Element> {
     return componentPath()
         .currentComponent()
         .enclosedElements
-        .filter { it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) }
+        .filter {
+            it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) ||
+                it.isAnnotatedWith(Component.Builder::class) || it.isAnnotatedWith(Subcomponent.Builder::class)
+        }
 }
 
 private fun BindingGraph.ComponentNode.getBindInstances(): Set<Element> {
-    val factory = getComponentFactory()
-    return factory
+    val factoriesAndBuilders = getComponentFactoriesAndBuilders()
+    return factoriesAndBuilders
         .flatMap { element ->
             element.getMethods()
                 .flatMap { it.parameters }

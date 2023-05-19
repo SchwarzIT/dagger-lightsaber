@@ -12,7 +12,7 @@ internal class UnusedBindInstanceKtTest {
     private val compiler = createCompiler(unusedBindInstance = ReportType.Error)
 
     @Test
-    fun bindInstanceNotUsed() {
+    fun bindInstanceNotUsed_Factory() {
         val component = createSource(
             """
                 package test;
@@ -28,6 +28,37 @@ internal class UnusedBindInstanceKtTest {
                         MyComponent create(
                             @BindsInstance int myInt
                         );
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component)
+
+        CompilationSubject.assertThat(compilation)
+            .hadErrorCount(1)
+        CompilationSubject.assertThat(compilation)
+            .hadErrorContaining("The @BindsInstance `myInt` is not used.")
+            .inFile(component)
+            .onLineContaining("interface MyComponent")
+    }
+
+    @Test
+    fun bindInstanceNotUsed_Builder() {
+        val component = createSource(
+            """
+                package test;
+                
+                import dagger.BindsInstance;
+                import dagger.Component;
+                
+                @Component
+                public interface MyComponent {
+                    
+                    @Component.Builder
+                    public interface Builder {
+                        MyComponent build();
+                        Builder myInt(@BindsInstance int myInt);
                     }
                 }
             """.trimIndent(),
