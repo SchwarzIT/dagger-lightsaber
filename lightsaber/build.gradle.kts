@@ -22,13 +22,13 @@ group = "com.schwarzit.lightsaber"
 version = "0.0.2"
 
 dependencies {
-    implementation("com.google.dagger:dagger-spi:2.46")
+    implementation("com.google.dagger:dagger-spi:2.46.1")
     compileOnly("com.google.auto.service:auto-service:1.0.1")
     kapt("com.google.auto.service:auto-service:1.0.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
-    testImplementation("com.google.dagger:dagger-compiler:2.46")
+    testImplementation("com.google.dagger:dagger-compiler:2.46.1")
     testImplementation("com.google.testing.compile:compile-testing:0.21.0")
     testImplementation("com.google.truth:truth:1.1.3")
 }
