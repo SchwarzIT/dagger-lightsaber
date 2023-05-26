@@ -367,6 +367,58 @@ class UnusedBindsAndProvidesKtTest {
             .onLineContaining("interface MyComponent")
     }
 
+    @Test
+    fun testMultibinding() {
+        val component = createSource(
+            """
+                package test;
+                
+                import dagger.Component;
+                import java.util.Set;
+                
+                @Component(modules = {MyModuleA.class})
+                public interface MyComponent {
+                    Set<Number> myInts();
+                }
+            """.trimIndent(),
+        )
+        val moduleA = createSource(
+            """
+                package test;
+                
+                import dagger.Binds;import dagger.Module;
+                import dagger.Provides;
+                import dagger.multibindings.IntoSet;
+                                
+                @Module
+                public abstract class MyModuleA {
+                        
+                    @Binds
+                    @IntoSet
+                    public abstract Number bindLong(Integer impl);
+                    
+                    @Binds
+                    @IntoSet
+                    public abstract Number bindLong2(Long impl);
+                    
+                    @Provides
+                    static Integer providesMyInt() {
+                        return 1;
+                    }
+                    
+                    @Provides
+                    static Long providesMyLong2() {
+                        return 2L;
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component, moduleA)
+
+        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
+    }
+
     @Nested
     internal inner class ReportTypes {
         private val component = createSource(
