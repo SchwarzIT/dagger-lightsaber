@@ -2,6 +2,7 @@ package schwarz.it.lightsaber
 
 import com.google.auto.service.AutoService
 import dagger.model.BindingGraph
+import dagger.model.BindingGraph.ComponentNode
 import dagger.spi.BindingGraphPlugin
 import dagger.spi.DiagnosticReporter
 import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
@@ -21,10 +22,16 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     private lateinit var config: LightsaberConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
-        checkUnusedDependencies(bindingGraph, diagnosticReporter, types, config.unusedDependencies)
+        val issues = checkUnusedDependencies(bindingGraph, types, config.unusedDependencies).map {
+            Finding(it.component, it.message, config.unusedDependencies)
+        }
         checkUnusedModules(bindingGraph, diagnosticReporter, types, config.unusedModules)
         checkUnusedBindInstance(bindingGraph, diagnosticReporter, config.unusedBindInstance)
         checkUnusedBindsAndProvides(bindingGraph, diagnosticReporter, types, config.unusedBindsAndProvides)
+
+        issues.forEach {
+            diagnosticReporter.reportComponent(it.reportType.toKind(), it.component, it.message)
+        }
     }
 
     override fun initTypes(types: Types) {
@@ -49,6 +56,12 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         )
     }
 }
+
+private data class Finding(
+    val component: ComponentNode,
+    val message: String,
+    val reportType: ReportType,
+)
 
 internal data class LightsaberConfig(
     val unusedBindInstance: ReportType,

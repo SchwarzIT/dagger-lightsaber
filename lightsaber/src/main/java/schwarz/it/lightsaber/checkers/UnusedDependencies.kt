@@ -2,9 +2,8 @@ package schwarz.it.lightsaber.checkers
 
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
-import dagger.spi.DiagnosticReporter
+import schwarz.it.lightsaber.Issue
 import schwarz.it.lightsaber.ReportType
-import schwarz.it.lightsaber.toKind
 import schwarz.it.lightsaber.utils.getComponentAnnotation
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.element.Element
@@ -13,25 +12,18 @@ import kotlin.jvm.optionals.getOrElse
 
 internal fun checkUnusedDependencies(
     bindingGraph: BindingGraph,
-    diagnosticReporter: DiagnosticReporter,
     types: Types,
     reportType: ReportType,
-) {
-    if (reportType == ReportType.Ignore) return
+): List<Issue> {
+    if (reportType == ReportType.Ignore) return emptyList()
 
     val used = bindingGraph.getUsedDependencies()
-
-    bindingGraph.componentNodes()
+    return bindingGraph.componentNodes()
         .filterNot { it.isSubcomponent }
-        .forEach { component ->
+        .flatMap { component ->
             val declared = component.getDeclaredDependencies(types)
-
-            (declared - used).forEach {
-                diagnosticReporter.reportComponent(
-                    reportType.toKind(),
-                    component,
-                    "The dependency `$it` is not used.",
-                )
+            (declared - used).map {
+                Issue(component, "The dependency `$it` is not used.")
             }
         }
 }
@@ -58,5 +50,6 @@ private fun BindingGraph.getUsedDependencies(): Set<Element> {
 }
 
 private fun BindingGraph.ComponentNode.getDeclaredDependencies(types: Types): Set<Element> {
-    return getComponentAnnotation().getTypesMirrorsFromClass { dependencies }.map { types.asElement(it) }.toSet()
+    return getComponentAnnotation().getTypesMirrorsFromClass { dependencies }
+        .map { types.asElement(it) }.toSet()
 }
