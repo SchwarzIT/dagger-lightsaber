@@ -3,7 +3,7 @@ package schwarz.it.lightsaber.checkers
 import dagger.Binds
 import dagger.Provides
 import dagger.model.BindingGraph
-import schwarz.it.lightsaber.Issue
+import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
@@ -16,7 +16,7 @@ import kotlin.reflect.KClass
 internal fun checkUnusedBindsAndProvides(
     bindingGraph: BindingGraph,
     types: Types,
-): List<Issue> {
+): List<Finding> {
     val usedBindsAndProvides = bindingGraph.getUsedBindsAndProvides()
     val allUsedModulesWithItsBindings = bindingGraph.getUsedModulesWithItsBindings()
     val componentsWithItsDeclaredModules = bindingGraph.getComponentsWithItsDeclaredModules(types)
@@ -27,7 +27,7 @@ internal fun checkUnusedBindsAndProvides(
             .getModulesWithUnusedBindings(usedBindsAndProvides)
             .flatMap { (module, unusedBindings) ->
                 unusedBindings.map { binding ->
-                    Issue(
+                    Finding(
                         component,
                         "The @${binding.getBindingAnnotation().simpleName} `${binding.simpleName}` declared on `$module` is not used.",
                     )
