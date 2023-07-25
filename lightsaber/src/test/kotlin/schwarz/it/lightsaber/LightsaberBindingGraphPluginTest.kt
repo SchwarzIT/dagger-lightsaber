@@ -1,6 +1,6 @@
 package schwarz.it.lightsaber
 
-import com.google.testing.compile.CompilationSubject
+import com.google.testing.compile.CompilationSubject.assertThat
 import org.junit.jupiter.api.Test
 
 class LightsaberBindingGraphPluginTest {
@@ -26,7 +26,7 @@ class LightsaberBindingGraphPluginTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation).succeededWithoutWarnings()
     }
 
     @Test
@@ -43,7 +43,7 @@ class LightsaberBindingGraphPluginTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation).succeededWithoutWarnings()
     }
 
     @Test
@@ -60,7 +60,7 @@ class LightsaberBindingGraphPluginTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation).succeededWithoutWarnings()
     }
 
     @Test
@@ -77,6 +77,6 @@ class LightsaberBindingGraphPluginTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation).succeededWithoutWarnings()
     }
 }
