@@ -22,16 +22,18 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     private lateinit var config: LightsaberConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
-        val issues = checkUnusedDependencies(bindingGraph, types, config.unusedDependencies).map {
-            Finding(it.component, it.message, config.unusedDependencies)
-        }
-        checkUnusedModules(bindingGraph, diagnosticReporter, types, config.unusedModules)
-        checkUnusedBindInstance(bindingGraph, diagnosticReporter, config.unusedBindInstance)
-        checkUnusedBindsAndProvides(bindingGraph, diagnosticReporter, types, config.unusedBindsAndProvides)
-
-        issues.forEach {
-            diagnosticReporter.reportComponent(it.reportType.toKind(), it.component, it.message)
-        }
+        listOf(
+            checkUnusedDependencies(bindingGraph, types, config.unusedDependencies)
+                .map { Finding(it.component, it.message, config.unusedDependencies) },
+            checkUnusedModules(bindingGraph, types, config.unusedModules)
+                .map { Finding(it.component, it.message, config.unusedModules) },
+            checkUnusedBindInstance(bindingGraph, config.unusedBindInstance)
+                .map { Finding(it.component, it.message, config.unusedBindInstance) },
+            checkUnusedBindsAndProvides(bindingGraph, types, config.unusedBindsAndProvides)
+                .map { Finding(it.component, it.message, config.unusedBindsAndProvides) },
+        )
+            .flatten()
+            .forEach { diagnosticReporter.reportComponent(it.reportType.toKind(), it.component, it.message) }
     }
 
     override fun initTypes(types: Types) {
@@ -86,7 +88,7 @@ private fun String?.toReportType(): ReportType {
     }
 }
 
-internal fun ReportType.toKind(): Diagnostic.Kind {
+private fun ReportType.toKind(): Diagnostic.Kind {
     return when (this) {
         ReportType.Ignore -> error("WTF!")
         ReportType.Warning -> Diagnostic.Kind.WARNING

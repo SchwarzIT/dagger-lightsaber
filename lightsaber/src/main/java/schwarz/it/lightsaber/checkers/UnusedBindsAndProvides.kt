@@ -3,9 +3,8 @@ package schwarz.it.lightsaber.checkers
 import dagger.Binds
 import dagger.Provides
 import dagger.model.BindingGraph
-import dagger.spi.DiagnosticReporter
+import schwarz.it.lightsaber.Issue
 import schwarz.it.lightsaber.ReportType
-import schwarz.it.lightsaber.toKind
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
@@ -17,24 +16,22 @@ import kotlin.reflect.KClass
 
 internal fun checkUnusedBindsAndProvides(
     bindingGraph: BindingGraph,
-    diagnosticReporter: DiagnosticReporter,
     types: Types,
     reportType: ReportType,
-) {
-    if (reportType == ReportType.Ignore) return
+): List<Issue> {
+    if (reportType == ReportType.Ignore) return emptyList()
 
     val usedBindsAndProvides = bindingGraph.getUsedBindsAndProvides()
     val allUsedModulesWithItsBindings = bindingGraph.getUsedModulesWithItsBindings()
     val componentsWithItsDeclaredModules = bindingGraph.getComponentsWithItsDeclaredModules(types)
 
-    componentsWithItsDeclaredModules.forEach { (component, declaredModulesAtThisComponent) ->
+    return componentsWithItsDeclaredModules.flatMap { (component, declaredModulesAtThisComponent) ->
         allUsedModulesWithItsBindings
             .getDeclaredAndUsedModulesWithItsBindings(declaredModulesAtThisComponent)
             .getModulesWithUnusedBindings(usedBindsAndProvides)
-            .forEach { (module, unusedBindings) ->
-                unusedBindings.forEach { binding ->
-                    diagnosticReporter.reportComponent(
-                        reportType.toKind(),
+            .flatMap { (module, unusedBindings) ->
+                unusedBindings.map { binding ->
+                    Issue(
                         component,
                         "The @${binding.getBindingAnnotation().simpleName} `${binding.simpleName}` declared on `$module` is not used.",
                     )
