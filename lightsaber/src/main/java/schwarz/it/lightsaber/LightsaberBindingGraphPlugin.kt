@@ -23,14 +23,10 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         listOf(
-            checkUnusedDependencies(bindingGraph, types, config.unusedDependencies)
-                .map { Finding(it.component, it.message, config.unusedDependencies) },
-            checkUnusedModules(bindingGraph, types, config.unusedModules)
-                .map { Finding(it.component, it.message, config.unusedModules) },
-            checkUnusedBindInstance(bindingGraph, config.unusedBindInstance)
-                .map { Finding(it.component, it.message, config.unusedBindInstance) },
-            checkUnusedBindsAndProvides(bindingGraph, types, config.unusedBindsAndProvides)
-                .map { Finding(it.component, it.message, config.unusedBindsAndProvides) },
+            runRule(config.unusedDependencies) { checkUnusedDependencies(bindingGraph, types) },
+            runRule(config.unusedModules) { checkUnusedModules(bindingGraph, types) },
+            runRule(config.unusedBindInstance) { checkUnusedBindInstance(bindingGraph) },
+            runRule(config.unusedBindsAndProvides) { checkUnusedBindsAndProvides(bindingGraph, types) },
         )
             .flatten()
             .forEach { diagnosticReporter.reportComponent(it.reportType.toKind(), it.component, it.message) }
@@ -57,6 +53,12 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             "Lightsaber.UnusedModules",
         )
     }
+}
+
+private fun runRule(reportType: ReportType, rule: () -> List<Issue>): List<Finding> {
+    if (reportType == ReportType.Ignore) return emptyList()
+
+    return rule().map { Finding(it.component, it.message, reportType) }
 }
 
 private data class Finding(

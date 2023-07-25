@@ -3,7 +3,6 @@ package schwarz.it.lightsaber.checkers
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import schwarz.it.lightsaber.Issue
-import schwarz.it.lightsaber.ReportType
 import schwarz.it.lightsaber.utils.getComponentAnnotation
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.element.Element
@@ -13,10 +12,7 @@ import kotlin.jvm.optionals.getOrElse
 internal fun checkUnusedDependencies(
     bindingGraph: BindingGraph,
     types: Types,
-    reportType: ReportType,
 ): List<Issue> {
-    if (reportType == ReportType.Ignore) return emptyList()
-
     val used = bindingGraph.getUsedDependencies()
     return bindingGraph.componentNodes()
         .filterNot { it.isSubcomponent }
