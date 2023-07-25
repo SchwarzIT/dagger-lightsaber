@@ -4,7 +4,6 @@ import dagger.Binds
 import dagger.Provides
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.Issue
-import schwarz.it.lightsaber.ReportType
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
@@ -17,10 +16,7 @@ import kotlin.reflect.KClass
 internal fun checkUnusedBindsAndProvides(
     bindingGraph: BindingGraph,
     types: Types,
-    reportType: ReportType,
 ): List<Issue> {
-    if (reportType == ReportType.Ignore) return emptyList()
-
     val usedBindsAndProvides = bindingGraph.getUsedBindsAndProvides()
     val allUsedModulesWithItsBindings = bindingGraph.getUsedModulesWithItsBindings()
     val componentsWithItsDeclaredModules = bindingGraph.getComponentsWithItsDeclaredModules(types)

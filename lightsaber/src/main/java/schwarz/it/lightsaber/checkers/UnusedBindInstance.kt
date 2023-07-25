@@ -6,7 +6,6 @@ import dagger.Subcomponent
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import schwarz.it.lightsaber.Issue
-import schwarz.it.lightsaber.ReportType
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -14,10 +13,7 @@ import javax.lang.model.element.ExecutableElement
 
 internal fun checkUnusedBindInstance(
     bindingGraph: BindingGraph,
-    reportType: ReportType,
 ): List<Issue> {
-    if (reportType == ReportType.Ignore) return emptyList()
-
     val usedInstances = bindingGraph.getUsedBindInstances()
 
     return bindingGraph
