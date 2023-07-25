@@ -5,7 +5,7 @@ import dagger.Component
 import dagger.Subcomponent
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
-import schwarz.it.lightsaber.Issue
+import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -13,7 +13,7 @@ import javax.lang.model.element.ExecutableElement
 
 internal fun checkUnusedBindInstance(
     bindingGraph: BindingGraph,
-): List<Issue> {
+): List<Finding> {
     val usedInstances = bindingGraph.getUsedBindInstances()
 
     return bindingGraph
@@ -22,7 +22,7 @@ internal fun checkUnusedBindInstance(
             val bindInstances = componentNode.getBindInstances()
 
             (bindInstances - usedInstances).map {
-                Issue(
+                Finding(
                     componentNode,
                     "The @BindsInstance `$it` is not used.",
                 )

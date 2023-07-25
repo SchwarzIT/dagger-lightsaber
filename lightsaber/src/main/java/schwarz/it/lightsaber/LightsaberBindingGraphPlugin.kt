@@ -55,13 +55,13 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 }
 
-private fun runRule(reportType: ReportType, rule: () -> List<Issue>): List<Finding> {
+private fun runRule(reportType: ReportType, rule: () -> List<Finding>): List<Issue> {
     if (reportType == ReportType.Ignore) return emptyList()
 
-    return rule().map { Finding(it.component, it.message, reportType) }
+    return rule().map { Issue(it.component, it.message, reportType) }
 }
 
-private data class Finding(
+private data class Issue(
     val component: ComponentNode,
     val message: String,
     val reportType: ReportType,
