@@ -1,6 +1,6 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.CompilationSubject
+import com.google.testing.compile.CompilationSubject.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.ReportType
@@ -45,7 +45,7 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, module)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -77,9 +77,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, module)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.MyModule` is not used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -114,7 +114,7 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, module)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -146,9 +146,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, module)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.MyModule` is not used. [test.MyComponent → test.MySubcomponent]")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -183,7 +183,7 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, module)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -203,9 +203,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, module)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.MyModule` is not used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -256,9 +256,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleA` is not used but its child `test.ModuleB` is used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -309,9 +309,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleB` included by `test.ModuleA` is not used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -380,9 +380,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB, moduleC)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleC` included by `test.ModuleA → test.ModuleB` is not used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -428,9 +428,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleA` is not used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -499,9 +499,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB, moduleC)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleA` is not used but its children `test.ModuleB`, `test.ModuleC` are used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -571,9 +571,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB, moduleC)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleB` included by `test.ModuleA` is not used but its child `test.ModuleC` is used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -660,9 +660,9 @@ class UnusedModulesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB, moduleC, moduleD)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @Module `test.ModuleB` included by `test.ModuleA` is not used but its children `test.ModuleC`, `test.ModuleD` are used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -699,7 +699,7 @@ class UnusedModulesKtTest {
             val compilation = createCompiler(unusedModules = ReportType.Error)
                 .compile(component, subcomponent, module)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .hadErrorCount(1)
         }
 
@@ -708,7 +708,7 @@ class UnusedModulesKtTest {
             val compilation = createCompiler(unusedModules = ReportType.Warning)
                 .compile(component, subcomponent, module)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .hadWarningCount(1)
         }
 
@@ -717,7 +717,7 @@ class UnusedModulesKtTest {
             val compilation = createCompiler(unusedModules = ReportType.Ignore)
                 .compile(component, subcomponent, module)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .succeededWithoutWarnings()
         }
     }

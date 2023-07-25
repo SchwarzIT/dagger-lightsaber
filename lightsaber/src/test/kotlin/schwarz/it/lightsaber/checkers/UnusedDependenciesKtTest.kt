@@ -1,6 +1,6 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.CompilationSubject
+import com.google.testing.compile.CompilationSubject.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.ReportType
@@ -38,9 +38,9 @@ class UnusedDependenciesKtTest {
         val compilation = compiler
             .compile(component, dependency)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The dependency `test.Dependency` is not used.")
             .inFile(component)
             .onLineContaining("MyComponent")
@@ -63,7 +63,7 @@ class UnusedDependenciesKtTest {
 
         val compilation = compiler.compile(component, dependency)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -96,7 +96,7 @@ class UnusedDependenciesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, dependency)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -128,7 +128,7 @@ class UnusedDependenciesKtTest {
             val compilation = createCompiler(unusedDependencies = ReportType.Error)
                 .compile(component, dependency)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .hadErrorCount(1)
         }
 
@@ -137,7 +137,7 @@ class UnusedDependenciesKtTest {
             val compilation = createCompiler(unusedDependencies = ReportType.Warning)
                 .compile(component, dependency)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .hadWarningCount(1)
         }
 
@@ -146,7 +146,7 @@ class UnusedDependenciesKtTest {
             val compilation = createCompiler(unusedDependencies = ReportType.Ignore)
                 .compile(component, dependency)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .succeededWithoutWarnings()
         }
     }

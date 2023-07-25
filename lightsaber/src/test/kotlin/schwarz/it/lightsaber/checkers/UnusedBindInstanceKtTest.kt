@@ -1,6 +1,6 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.CompilationSubject
+import com.google.testing.compile.CompilationSubject.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.ReportType
@@ -35,9 +35,9 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @BindsInstance `myInt` is not used.")
             .inFile(component)
             .onLineContaining("interface MyComponent")
@@ -66,9 +66,9 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @BindsInstance `myInt` is not used.")
             .inFile(component)
             .onLineContaining("interface MyComponent")
@@ -100,7 +100,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -132,9 +132,9 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @BindsInstance `secondInt` is not used.")
             .inFile(component)
             .onLineContaining("interface MyComponent")
@@ -179,7 +179,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -223,7 +223,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .succeededWithoutWarnings()
     }
 
@@ -266,10 +266,10 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorCount(1)
 
-        CompilationSubject.assertThat(compilation)
+        assertThat(compilation)
             .hadErrorContaining("The @BindsInstance `myInt` is not used. [test.MyComponent → test.MySubcomponent]")
             .inFile(component)
             .onLineContaining("interface MyComponent")
@@ -302,7 +302,7 @@ internal class UnusedBindInstanceKtTest {
             val compilation = createCompiler(unusedBindInstance = ReportType.Error)
                 .compile(component)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .hadErrorCount(1)
         }
 
@@ -311,7 +311,7 @@ internal class UnusedBindInstanceKtTest {
             val compilation = createCompiler(unusedBindInstance = ReportType.Warning)
                 .compile(component)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .hadWarningCount(1)
         }
 
@@ -320,7 +320,7 @@ internal class UnusedBindInstanceKtTest {
             val compilation = createCompiler(unusedBindInstance = ReportType.Ignore)
                 .compile(component)
 
-            CompilationSubject.assertThat(compilation)
+            assertThat(compilation)
                 .succeededWithoutWarnings()
         }
     }
