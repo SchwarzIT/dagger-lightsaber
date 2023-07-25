@@ -1,9 +1,8 @@
 package schwarz.it.lightsaber.checkers
 
 import dagger.model.BindingGraph
-import dagger.spi.DiagnosticReporter
+import schwarz.it.lightsaber.Issue
 import schwarz.it.lightsaber.ReportType
-import schwarz.it.lightsaber.toKind
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
@@ -12,24 +11,17 @@ import javax.lang.model.util.Types
 
 internal fun checkUnusedModules(
     bindingGraph: BindingGraph,
-    diagnosticReporter: DiagnosticReporter,
     types: Types,
     reportType: ReportType,
-) {
-    if (reportType == ReportType.Ignore) return
+): List<Issue> {
+    if (reportType == ReportType.Ignore) return emptyList()
 
     val used = bindingGraph.getUsedModules()
-    bindingGraph.componentNodes()
-        .forEach { component ->
+    return bindingGraph.componentNodes()
+        .flatMap { component ->
             component.getDeclaredModules(bindingGraph, types)
                 .flatMap { getErrorMessages(used, it, types) }
-                .forEach { errorMessage ->
-                    diagnosticReporter.reportComponent(
-                        reportType.toKind(),
-                        component,
-                        errorMessage,
-                    )
-                }
+                .map { errorMessage -> Issue(component, errorMessage) }
         }
 }
 
