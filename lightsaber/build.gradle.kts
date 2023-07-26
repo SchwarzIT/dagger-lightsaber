@@ -26,8 +26,8 @@ dependencies {
     compileOnly("com.google.auto.service:auto-service:1.1.1")
     kapt("com.google.auto.service:auto-service:1.1.1")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
     testImplementation("com.google.dagger:dagger-compiler:2.47")
     testImplementation("com.google.testing.compile:compile-testing:0.21.0")
     testImplementation("com.google.truth:truth:1.1.3")
