@@ -23,8 +23,8 @@ version = "0.0.2"
 
 dependencies {
     implementation("com.google.dagger:dagger-spi:2.46.1")
-    compileOnly("com.google.auto.service:auto-service:1.0.1")
-    kapt("com.google.auto.service:auto-service:1.0.1")
+    compileOnly("com.google.auto.service:auto-service:1.1.1")
+    kapt("com.google.auto.service:auto-service:1.1.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.3")
