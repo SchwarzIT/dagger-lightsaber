@@ -1,4 +1,4 @@
-package es.lidlplus.libs.lightsaber.utils
+package schwarz.it.lightsaber.utils
 
 import dagger.Module
 import dagger.model.BindingGraph

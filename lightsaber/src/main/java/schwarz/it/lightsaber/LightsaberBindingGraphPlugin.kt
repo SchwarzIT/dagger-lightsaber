@@ -1,13 +1,13 @@
-package es.lidlplus.libs.lightsaber
+package schwarz.it.lightsaber
 
 import com.google.auto.service.AutoService
 import dagger.model.BindingGraph
 import dagger.spi.BindingGraphPlugin
 import dagger.spi.DiagnosticReporter
-import es.lidlplus.libs.lightsaber.checkers.checkUnusedBindInstance
-import es.lidlplus.libs.lightsaber.checkers.checkUnusedBindsAndProvides
-import es.lidlplus.libs.lightsaber.checkers.checkUnusedDependencies
-import es.lidlplus.libs.lightsaber.checkers.checkUnusedModules
+import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
+import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
+import schwarz.it.lightsaber.checkers.checkUnusedDependencies
+import schwarz.it.lightsaber.checkers.checkUnusedModules
 import javax.lang.model.util.Types
 import javax.tools.Diagnostic
 

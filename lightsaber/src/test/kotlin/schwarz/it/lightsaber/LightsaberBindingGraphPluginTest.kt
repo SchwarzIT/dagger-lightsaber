@@ -1,4 +1,4 @@
-package es.lidlplus.libs.lightsaber
+package schwarz.it.lightsaber
 
 import com.google.testing.compile.CompilationSubject
 import org.junit.jupiter.api.Test

@@ -1,15 +1,15 @@
-package es.lidlplus.libs.lightsaber.checkers
+package schwarz.it.lightsaber.checkers
 
 import dagger.Binds
 import dagger.Provides
 import dagger.model.BindingGraph
 import dagger.spi.DiagnosticReporter
-import es.lidlplus.libs.lightsaber.ReportType
-import es.lidlplus.libs.lightsaber.toKind
-import es.lidlplus.libs.lightsaber.utils.TreeNode
-import es.lidlplus.libs.lightsaber.utils.getDeclaredModules
-import es.lidlplus.libs.lightsaber.utils.getUsedModules
-import es.lidlplus.libs.lightsaber.utils.isAnnotatedWith
+import schwarz.it.lightsaber.ReportType
+import schwarz.it.lightsaber.toKind
+import schwarz.it.lightsaber.utils.TreeNode
+import schwarz.it.lightsaber.utils.getDeclaredModules
+import schwarz.it.lightsaber.utils.getUsedModules
+import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types

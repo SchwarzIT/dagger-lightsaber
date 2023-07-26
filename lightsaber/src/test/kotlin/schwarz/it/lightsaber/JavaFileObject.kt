@@ -1,4 +1,4 @@
-package es.lidlplus.libs.lightsaber
+package schwarz.it.lightsaber
 
 import com.google.testing.compile.JavaFileObjects
 import org.intellij.lang.annotations.Language

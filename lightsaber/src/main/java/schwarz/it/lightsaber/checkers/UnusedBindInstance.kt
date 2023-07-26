@@ -1,4 +1,4 @@
-package es.lidlplus.libs.lightsaber.checkers
+package schwarz.it.lightsaber.checkers
 
 import dagger.BindsInstance
 import dagger.Component
@@ -6,9 +6,9 @@ import dagger.Subcomponent
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import dagger.spi.DiagnosticReporter
-import es.lidlplus.libs.lightsaber.ReportType
-import es.lidlplus.libs.lightsaber.toKind
-import es.lidlplus.libs.lightsaber.utils.isAnnotatedWith
+import schwarz.it.lightsaber.ReportType
+import schwarz.it.lightsaber.toKind
+import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement

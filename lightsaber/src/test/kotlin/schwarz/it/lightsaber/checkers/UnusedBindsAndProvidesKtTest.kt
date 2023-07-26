@@ -1,11 +1,11 @@
-package es.lidlplus.libs.lightsaber.checkers
+package schwarz.it.lightsaber.checkers
 
 import com.google.testing.compile.CompilationSubject
-import es.lidlplus.libs.lightsaber.ReportType
-import es.lidlplus.libs.lightsaber.createCompiler
-import es.lidlplus.libs.lightsaber.createSource
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import schwarz.it.lightsaber.ReportType
+import schwarz.it.lightsaber.createCompiler
+import schwarz.it.lightsaber.createSource
 
 class UnusedBindsAndProvidesKtTest {
 

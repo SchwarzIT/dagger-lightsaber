@@ -1,12 +1,12 @@
-package es.lidlplus.libs.lightsaber.checkers
+package schwarz.it.lightsaber.checkers
 
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import dagger.spi.DiagnosticReporter
-import es.lidlplus.libs.lightsaber.ReportType
-import es.lidlplus.libs.lightsaber.toKind
-import es.lidlplus.libs.lightsaber.utils.getComponentAnnotation
-import es.lidlplus.libs.lightsaber.utils.getTypesMirrorsFromClass
+import schwarz.it.lightsaber.ReportType
+import schwarz.it.lightsaber.toKind
+import schwarz.it.lightsaber.utils.getComponentAnnotation
+import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.element.Element
 import javax.lang.model.util.Types
 import kotlin.jvm.optionals.getOrElse

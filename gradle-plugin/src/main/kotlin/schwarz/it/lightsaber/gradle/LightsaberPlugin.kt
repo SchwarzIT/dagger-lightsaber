@@ -1,4 +1,4 @@
-package es.lidlplus.libs.lightsaber.plugin
+package schwarz.it.lightsaber.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project

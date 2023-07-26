@@ -35,7 +35,7 @@ dependencies {
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("com.schwarzit.lightsaber") version "<version>"
+    id("schwarz.it.lightsaber") version "<version>"
 }
 ```
 
@@ -55,7 +55,7 @@ kapt {
 
 ### as a gradle plugin
 ```kotlin
-import es.lidlplus.libs.lightsaber.plugin.Severity
+import schwarz.it.lightsaber.gradle.Severity
 
 lightsaber {
   unusedBindInstance = Severity.Error

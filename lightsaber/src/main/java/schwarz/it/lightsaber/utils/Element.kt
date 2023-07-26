@@ -1,4 +1,4 @@
-package es.lidlplus.libs.lightsaber.utils
+package schwarz.it.lightsaber.utils
 
 import javax.lang.model.element.Element
 import kotlin.reflect.KClass
