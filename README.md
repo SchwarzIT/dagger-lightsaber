@@ -27,7 +27,7 @@ There are two ways to use the plugin:
 ```kotlin
 // build.gradle.kts
 dependencies {
-    kapt("com.schwarzit.lightsaber:lightsaber:<version>")
+    kapt("schwarz.it.lightsaber:lightsaber:<version>")
 }
 ```
 

@@ -12,7 +12,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-group = "com.schwarzit.lightsaber"
+group = "schwarz.it.lightsaber"
 version = "0.0.2"
 
 gradlePlugin {

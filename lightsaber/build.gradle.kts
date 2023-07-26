@@ -18,7 +18,7 @@ tasks
     .matching { it.name.startsWith("kapt") && it.name.endsWith("TestKotlin") }
     .configureEach { enabled = false }
 
-group = "com.schwarzit.lightsaber"
+group = "schwarz.it.lightsaber"
 version = "0.0.2"
 
 dependencies {
