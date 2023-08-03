@@ -25,12 +25,12 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
 
 private fun getModuleTree(
     usedModules: Set<TypeElement>,
-    element: TypeElement,
+    module: TypeElement,
     types: Types,
 ): TreeNode<TypeElement> {
     return TreeNode(
-        value = element,
-        children = element.getAnnotation(Module::class.java)
+        value = module,
+        children = module.getAnnotation(Module::class.java)
             .getTypesMirrorsFromClass { includes }
             .map { getModuleTree(usedModules, types.asElement(it) as TypeElement, types) },
     )
