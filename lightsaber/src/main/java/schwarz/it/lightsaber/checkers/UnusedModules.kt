@@ -2,10 +2,10 @@ package schwarz.it.lightsaber.checkers
 
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.utils.Module
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
-import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
 
 internal fun checkUnusedModules(
@@ -22,8 +22,8 @@ internal fun checkUnusedModules(
 }
 
 private fun getErrorMessages(
-    used: Set<TypeElement>,
-    node: TreeNode<TypeElement>,
+    used: Set<Module>,
+    node: TreeNode<Module>,
     types: Types,
     path: List<String> = emptyList(),
 ): List<String> {
@@ -50,9 +50,9 @@ private fun getErrorMessages(
 }
 
 private fun findUsedChildren(
-    used: Set<TypeElement>,
-    node: TreeNode<TypeElement>,
-): List<TreeNode<TypeElement>> {
+    used: Set<Module>,
+    node: TreeNode<Module>,
+): List<TreeNode<Module>> {
     return node.children.flatMap {
         if (used.contains(it.value)) {
             listOf(it)

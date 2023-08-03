@@ -1,7 +1,6 @@
 package schwarz.it.lightsaber.utils
 
 import dagger.Component
-import dagger.Module
 import dagger.Subcomponent
 import dagger.model.BindingGraph
 import javax.lang.model.element.TypeElement
@@ -12,27 +11,28 @@ import javax.lang.model.util.Types
 internal fun BindingGraph.ComponentNode.getDeclaredModules(
     bindingGraph: BindingGraph,
     types: Types,
-): List<TreeNode<TypeElement>> {
+): List<TreeNode<Module>> {
     val usedModules = bindingGraph.getUsedModules()
     return if (isSubcomponent) {
-        getSubcomponentAnnotation().getTypesMirrorsFromClass { modules }.map { types.asElement(it) as TypeElement }
+        getSubcomponentAnnotation().getTypesMirrorsFromClass { modules }
+            .map { Module(types.asElement(it) as TypeElement) }
     } else {
-        getComponentAnnotation().getTypesMirrorsFromClass { modules }.map { types.asElement(it) as TypeElement }
+        getComponentAnnotation().getTypesMirrorsFromClass { modules }
+            .map { Module(types.asElement(it) as TypeElement) }
     }.map { element ->
         getModuleTree(usedModules, element, types)
     }
 }
 
 private fun getModuleTree(
-    usedModules: Set<TypeElement>,
-    module: TypeElement,
+    usedModules: Set<Module>,
+    module: Module,
     types: Types,
-): TreeNode<TypeElement> {
+): TreeNode<Module> {
     return TreeNode(
         value = module,
-        children = module.getAnnotation(Module::class.java)
-            .getTypesMirrorsFromClass { includes }
-            .map { getModuleTree(usedModules, types.asElement(it) as TypeElement, types) },
+        children = module.getIncludedModules(types)
+            .map { getModuleTree(usedModules, it, types) },
     )
 }
 

@@ -1,18 +1,17 @@
 package schwarz.it.lightsaber.utils
 
-import dagger.Module
 import dagger.model.BindingGraph
 import javax.lang.model.element.TypeElement
 import kotlin.jvm.optionals.getOrNull
 
-internal fun BindingGraph.getUsedModules(): Set<TypeElement> {
+internal fun BindingGraph.getUsedModules(): Set<Module> {
     return bindings()
         .asSequence()
         .mapNotNull { it.contributingModule().getOrNull() }
         .distinct()
         .flatMap { element ->
             val parentElement = element.enclosingElement
-            if (parentElement.isAnnotatedWith(Module::class) &&
+            if (parentElement.isAnnotatedWith(dagger.Module::class) &&
                 parentElement is TypeElement &&
                 element.simpleName.toString() == "Companion"
             ) {
@@ -21,5 +20,6 @@ internal fun BindingGraph.getUsedModules(): Set<TypeElement> {
                 listOf(element)
             }
         }
+        .map { Module(it) }
         .toSet()
 }
