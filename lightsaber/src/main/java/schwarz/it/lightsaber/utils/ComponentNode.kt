@@ -39,6 +39,10 @@ private fun getModuleTree(
 
 class TreeNode<T>(val value: T, val children: List<TreeNode<T>> = emptyList())
 
+internal fun <T> TreeNode<T>.toList(): List<T> {
+    return children.flatMap { it.toList() }.plus(this.value)
+}
+
 internal fun BindingGraph.ComponentNode.getComponentAnnotation(): Component {
     return componentPath()
         .currentComponent()

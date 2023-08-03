@@ -4,10 +4,10 @@ import dagger.Binds
 import dagger.Provides
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.Finding
-import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
 import schwarz.it.lightsaber.utils.isAnnotatedWith
+import schwarz.it.lightsaber.utils.toList
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
@@ -48,12 +48,8 @@ private fun BindingGraph.getComponentsWithItsDeclaredModules(
 ): Map<BindingGraph.ComponentNode, List<Element>> {
     return componentNodes().associateWith { component ->
         component.getDeclaredModules(this, types)
-            .flatMap { node -> node.getAllNodes().map { it.value } }
+            .flatMap { it.toList() }
     }
-}
-
-private fun <T> TreeNode<T>.getAllNodes(): List<TreeNode<T>> {
-    return children.flatMap { it.getAllNodes() }.plus(this)
 }
 
 private fun BindingGraph.getUsedModulesWithItsBindings(): Map<TypeElement, List<Element>> {
