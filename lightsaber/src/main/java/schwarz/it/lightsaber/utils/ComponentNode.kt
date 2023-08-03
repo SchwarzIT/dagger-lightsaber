@@ -4,7 +4,6 @@ import dagger.Component
 import dagger.Module
 import dagger.Subcomponent
 import dagger.model.BindingGraph
-import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.MirroredTypesException
 import javax.lang.model.type.TypeMirror
@@ -13,12 +12,12 @@ import javax.lang.model.util.Types
 internal fun BindingGraph.ComponentNode.getDeclaredModules(
     bindingGraph: BindingGraph,
     types: Types,
-): List<TreeNode<Element>> {
+): List<TreeNode<TypeElement>> {
     val usedModules = bindingGraph.getUsedModules()
     return if (isSubcomponent) {
-        getSubcomponentAnnotation().getTypesMirrorsFromClass { modules }.map { types.asElement(it) }
+        getSubcomponentAnnotation().getTypesMirrorsFromClass { modules }.map { types.asElement(it) as TypeElement }
     } else {
-        getComponentAnnotation().getTypesMirrorsFromClass { modules }.map { types.asElement(it) }
+        getComponentAnnotation().getTypesMirrorsFromClass { modules }.map { types.asElement(it) as TypeElement }
     }.map { element ->
         getModuleTree(usedModules, element, types)
     }
@@ -26,14 +25,14 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
 
 private fun getModuleTree(
     usedModules: Set<TypeElement>,
-    element: Element,
+    element: TypeElement,
     types: Types,
-): TreeNode<Element> {
+): TreeNode<TypeElement> {
     return TreeNode(
         value = element,
         children = element.getAnnotation(Module::class.java)
             .getTypesMirrorsFromClass { includes }
-            .map { getModuleTree(usedModules, types.asElement(it), types) },
+            .map { getModuleTree(usedModules, types.asElement(it) as TypeElement, types) },
     )
 }
 

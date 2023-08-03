@@ -5,7 +5,7 @@ import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
-import javax.lang.model.element.Element
+import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
 
 internal fun checkUnusedModules(
@@ -22,8 +22,8 @@ internal fun checkUnusedModules(
 }
 
 private fun getErrorMessages(
-    used: Set<Element>,
-    node: TreeNode<Element>,
+    used: Set<TypeElement>,
+    node: TreeNode<TypeElement>,
     types: Types,
     path: List<String> = emptyList(),
 ): List<String> {
@@ -50,9 +50,9 @@ private fun getErrorMessages(
 }
 
 private fun findUsedChildren(
-    used: Set<Element>,
-    node: TreeNode<Element>,
-): List<TreeNode<Element>> {
+    used: Set<TypeElement>,
+    node: TreeNode<TypeElement>,
+): List<TreeNode<TypeElement>> {
     return node.children.flatMap {
         if (used.contains(it.value)) {
             listOf(it)
