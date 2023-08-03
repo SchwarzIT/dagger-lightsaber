@@ -13,7 +13,7 @@ value class Module(private val value: TypeElement) {
     }
 
     fun getBindings(): List<Binding> {
-        return value.enclosedElements.filter { it.isABinding() }.map { Binding(it) }
+        return value.getBindings() + value.getCompanion()?.getBindings().orEmpty()
     }
 
     fun getIncludedModules(types: Types): List<Module> {
@@ -28,6 +28,14 @@ value class Module(private val value: TypeElement) {
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
         }
     }
+}
+
+private fun TypeElement.getCompanion(): Element? {
+    return enclosedElements.find { it.simpleName.toString() == "Companion" }
+}
+
+private fun Element.getBindings(): List<Module.Binding> {
+    return this.enclosedElements.filter { it.isABinding() }.map { Module.Binding(it) }
 }
 
 private fun Element.isABinding(): Boolean {
