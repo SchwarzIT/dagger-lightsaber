@@ -13,7 +13,7 @@ tasks.withType<Test> {
 }
 
 group = "schwarz.it.lightsaber"
-version = "0.0.2"
+version = properties["version"]!!
 
 gradlePlugin {
     plugins {
