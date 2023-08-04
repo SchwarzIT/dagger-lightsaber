@@ -13,6 +13,7 @@ class LightsaberPlugin : Plugin<Project> {
 
 private fun Project.apply() {
     val extension = extensions.create("lightsaber", LightsaberExtension::class.java).apply {
+        enable.convention(true)
         unusedBindInstance.convention(Severity.Error)
         unusedBindsAndProvides.convention(Severity.Error)
         unusedDependencies.convention(Severity.Error)
@@ -23,16 +24,23 @@ private fun Project.apply() {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
-                arg("Lightsaber.UnusedBindInstance", extension.unusedBindInstance.map(Severity::toKapt).get())
-                arg("Lightsaber.UnusedBindsAndProvides", extension.unusedBindsAndProvides.map(Severity::toKapt).get())
-                arg("Lightsaber.UnusedDependencies", extension.unusedDependencies.map(Severity::toKapt).get())
-                arg("Lightsaber.UnusedModules", extension.unusedModules.map(Severity::toKapt).get())
+                fun Property<Severity>.getIfEnabled() = if (extension.enable.get()) {
+                    this.get()
+                } else {
+                    Severity.Ignore
+                }.toKapt()
+
+                arg("Lightsaber.UnusedBindInstance", extension.unusedBindInstance.getIfEnabled())
+                arg("Lightsaber.UnusedBindsAndProvides", extension.unusedBindsAndProvides.getIfEnabled())
+                arg("Lightsaber.UnusedDependencies", extension.unusedDependencies.getIfEnabled())
+                arg("Lightsaber.UnusedModules", extension.unusedModules.getIfEnabled())
             }
         }
     }
 }
 
 interface LightsaberExtension {
+    val enable: Property<Boolean>
     val unusedBindInstance: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>
