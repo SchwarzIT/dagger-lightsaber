@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+
 plugins {
     kotlin("jvm")
     id("java-gradle-plugin")
@@ -32,6 +34,32 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+}
+
+private val createVersionsKtFile by tasks.registering(Task::class) {
+    outputs.dir(layout.buildDirectory.dir("generated"))
+    val versionKt = layout.buildDirectory.file("generated/Version.kt")
+    doLast {
+        versionKt.get().asFile.apply {
+            ensureParentDirsCreated()
+            writeText(
+                """
+                    package schwarz.it.lightsaber.gradle
+                    
+                    const val lightsaberVersion = "${properties["version"]!!}"
+                    
+                """.trimIndent()
+            )
+        }
+    }
+}
+
+sourceSets {
+    main {
+        kotlin {
+            srcDir(createVersionsKtFile)
+        }
+    }
 }
 
 mavenPublishing {
