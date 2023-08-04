@@ -37,6 +37,7 @@ dependencies {
 }
 
 private val createVersionsKtFile by tasks.registering(Task::class) {
+    inputs.property("version", properties["version"]!!)
     outputs.dir(layout.buildDirectory.dir("generated"))
     val versionKt = layout.buildDirectory.file("generated/Version.kt")
     doLast {
@@ -46,7 +47,7 @@ private val createVersionsKtFile by tasks.registering(Task::class) {
                 """
                     package schwarz.it.lightsaber.gradle
                     
-                    const val lightsaberVersion = "${properties["version"]!!}"
+                    const val lightsaberVersion = "${inputs.properties["version"]}"
                     
                 """.trimIndent()
             )
