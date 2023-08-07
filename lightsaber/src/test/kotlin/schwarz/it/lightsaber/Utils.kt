@@ -38,7 +38,7 @@ internal fun createOptions(
 private fun ReportType.toOption(): String {
     return when (this) {
         ReportType.Ignore -> "ignore"
-        ReportType.Warning -> "warn"
+        ReportType.Warning -> "warning"
         ReportType.Error -> "error"
     }
 }

@@ -82,7 +82,7 @@ internal enum class ReportType {
 
 private fun String?.toReportType(): ReportType {
     return when (this) {
-        "warn" -> ReportType.Warning
+        "warning" -> ReportType.Warning
         "error" -> ReportType.Error
         "ignore" -> ReportType.Ignore
         null -> ReportType.Error
