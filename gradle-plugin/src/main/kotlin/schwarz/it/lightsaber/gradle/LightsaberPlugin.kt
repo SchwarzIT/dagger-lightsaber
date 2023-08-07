@@ -12,28 +12,21 @@ class LightsaberPlugin : Plugin<Project> {
 }
 
 private fun Project.apply() {
-    val extension = extensions.create("lightsaber", LightsaberExtension::class.java)
+    val extension = extensions.create("lightsaber", LightsaberExtension::class.java).apply {
+        unusedBindInstance.convention(Severity.Error)
+        unusedBindsAndProvides.convention(Severity.Error)
+        unusedDependencies.convention(Severity.Error)
+        unusedModules.convention(Severity.Error)
+    }
 
     pluginManager.withPlugin("kotlin-kapt") {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
-                arg(
-                    "Lightsaber.UnusedBindInstance",
-                    extension.unusedBindInstance.convention(Severity.Error).map(Severity::toKapt).get(),
-                )
-                arg(
-                    "Lightsaber.UnusedBindsAndProvides",
-                    extension.unusedBindsAndProvides.convention(Severity.Error).map(Severity::toKapt).get(),
-                )
-                arg(
-                    "Lightsaber.UnusedDependencies",
-                    extension.unusedDependencies.convention(Severity.Error).map(Severity::toKapt).get(),
-                )
-                arg(
-                    "Lightsaber.UnusedModules",
-                    extension.unusedModules.convention(Severity.Error).map(Severity::toKapt).get(),
-                )
+                arg("Lightsaber.UnusedBindInstance", extension.unusedBindInstance.map(Severity::toKapt).get())
+                arg("Lightsaber.UnusedBindsAndProvides", extension.unusedBindsAndProvides.map(Severity::toKapt).get())
+                arg("Lightsaber.UnusedDependencies", extension.unusedDependencies.map(Severity::toKapt).get())
+                arg("Lightsaber.UnusedModules", extension.unusedModules.map(Severity::toKapt).get())
             }
         }
     }
