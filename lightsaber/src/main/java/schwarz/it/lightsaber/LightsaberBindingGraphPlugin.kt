@@ -1,6 +1,11 @@
+@file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
+
 package schwarz.it.lightsaber
 
 import com.google.auto.service.AutoService
+import com.sun.tools.javac.model.JavacElements
+import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.util.DiagnosticSource
 import dagger.model.BindingGraph
 import dagger.model.BindingGraph.ComponentNode
 import dagger.spi.BindingGraphPlugin
@@ -9,8 +14,13 @@ import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
+import java.io.PrintWriter
+import javax.annotation.processing.Filer
+import javax.lang.model.element.Element
+import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.Diagnostic
+import javax.tools.StandardLocation
 
 @AutoService(BindingGraphPlugin::class)
 public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
@@ -19,17 +29,35 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     private lateinit var types: Types
+    private lateinit var filer: Filer
+    private lateinit var elements: Elements
     private lateinit var config: LightsaberConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
-        listOf(
+        val issues = listOf(
             runRule(config.unusedDependencies) { checkUnusedDependencies(bindingGraph, types) },
             runRule(config.unusedModules) { checkUnusedModules(bindingGraph, types) },
             runRule(config.unusedBindInstance) { checkUnusedBindInstance(bindingGraph) },
             runRule(config.unusedBindsAndProvides) { checkUnusedBindsAndProvides(bindingGraph, types) },
+        ).flatten().ifEmpty { return }
+
+        val fileObject = filer.createResource(
+            StandardLocation.SOURCE_OUTPUT,
+            "schwarz.it.lightsaber",
+            bindingGraph.rootComponentNode().componentPath().currentComponent().qualifiedName,
         )
-            .flatten()
-            .forEach { diagnosticReporter.reportComponent(it.reportType.toKind(), it.component, it.message) }
+
+        PrintWriter(fileObject.openWriter()).use {
+            issues.forEach { issue -> it.println(issue.getMessage()) }
+        }
+    }
+
+    override fun initFiler(filer: Filer) {
+        this.filer = filer
+    }
+
+    override fun initElements(elements: Elements) {
+        this.elements = elements
     }
 
     override fun initTypes(types: Types) {
@@ -52,6 +80,22 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             "Lightsaber.UnusedDependencies",
             "Lightsaber.UnusedModules",
         )
+    }
+
+    private fun Element.getLocation(): String {
+        val pair = (elements as JavacElements).getTreeAndTopLevel(this, null, null)
+        val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
+        val diagnosticSource = DiagnosticSource(sourceFile, null)
+        return "${sourceFile.name}:${diagnosticSource.getLineNumber(pair.fst.pos)}:${
+            diagnosticSource.getColumnNumber(
+                pair.fst.pos,
+                true,
+            )
+        }"
+    }
+
+    private fun Issue.getMessage(): String {
+        return "${component.componentPath().currentComponent().getLocation()} - $message"
     }
 }
 
