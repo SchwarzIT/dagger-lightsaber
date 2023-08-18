@@ -1,5 +1,8 @@
 package schwarz.it.lightsaber
 
+import com.google.common.truth.Truth.assertThat
+import com.google.testing.compile.Compilation
+import com.google.testing.compile.CompilationSubject.assertThat
 import com.google.testing.compile.Compiler
 import dagger.internal.codegen.ComponentProcessor
 
@@ -40,5 +43,51 @@ private fun ReportType.toOption(): String {
         ReportType.Ignore -> "ignore"
         ReportType.Warning -> "warning"
         ReportType.Error -> "error"
+    }
+}
+
+internal fun Compilation.assertHasFinding(
+    message: String,
+    line: Int,
+    column: Int,
+    fileName: String = "test/MyComponent.java",
+    ruleName: String,
+) {
+    assertHasFindings(
+        FindingInfo(
+            message = message,
+            line = line,
+            column = column,
+            ruleName = ruleName,
+            fileName = fileName,
+        ),
+    )
+}
+
+internal fun Compilation.assertHasFindings(
+    vararg findingsInfo: FindingInfo,
+) {
+    assertThat(this).succeededWithoutWarnings()
+    assertThat(
+        generatedFiles().filter { it.name.endsWith(".lightsaber") }.map { it.getCharContent(true) }.joinToString(""),
+    ).isEqualTo(findingsInfo.joinToString("\n", postfix = "\n") { it.toString() })
+}
+
+internal fun Compilation.assertNoFindings() {
+    assertThat(this).succeededWithoutWarnings()
+    assertThat(
+        generatedFiles().filter { it.name.endsWith(".lightsaber") },
+    ).isEmpty()
+}
+
+internal data class FindingInfo(
+    val message: String,
+    val line: Int,
+    val column: Int,
+    val ruleName: String,
+    val fileName: String = "test/MyComponent.java",
+) {
+    override fun toString(): String {
+        return "$fileName:$line:$column: $message [$ruleName]"
     }
 }
