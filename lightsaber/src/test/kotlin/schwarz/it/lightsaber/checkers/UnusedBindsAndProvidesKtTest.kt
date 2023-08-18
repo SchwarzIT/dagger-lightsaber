@@ -1,9 +1,12 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.CompilationSubject.assertThat
-import org.junit.jupiter.api.Nested
+import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
+import schwarz.it.lightsaber.FindingInfo
 import schwarz.it.lightsaber.ReportType
+import schwarz.it.lightsaber.assertHasFinding
+import schwarz.it.lightsaber.assertHasFindings
+import schwarz.it.lightsaber.assertNoFindings
 import schwarz.it.lightsaber.createCompiler
 import schwarz.it.lightsaber.createSource
 
@@ -52,12 +55,11 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, module)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @Binds `bindsMyInts` declared on `test.MyModule` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindsAndProvides(
+            message = "The @Binds `bindsMyInts` declared on `test.MyModule` is not used.",
+            line = 8,
+            column = 8,
+        )
     }
 
     @Test
@@ -103,12 +105,11 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, module)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @Provides `providesMyString` declared on `test.MyModule` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindsAndProvides(
+            message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+            line = 8,
+            column = 8,
+        )
     }
 
     @Test
@@ -166,11 +167,12 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, module)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @Provides `providesMyString` declared on `test.MyModule` is not used. [test.MyComponent → test.MySubcomponent]")
-            .inFile(component)
+        compilation.assertUnusedBindsAndProvides(
+            message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+            line = 7,
+            column = 8,
+            fileName = "test/MySubcomponent.java",
+        )
     }
 
     @Test
@@ -240,14 +242,22 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, subcomponent, component2, module)
 
-        assertThat(compilation)
-            .hadErrorCount(2)
-        assertThat(compilation)
-            .hadErrorContaining("The @Provides `providesMyString` declared on `test.MyModule` is not used. [test.MyComponent → test.MySubcomponent]")
-            .inFile(component)
-        assertThat(compilation)
-            .hadErrorContaining("The @Provides `providesMyInts` declared on `test.MyModule` is not used.")
-            .inFile(component2)
+        compilation.assertHasFindings(
+            FindingInfo(
+                message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+                line = 7,
+                column = 8,
+                ruleName = "UnusedBindsAndProvides",
+                fileName = "test/MySubcomponent.java",
+            ),
+            FindingInfo(
+                message = "The @Provides `providesMyInts` declared on `test.MyModule` is not used.",
+                line = 6,
+                column = 8,
+                ruleName = "UnusedBindsAndProvides",
+                fileName = "test/MyComponent2.java",
+            ),
+        )
     }
 
     @Test
@@ -298,8 +308,7 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, componentInterface, module)
 
-        assertThat(compilation)
-            .succeededWithoutWarnings()
+        compilation.assertNoFindings()
     }
 
     @Test
@@ -359,12 +368,11 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, moduleA, moduleB)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindsAndProvides(
+            message = "The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.",
+            line = 8,
+            column = 8,
+        )
     }
 
     @Test
@@ -416,74 +424,7 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, moduleA)
 
-        assertThat(compilation).succeededWithoutWarnings()
-    }
-
-    @Nested
-    internal inner class ReportTypes {
-        private val component = createSource(
-            """
-                package test;
-                
-                import dagger.BindsInstance;
-                import dagger.Component;
-                import java.util.ArrayList;
-                
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    ArrayList<Integer> myInts();
-                }
-            """.trimIndent(),
-        )
-        private val module = createSource(
-            """
-                package test;
-                
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
-                
-                @Module
-                public abstract class MyModule {
-                    @Binds
-                    abstract List<Integer> bindsMyInts(ArrayList<Integer> impl);
-                    
-                    @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
-                    }
-                }
-            """.trimIndent(),
-        )
-
-        @Test
-        fun testError() {
-            val compilation = createCompiler(unusedBindsAndProvides = ReportType.Error)
-                .compile(component, module)
-
-            assertThat(compilation)
-                .hadErrorCount(1)
-        }
-
-        @Test
-        fun testWarning() {
-            val compilation = createCompiler(unusedBindsAndProvides = ReportType.Warning)
-                .compile(component, module)
-
-            assertThat(compilation)
-                .hadWarningCount(1)
-        }
-
-        @Test
-        fun testIgnore() {
-            val compilation = createCompiler(unusedBindsAndProvides = ReportType.Ignore)
-                .compile(component, module)
-
-            assertThat(compilation)
-                .succeededWithoutWarnings()
-        }
+        compilation.assertNoFindings()
     }
 
     @Test
@@ -539,11 +480,19 @@ class UnusedBindsAndProvidesKtTest {
 
         val compilation = compiler.compile(component, module)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @Provides `myLong` declared on `schwartz.it.lightsaber.sample.MyModule` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindsAndProvides(
+            message = "The @Provides `myLong` declared on `schwartz.it.lightsaber.sample.MyModule` is not used.",
+            line = 8,
+            column = 8,
+        )
     }
+}
+
+private fun Compilation.assertUnusedBindsAndProvides(
+    message: String,
+    line: Int,
+    column: Int,
+    fileName: String = "test/MyComponent.java",
+) {
+    assertHasFinding(message, line, column, fileName, "UnusedBindsAndProvides")
 }

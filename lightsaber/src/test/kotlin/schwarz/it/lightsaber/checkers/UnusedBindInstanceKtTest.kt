@@ -1,9 +1,10 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.CompilationSubject.assertThat
-import org.junit.jupiter.api.Nested
+import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.ReportType
+import schwarz.it.lightsaber.assertHasFinding
+import schwarz.it.lightsaber.assertNoFindings
 import schwarz.it.lightsaber.createCompiler
 import schwarz.it.lightsaber.createSource
 
@@ -35,12 +36,11 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @BindsInstance `myInt` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindInstance(
+            message = "The @BindsInstance `myInt` is not used.",
+            line = 7,
+            column = 8,
+        )
     }
 
     @Test
@@ -66,12 +66,11 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @BindsInstance `myInt` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindInstance(
+            message = "The @BindsInstance `myInt` is not used.",
+            line = 7,
+            column = 8,
+        )
     }
 
     @Test
@@ -100,8 +99,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation)
-            .succeededWithoutWarnings()
+        compilation.assertNoFindings()
     }
 
     @Test
@@ -132,12 +130,11 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-        assertThat(compilation)
-            .hadErrorContaining("The @BindsInstance `secondInt` is not used.")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
+        compilation.assertUnusedBindInstance(
+            message = "The @BindsInstance `secondInt` is not used.",
+            line = 8,
+            column = 8,
+        )
     }
 
     @Test
@@ -179,8 +176,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        assertThat(compilation)
-            .succeededWithoutWarnings()
+        compilation.assertNoFindings()
     }
 
     @Test
@@ -223,8 +219,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        assertThat(compilation)
-            .succeededWithoutWarnings()
+        compilation.assertNoFindings()
     }
 
     @Test
@@ -266,62 +261,20 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        assertThat(compilation)
-            .hadErrorCount(1)
-
-        assertThat(compilation)
-            .hadErrorContaining("The @BindsInstance `myInt` is not used. [test.MyComponent → test.MySubcomponent]")
-            .inFile(component)
-            .onLineContaining("interface MyComponent")
-    }
-
-    @Nested
-    internal inner class ReportTypes {
-        private val component = createSource(
-            """
-                package test;
-                
-                import dagger.BindsInstance;
-                import dagger.Component;
-                
-                @Component
-                public interface MyComponent {
-                    
-                    @Component.Factory
-                    public interface Factory {
-                        MyComponent create(
-                            @BindsInstance int myInt
-                        );
-                    }
-                }
-            """.trimIndent(),
+        compilation.assertUnusedBindInstance(
+            message = "The @BindsInstance `myInt` is not used.",
+            line = 7,
+            column = 8,
+            fileName = "test/MySubcomponent.java",
         )
-
-        @Test
-        fun testError() {
-            val compilation = createCompiler(unusedBindInstance = ReportType.Error)
-                .compile(component)
-
-            assertThat(compilation)
-                .hadErrorCount(1)
-        }
-
-        @Test
-        fun testWarning() {
-            val compilation = createCompiler(unusedBindInstance = ReportType.Warning)
-                .compile(component)
-
-            assertThat(compilation)
-                .hadWarningCount(1)
-        }
-
-        @Test
-        fun testIgnore() {
-            val compilation = createCompiler(unusedBindInstance = ReportType.Ignore)
-                .compile(component)
-
-            assertThat(compilation)
-                .succeededWithoutWarnings()
-        }
     }
+}
+
+private fun Compilation.assertUnusedBindInstance(
+    message: String,
+    line: Int,
+    column: Int,
+    fileName: String = "test/MyComponent.java",
+) {
+    assertHasFinding(message, line, column, fileName, "UnusedBindInstance")
 }

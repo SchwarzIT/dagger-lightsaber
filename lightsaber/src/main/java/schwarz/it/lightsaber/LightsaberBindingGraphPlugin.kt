@@ -47,7 +47,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         val fileObject = filer.createResource(
             StandardLocation.SOURCE_OUTPUT,
             "schwarz.it.lightsaber",
-            bindingGraph.rootComponentNode().componentPath().currentComponent().qualifiedName,
+            "${bindingGraph.rootComponentNode().componentPath().currentComponent().qualifiedName}.lightsaber",
         )
 
         PrintWriter(fileObject.openWriter()).use { writer ->
