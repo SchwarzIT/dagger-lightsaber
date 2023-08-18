@@ -19,7 +19,6 @@ import javax.annotation.processing.Filer
 import javax.lang.model.element.Element
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import javax.tools.Diagnostic
 import javax.tools.StandardLocation
 
 @AutoService(BindingGraphPlugin::class)
@@ -35,11 +34,15 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
-            runRule(config.unusedDependencies) { checkUnusedDependencies(bindingGraph, types) },
-            runRule(config.unusedModules) { checkUnusedModules(bindingGraph, types) },
-            runRule(config.unusedBindInstance) { checkUnusedBindInstance(bindingGraph) },
-            runRule(config.unusedBindsAndProvides) { checkUnusedBindsAndProvides(bindingGraph, types) },
-        ).flatten().ifEmpty { return }
+            runRule(config.unusedDependencies, "UnusedDependencies") { checkUnusedDependencies(bindingGraph, types) },
+            runRule(config.unusedModules, "UnusedModules") { checkUnusedModules(bindingGraph, types) },
+            runRule(config.unusedBindInstance, "UnusedBindInstance") { checkUnusedBindInstance(bindingGraph) },
+            runRule(config.unusedBindsAndProvides, "UnusedBindsAndProvides") {
+                checkUnusedBindsAndProvides(bindingGraph, types)
+            },
+        )
+            .flatten()
+            .ifEmpty { return }
 
         val fileObject = filer.createResource(
             StandardLocation.SOURCE_OUTPUT,
@@ -47,8 +50,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             bindingGraph.rootComponentNode().componentPath().currentComponent().qualifiedName,
         )
 
-        PrintWriter(fileObject.openWriter()).use {
-            issues.forEach { issue -> it.println(issue.getMessage()) }
+        PrintWriter(fileObject.openWriter()).use { writer ->
+            issues.forEach { writer.println(it.getMessage()) }
         }
     }
 
@@ -86,29 +89,31 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         val pair = (elements as JavacElements).getTreeAndTopLevel(this, null, null)
         val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
         val diagnosticSource = DiagnosticSource(sourceFile, null)
-        return "${sourceFile.name}:${diagnosticSource.getLineNumber(pair.fst.pos)}:${
-            diagnosticSource.getColumnNumber(
-                pair.fst.pos,
-                true,
-            )
-        }"
+        val line = diagnosticSource.getLineNumber(pair.fst.pos)
+        val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
+        return "${sourceFile.name}:$line:$column"
+    }
+
+    private fun ComponentNode.getLocation(): String {
+        return this.componentPath().currentComponent().getLocation()
     }
 
     private fun Issue.getMessage(): String {
-        return "${component.componentPath().currentComponent().getLocation()} - $message"
+        return "${component.getLocation()}: $message [$rule]"
     }
 }
 
-private fun runRule(reportType: ReportType, rule: () -> List<Finding>): List<Issue> {
+private fun runRule(reportType: ReportType, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (reportType == ReportType.Ignore) return emptyList()
 
-    return rule().map { Issue(it.component, it.message, reportType) }
+    return rule().map { Issue(it.component, it.message, reportType, ruleName) }
 }
 
 private data class Issue(
     val component: ComponentNode,
     val message: String,
     val reportType: ReportType,
+    val rule: String,
 )
 
 internal data class LightsaberConfig(
@@ -131,13 +136,5 @@ private fun String?.toReportType(): ReportType {
         "ignore" -> ReportType.Ignore
         null -> ReportType.Error
         else -> error("Unknown type $this")
-    }
-}
-
-private fun ReportType.toKind(): Diagnostic.Kind {
-    return when (this) {
-        ReportType.Ignore -> error("WTF!")
-        ReportType.Warning -> Diagnostic.Kind.WARNING
-        ReportType.Error -> Diagnostic.Kind.ERROR
     }
 }
