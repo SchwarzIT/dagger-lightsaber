@@ -22,7 +22,7 @@ group = "schwarz.it.lightsaber"
 version = properties["version"]!!
 
 dependencies {
-    implementation("com.google.dagger:dagger-spi:2.47")
+    implementation("com.google.dagger:dagger-spi:2.48")
     compileOnly("com.google.auto.service:auto-service:1.1.1")
     kapt("com.google.auto.service:auto-service:1.1.1")
 
