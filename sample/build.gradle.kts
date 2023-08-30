@@ -14,5 +14,5 @@ tasks.withType<Test> {
 
 dependencies {
     implementation("com.google.dagger:dagger:2.47")
-    kapt("com.google.dagger:dagger-compiler:2.47")
+    kapt("com.google.dagger:dagger-compiler:2.48")
 }
