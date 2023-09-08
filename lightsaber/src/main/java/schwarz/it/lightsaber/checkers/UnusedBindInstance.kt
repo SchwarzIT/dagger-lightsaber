@@ -25,6 +25,7 @@ internal fun checkUnusedBindInstance(
                 Finding(
                     componentNode,
                     "The @BindsInstance `$it` is not used.",
+                    it
                 )
             }
         }

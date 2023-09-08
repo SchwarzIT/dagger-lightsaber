@@ -38,8 +38,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `myInt` is not used.",
-            line = 7,
-            column = 8,
+            line = 12,
+            column = 32,
         )
     }
 
@@ -68,8 +68,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `myInt` is not used.",
-            line = 7,
-            column = 8,
+            line = 12,
+            column = 42,
         )
     }
 
@@ -132,8 +132,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `secondInt` is not used.",
-            line = 8,
-            column = 8,
+            line = 16,
+            column = 52,
         )
     }
 
@@ -263,8 +263,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `myInt` is not used.",
-            line = 7,
-            column = 8,
+            line = 12,
+            column = 32,
             fileName = "test/MySubcomponent.java",
         )
     }

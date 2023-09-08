@@ -99,14 +99,18 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     private fun Issue.getMessage(): String {
-        return "${component.getLocation()}: $message [$rule]"
+        return if (element != null) {
+            "${element.getLocation()}: $message [$rule]"
+        } else {
+            "${component.getLocation()}: $message [$rule]"
+        }
     }
 }
 
 private fun runRule(reportType: ReportType, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (reportType == ReportType.Ignore) return emptyList()
 
-    return rule().map { Issue(it.component, it.message, reportType, ruleName) }
+    return rule().map { Issue(it.component, it.message, reportType, ruleName, it.element) }
 }
 
 private data class Issue(
@@ -114,6 +118,7 @@ private data class Issue(
     val message: String,
     val reportType: ReportType,
     val rule: String,
+    val element: Element? = null,
 )
 
 internal data class LightsaberConfig(
