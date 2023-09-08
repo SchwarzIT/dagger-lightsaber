@@ -1,4 +1,4 @@
-package schwartz.it.lightsaber.sample
+package schwarz.it.lightsaber.sample
 
 import dagger.Binds
 import dagger.Component

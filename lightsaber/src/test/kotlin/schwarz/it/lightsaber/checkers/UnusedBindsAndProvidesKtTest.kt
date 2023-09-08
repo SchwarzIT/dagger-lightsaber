@@ -435,7 +435,7 @@ class UnusedBindsAndProvidesKtTest {
                 
                 import dagger.BindsInstance;
                 import dagger.Component;
-                import schwartz.it.lightsaber.sample.MyModule;
+                import schwarz.it.lightsaber.sample.MyModule;
                 
                 @Component(modules = {MyModule.class})
                 public interface MyComponent {
@@ -445,19 +445,19 @@ class UnusedBindsAndProvidesKtTest {
         )
         val module = createSource(
             """
-                package schwartz.it.lightsaber.sample;
+                package schwarz.it.lightsaber.sample;
                 
                 @dagger.Module
-                @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\b\'\u0018\u0000 \u00032\u00020\u0001:\u0001\u0003B\u0005\u00a2\u0006\u0002\u0010\u0002\u00a8\u0006\u0004"}, d2 = {"Lschwartz/it/lightsaber/sample/MyModule;", "", "()V", "Companion", "sample"})
+                @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\b\'\u0018\u0000 \u00032\u00020\u0001:\u0001\u0003B\u0005\u00a2\u0006\u0002\u0010\u0002\u00a8\u0006\u0004"}, d2 = {"Lschwarz/it/lightsaber/sample/MyModule;", "", "()V", "Companion", "sample"})
                 public abstract class MyModule {
                     @org.jetbrains.annotations.NotNull
-                    public static final schwartz.it.lightsaber.sample.MyModule.Companion Companion = null;
+                    public static final schwarz.it.lightsaber.sample.MyModule.Companion Companion = null;
                     
                     public MyModule() {
                         super();
                     }
                     
-                    @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\b\n\u0000\n\u0002\u0010\t\n\u0000\b\u0086\u0003\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J\b\u0010\u0003\u001a\u00020\u0004H\u0007J\b\u0010\u0005\u001a\u00020\u0006H\u0007\u00a8\u0006\u0007"}, d2 = {"Lschwartz/it/lightsaber/sample/MyModule${'$'}Companion;", "", "()V", "myInt", "", "myLong", "", "sample"})
+                    @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\b\n\u0000\n\u0002\u0010\t\n\u0000\b\u0086\u0003\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J\b\u0010\u0003\u001a\u00020\u0004H\u0007J\b\u0010\u0005\u001a\u00020\u0006H\u0007\u00a8\u0006\u0007"}, d2 = {"Lschwarz/it/lightsaber/sample/MyModule${'$'}Companion;", "", "()V", "myInt", "", "myLong", "", "sample"})
                     public static final class Companion {
                         
                         private Companion() {
@@ -481,7 +481,7 @@ class UnusedBindsAndProvidesKtTest {
         val compilation = compiler.compile(component, module)
 
         compilation.assertUnusedBindsAndProvides(
-            message = "The @Provides `myLong` declared on `schwartz.it.lightsaber.sample.MyModule` is not used.",
+            message = "The @Provides `myLong` declared on `schwarz.it.lightsaber.sample.MyModule` is not used.",
             line = 8,
             column = 8,
         )
