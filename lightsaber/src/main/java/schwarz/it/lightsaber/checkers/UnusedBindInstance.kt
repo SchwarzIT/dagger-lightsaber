@@ -6,6 +6,7 @@ import dagger.Subcomponent
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -25,7 +26,7 @@ internal fun checkUnusedBindInstance(
                 Finding(
                     componentNode,
                     "The @BindsInstance `$it` is not used.",
-                    it
+                    it.toCodePosition()
                 )
             }
         }

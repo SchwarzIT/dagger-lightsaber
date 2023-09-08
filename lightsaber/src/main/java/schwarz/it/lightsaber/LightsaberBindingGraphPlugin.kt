@@ -17,6 +17,7 @@ import schwarz.it.lightsaber.checkers.checkUnusedModules
 import java.io.PrintWriter
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Element
+import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.StandardLocation
@@ -85,8 +86,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         )
     }
 
-    private fun Element.getLocation(): String {
-        val pair = (elements as JavacElements).getTreeAndTopLevel(this, null, null)
+    private fun CodePosition.getLocation(): String {
+        val pair = (elements as JavacElements).getTreeAndTopLevel(this.element, this.annotationMirror, this.annotationValue)
         val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
         val diagnosticSource = DiagnosticSource(sourceFile, null)
         val line = diagnosticSource.getLineNumber(pair.fst.pos)
@@ -95,12 +96,12 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     private fun ComponentNode.getLocation(): String {
-        return this.componentPath().currentComponent().getLocation()
+        return this.componentPath().currentComponent().toCodePosition().getLocation()
     }
 
     private fun Issue.getMessage(): String {
-        return if (element != null) {
-            "${element.getLocation()}: $message [$rule]"
+        return if (codePosition != null) {
+            "${codePosition.getLocation()}: $message [$rule]"
         } else {
             "${component.getLocation()}: $message [$rule]"
         }
@@ -110,7 +111,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 private fun runRule(reportType: ReportType, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (reportType == ReportType.Ignore) return emptyList()
 
-    return rule().map { Issue(it.component, it.message, reportType, ruleName, it.element) }
+    return rule().map { Issue(it.component, it.message, reportType, ruleName, it.codePosition) }
 }
 
 private data class Issue(
@@ -118,7 +119,7 @@ private data class Issue(
     val message: String,
     val reportType: ReportType,
     val rule: String,
-    val element: Element? = null,
+    val codePosition: CodePosition? = null,
 )
 
 internal data class LightsaberConfig(

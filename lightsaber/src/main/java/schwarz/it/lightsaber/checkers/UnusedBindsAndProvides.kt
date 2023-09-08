@@ -2,6 +2,7 @@ package schwarz.it.lightsaber.checkers
 
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.Module
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
@@ -24,7 +25,7 @@ internal fun checkUnusedBindsAndProvides(
                     Finding(
                         component,
                         "The $binding declared on `$module` is not used.",
-                        binding.value
+                        binding.value.toCodePosition()
                     )
                 }
             }
