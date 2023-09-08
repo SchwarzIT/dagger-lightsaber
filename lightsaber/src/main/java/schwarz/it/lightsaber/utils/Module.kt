@@ -23,7 +23,7 @@ value class Module(private val value: TypeElement) {
     }
 
     @JvmInline
-    value class Binding(private val value: Element) {
+    value class Binding(val value: Element) {
         override fun toString(): String {
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
         }
