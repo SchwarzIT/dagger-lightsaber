@@ -41,8 +41,8 @@ class UnusedDependenciesKtTest {
 
         compilation.assertUnusedDependencies(
             message = "The dependency `test.Dependency` is not used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 27,
         )
     }
 
