@@ -32,10 +32,12 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
-            runRule(config.unusedDependencies, "UnusedDependencies") { checkUnusedDependencies(bindingGraph, types) },
-            runRule(config.unusedModules, "UnusedModules") { checkUnusedModules(bindingGraph, types) },
-            runRule(config.unusedBindInstance, "UnusedBindInstance") { checkUnusedBindInstance(bindingGraph) },
-            runRule(config.unusedBindsAndProvides, "UnusedBindsAndProvides") {
+            runRule(config.checkUnusedDependencies, "UnusedDependencies") {
+                checkUnusedDependencies(bindingGraph, types)
+            },
+            runRule(config.checkUnusedModules, "UnusedModules") { checkUnusedModules(bindingGraph, types) },
+            runRule(config.checkUnusedBindInstance, "UnusedBindInstance") { checkUnusedBindInstance(bindingGraph) },
+            runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
                 checkUnusedBindsAndProvides(bindingGraph, types)
             },
         )
@@ -67,19 +69,19 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun initOptions(options: Map<String, String>) {
         this.config = LightsaberConfig(
-            unusedBindInstance = options["Lightsaber.UnusedBindInstance"].toReportType(),
-            unusedBindsAndProvides = options["Lightsaber.UnusedBindsAndProvides"].toReportType(),
-            unusedDependencies = options["Lightsaber.UnusedDependencies"].toReportType(),
-            unusedModules = options["Lightsaber.UnusedModules"].toReportType(),
+            checkUnusedBindInstance = options["Lightsaber.CheckUnusedBindInstance"] != "false",
+            checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
+            checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
+            checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
     }
 
     override fun supportedOptions(): Set<String> {
         return setOf(
-            "Lightsaber.UnusedBindInstance",
-            "Lightsaber.UnusedBindsAndProvides",
-            "Lightsaber.UnusedDependencies",
-            "Lightsaber.UnusedModules",
+            "Lightsaber.CheckUnusedBindInstance",
+            "Lightsaber.CheckUnusedBindsAndProvides",
+            "Lightsaber.CheckUnusedDependencies",
+            "Lightsaber.CheckUnusedModules",
         )
     }
 
@@ -97,38 +99,21 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 }
 
-private fun runRule(reportType: ReportType, ruleName: String, rule: () -> List<Finding>): List<Issue> {
-    if (reportType == ReportType.Ignore) return emptyList()
+private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
+    if (!check) return emptyList()
 
-    return rule().map { Issue(it.codePosition, it.message, reportType, ruleName) }
+    return rule().map { Issue(it.codePosition, it.message, ruleName) }
 }
 
 private data class Issue(
     val codePosition: CodePosition,
     val message: String,
-    val reportType: ReportType,
     val rule: String,
 )
 
 internal data class LightsaberConfig(
-    val unusedBindInstance: ReportType,
-    val unusedBindsAndProvides: ReportType,
-    val unusedDependencies: ReportType,
-    val unusedModules: ReportType,
+    val checkUnusedBindInstance: Boolean,
+    val checkUnusedBindsAndProvides: Boolean,
+    val checkUnusedDependencies: Boolean,
+    val checkUnusedModules: Boolean,
 )
-
-internal enum class ReportType {
-    Ignore,
-    Warning,
-    Error,
-}
-
-private fun String?.toReportType(): ReportType {
-    return when (this) {
-        "warning" -> ReportType.Warning
-        "error" -> ReportType.Error
-        "ignore" -> ReportType.Ignore
-        null -> ReportType.Error
-        else -> error("Unknown type $this")
-    }
-}

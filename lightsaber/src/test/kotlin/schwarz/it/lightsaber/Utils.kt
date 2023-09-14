@@ -7,43 +7,35 @@ import com.google.testing.compile.Compiler
 import dagger.internal.codegen.ComponentProcessor
 
 internal fun createCompiler(
-    unusedBindInstance: ReportType = ReportType.Ignore,
-    unusedBindsAndProvides: ReportType = ReportType.Ignore,
-    unusedDependencies: ReportType = ReportType.Ignore,
-    unusedModules: ReportType = ReportType.Ignore,
+    checkUnusedBindInstance: Boolean = false,
+    checkUnusedBindsAndProvides: Boolean = false,
+    checkUnusedDependencies: Boolean = false,
+    checkUnusedModules: Boolean = false,
 ): Compiler {
     return Compiler.javac()
         .withProcessors(ComponentProcessor.forTesting(LightsaberBindingGraphPlugin()))
         .withOptions(
             createOptions(
-                unusedBindInstance = unusedBindInstance,
-                unusedBindsAndProvides = unusedBindsAndProvides,
-                unusedDependencies = unusedDependencies,
-                unusedModules = unusedModules,
+                checkUnusedBindInstance = checkUnusedBindInstance,
+                checkUnusedBindsAndProvides = checkUnusedBindsAndProvides,
+                checkUnusedDependencies = checkUnusedDependencies,
+                checkUnusedModules = checkUnusedModules,
             ),
         )
 }
 
 internal fun createOptions(
-    unusedBindInstance: ReportType = ReportType.Ignore,
-    unusedBindsAndProvides: ReportType = ReportType.Ignore,
-    unusedDependencies: ReportType = ReportType.Ignore,
-    unusedModules: ReportType = ReportType.Ignore,
+    checkUnusedBindInstance: Boolean = false,
+    checkUnusedBindsAndProvides: Boolean = false,
+    checkUnusedDependencies: Boolean = false,
+    checkUnusedModules: Boolean = false,
 ): List<String> {
     return listOf(
-        "Lightsaber.UnusedBindInstance" to unusedBindInstance.toOption(),
-        "Lightsaber.UnusedBindsAndProvides" to unusedBindsAndProvides.toOption(),
-        "Lightsaber.UnusedDependencies" to unusedDependencies.toOption(),
-        "Lightsaber.UnusedModules" to unusedModules.toOption(),
+        "Lightsaber.CheckUnusedBindInstance" to checkUnusedBindInstance,
+        "Lightsaber.CheckUnusedBindsAndProvides" to checkUnusedBindsAndProvides,
+        "Lightsaber.CheckUnusedDependencies" to checkUnusedDependencies,
+        "Lightsaber.CheckUnusedModules" to checkUnusedModules,
     ).map { (first, second) -> "-A$first=$second" } // https://docs.oracle.com/javase/7/docs/technotes/tools/solaris/javac.html
-}
-
-private fun ReportType.toOption(): String {
-    return when (this) {
-        ReportType.Ignore -> "ignore"
-        ReportType.Warning -> "warning"
-        ReportType.Error -> "error"
-    }
 }
 
 internal fun Compilation.assertHasFinding(
@@ -69,7 +61,7 @@ internal fun Compilation.assertHasFindings(
 ) {
     assertThat(this).succeededWithoutWarnings()
     assertThat(
-        generatedFiles().filter { it.name.endsWith(".lightsaber") }.map { it.getCharContent(true) }.joinToString(""),
+        generatedFiles().filter { it.name.endsWith(".lightsaber") }.joinToString("") { it.getCharContent(true) },
     ).isEqualTo(findingsInfo.joinToString("\n", postfix = "\n") { it.toString() })
 }
 

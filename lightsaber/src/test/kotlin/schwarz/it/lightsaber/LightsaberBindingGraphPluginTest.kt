@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test
 class LightsaberBindingGraphPluginTest {
 
     private val compiler = createCompiler(
-        unusedBindInstance = ReportType.Error,
-        unusedBindsAndProvides = ReportType.Error,
-        unusedDependencies = ReportType.Error,
-        unusedModules = ReportType.Error,
+        checkUnusedBindInstance = true,
+        checkUnusedBindsAndProvides = true,
+        checkUnusedDependencies = true,
+        checkUnusedModules = true,
     )
 
     @Test

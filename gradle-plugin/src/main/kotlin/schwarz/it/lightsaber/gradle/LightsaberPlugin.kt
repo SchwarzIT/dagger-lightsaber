@@ -24,10 +24,10 @@ private fun Project.apply() {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
-                arg("Lightsaber.UnusedBindInstance", extension.unusedBindInstance.map(Severity::toKapt).get())
-                arg("Lightsaber.UnusedBindsAndProvides", extension.unusedBindsAndProvides.map(Severity::toKapt).get())
-                arg("Lightsaber.UnusedDependencies", extension.unusedDependencies.map(Severity::toKapt).get())
-                arg("Lightsaber.UnusedModules", extension.unusedModules.map(Severity::toKapt).get())
+                arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.map(Severity::toKapt).get())
+                arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.map(Severity::toKapt).get())
+                arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.map(Severity::toKapt).get())
+                arg("Lightsaber.CheckUnusedModules", extension.unusedModules.map(Severity::toKapt).get())
             }
         }
     }
@@ -76,7 +76,7 @@ enum class Severity {
 }
 
 private fun Severity.toKapt() = when (this) {
-    Severity.Error -> "error"
-    Severity.Warning -> "warning"
-    Severity.Ignore -> "ignore"
+    Severity.Error -> true
+    Severity.Warning -> true
+    Severity.Ignore -> false
 }
