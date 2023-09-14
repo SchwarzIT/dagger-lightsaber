@@ -1,3 +1,5 @@
+import schwarz.it.lightsaber.gradle.Severity
+
 plugins {
     kotlin("jvm") version "1.9.10"
     kotlin("kapt") version "1.9.10"
@@ -10,6 +12,10 @@ kotlin {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+lightsaber {
+    unusedBindsAndProvides = Severity.Error
 }
 
 dependencies {

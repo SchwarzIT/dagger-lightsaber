@@ -21,17 +21,8 @@ By default, anything flagged by those rules is treated as a compilation error.
 
 ## How to use it
 
-There are two ways to use the plugin:
+Add the plugin to your project:
 
-### as a dependency
-```kotlin
-// build.gradle.kts
-dependencies {
-    kapt("schwarz.it.lightsaber:lightsaber:<version>")
-}
-```
-
-### as a gradle plugin
 ```kotlin
 // build.gradle.kts
 plugins {
@@ -39,21 +30,12 @@ plugins {
 }
 ```
 
-You can change that default behaviour from compilation error to warnings or even ignore them completely like this:
+And run `./gradlew lightsaberCheck`. Lightsaber will check your code and fail if there is any issue.
 
-### as a dependency
-```kotlin
-kapt {
-    arguments {
-        arg("Lightsaber.UnusedBindInstance", "error") // "warning" or "ignore"
-        arg("Lightsaber.UnusedBindsAndProvides", "error") // "warning" or "ignore"
-        arg("Lightsaber.UnusedDependencies", "error") // "warning" or "ignore"
-        arg("Lightsaber.UnusedModules", "error") // "warning" or "ignore"
-    }
-}
-```
+### Configuration
 
-### as a gradle plugin
+You can change that default for each rule from error to warnings or even ignore it completely like this:
+
 ```kotlin
 import schwarz.it.lightsaber.gradle.Severity
 
