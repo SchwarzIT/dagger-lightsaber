@@ -3,7 +3,6 @@ package schwarz.it.lightsaber.checkers
 import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.FindingInfo
-import schwarz.it.lightsaber.ReportType
 import schwarz.it.lightsaber.assertHasFinding
 import schwarz.it.lightsaber.assertHasFindings
 import schwarz.it.lightsaber.assertNoFindings
@@ -12,7 +11,7 @@ import schwarz.it.lightsaber.createSource
 
 class UnusedBindsAndProvidesKtTest {
 
-    private val compiler = createCompiler(unusedBindsAndProvides = ReportType.Error)
+    private val compiler = createCompiler(checkUnusedBindsAndProvides = true)
 
     @Test
     fun bindsNotUsed() {
