@@ -2,7 +2,6 @@ package schwarz.it.lightsaber.checkers
 
 import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
-import schwarz.it.lightsaber.ReportType
 import schwarz.it.lightsaber.assertHasFinding
 import schwarz.it.lightsaber.assertNoFindings
 import schwarz.it.lightsaber.createCompiler
@@ -10,7 +9,7 @@ import schwarz.it.lightsaber.createSource
 
 class UnusedDependenciesKtTest {
 
-    private val compiler = createCompiler(unusedDependencies = ReportType.Error)
+    private val compiler = createCompiler(checkUnusedDependencies = true)
 
     private val dependency = createSource(
         """
