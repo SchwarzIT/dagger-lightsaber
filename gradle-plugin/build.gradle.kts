@@ -12,6 +12,7 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    dependsOn(provider { rootProject.project(":lightsaber").tasks.named("publishToMavenLocal") })
 }
 
 group = "schwarz.it.lightsaber"
@@ -29,8 +30,7 @@ gradlePlugin {
 dependencies {
     implementation(project(":lightsaber"))
 
-    compileOnly(gradleApi())
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
@@ -50,7 +50,7 @@ private val createVersionsKtFile by tasks.registering(Task::class) {
                     
                     const val lightsaberVersion = "${inputs.properties["version"]}"
                     
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
