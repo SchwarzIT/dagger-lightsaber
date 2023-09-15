@@ -3,6 +3,7 @@ package schwarz.it.lightsaber.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 
@@ -24,10 +25,10 @@ private fun Project.apply() {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
-                arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.map(Severity::toKapt).get())
-                arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.map(Severity::toKapt).get())
-                arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.map(Severity::toKapt).get())
-                arg("Lightsaber.CheckUnusedModules", extension.unusedModules.map(Severity::toKapt).get())
+                arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get())
+                arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get())
+                arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get())
+                arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get())
             }
         }
     }
@@ -75,8 +76,12 @@ enum class Severity {
     Ignore,
 }
 
-private fun Severity.toKapt() = when (this) {
-    Severity.Error -> true
-    Severity.Warning -> true
-    Severity.Ignore -> false
+private fun Property<Severity>.toProcessor(): Provider<Boolean> {
+    return map { severity: Severity ->
+        when (severity) {
+            Severity.Error -> true
+            Severity.Warning -> true
+            Severity.Ignore -> false
+        }
+    }
 }
