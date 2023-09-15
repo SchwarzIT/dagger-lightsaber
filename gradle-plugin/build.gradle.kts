@@ -17,7 +17,9 @@ tasks.withType<Test> {
 group = "schwarz.it.lightsaber"
 version = properties["version"]!!
 
+@Suppress("UnstableApiUsage")
 gradlePlugin {
+    vcsUrl = "https://github.com/SchwarzIT/dagger-lightsaber"
     plugins {
         create("LightsaberPlugin") {
             id = "schwarz.it.lightsaber"
