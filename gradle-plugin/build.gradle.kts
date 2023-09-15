@@ -10,7 +10,7 @@ kotlin {
     jvmToolchain(11)
 }
 
-tasks.withType<Test> {
+tasks.test {
     useJUnitPlatform()
 }
 
