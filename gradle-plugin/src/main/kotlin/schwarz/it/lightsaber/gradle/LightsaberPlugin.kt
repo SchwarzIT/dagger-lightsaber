@@ -3,6 +3,7 @@ package schwarz.it.lightsaber.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import schwarz.it.lightsaber.gradle.utils.configureProcessor
 
@@ -27,10 +28,20 @@ private fun Project.apply() {
             task.dependsOn(provider { tasks.withType(BaseKapt::class.java) })
         }
 
-        task.source = tasks.withType(BaseKapt::class.java)
-            .map { fileTree(it.destinationDir.dir("schwarz/it/lightsaber")).asFileTree }
+        task.dependsOn(provider { tasks.withType(JavaCompile::class.java) })
+
+        task.source = listOf(
+            tasks.withType(BaseKapt::class.java).map { kaptTask ->
+                fileTree(kaptTask.destinationDir.dir("schwarz/it/lightsaber")).asFileTree
+                    .matching { it.include("*.lightsaber") }
+            },
+            listOf(
+                fileTree(layout.buildDirectory.dir("generated/sources/annotationProcessor")).asFileTree
+                    .matching { it.include("**/*.lightsaber") },
+            ),
+        )
+            .flatten()
             .reduce { acc, fileTree -> acc.plus(fileTree) }
-            .matching { it.include("*.lightsaber") }
 
         task.severities.set(
             objects.mapProperty(Rule::class.java, Severity::class.java).apply {
