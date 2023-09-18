@@ -88,12 +88,16 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     private fun Element.getLocation(): String {
-        val pair = (elements as JavacElements).getTreeAndTopLevel(this, null, null)
-        val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
-        val diagnosticSource = DiagnosticSource(sourceFile, null)
-        val line = diagnosticSource.getLineNumber(pair.fst.pos)
-        val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
-        return "${sourceFile.name}:$line:$column"
+        return try {
+            val pair = (elements as JavacElements).getTreeAndTopLevel(this, null, null)
+            val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
+            val diagnosticSource = DiagnosticSource(sourceFile, null)
+            val line = diagnosticSource.getLineNumber(pair.fst.pos)
+            val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
+            "${sourceFile.name}:$line:$column"
+        } catch (e: IllegalAccessError) {
+            "Unknown:1:1" // FIXME: We need a way to workaround this
+        }
     }
 
     private fun ComponentNode.getLocation(): String {
