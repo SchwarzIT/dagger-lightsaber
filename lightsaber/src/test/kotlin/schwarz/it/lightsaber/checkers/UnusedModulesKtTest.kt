@@ -79,8 +79,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 22,
         )
     }
 
@@ -146,8 +146,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 25,
             fileName = "test/MySubcomponent.java",
         )
     }
@@ -202,8 +202,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 22,
         )
     }
 
@@ -254,8 +254,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used but its child `test.ModuleB` is used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 22,
         )
     }
 
@@ -306,7 +306,8 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used.",
             line = 6,
-            column = 8,
+            column = 20,
+            fileName = "test/ModuleA.java"
         )
     }
 
@@ -344,7 +345,6 @@ class UnusedModulesKtTest {
                 }
             """.trimIndent(),
         )
-
         val moduleC = createSource(
             """
                 package test;
@@ -376,7 +376,8 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleC` included by `test.ModuleA → test.ModuleB` is not used.",
             line = 6,
-            column = 8,
+            column = 20,
+            fileName = "test/ModuleB.java"
         )
     }
 
@@ -422,8 +423,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 22,
         )
     }
 
@@ -492,8 +493,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used but its children `test.ModuleB`, `test.ModuleC` are used.",
-            line = 6,
-            column = 8,
+            line = 5,
+            column = 22,
         )
     }
 
@@ -564,7 +565,8 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its child `test.ModuleC` is used.",
             line = 6,
-            column = 8,
+            column = 20,
+            fileName = "test/ModuleA.java"
         )
     }
 
@@ -652,7 +654,8 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its children `test.ModuleC`, `test.ModuleD` are used.",
             line = 6,
-            column = 8,
+            column = 20,
+            fileName = "test/ModuleA.java"
         )
     }
 }

@@ -27,18 +27,15 @@ internal fun BindingGraph.getUsedModules(): Set<Module> {
         .toSet()
 }
 
-internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosition {
+internal fun BindingGraph.ComponentNode.getModulesCodePosition(): CodePosition {
     val componentElement = componentPath().currentComponent()
     val annotationMirror = componentElement.findAnnotationMirrors("Component")
+        ?: componentElement.findAnnotationMirrors("Subcomponent")!!
+    return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("modules"))
+}
+
+internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosition {
+    val componentElement = componentPath().currentComponent()
+    val annotationMirror = componentElement.findAnnotationMirrors("Component")!!
     return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("dependencies"))
-}
-
-private fun TypeElement.findAnnotationMirrors(annotationName: String): AnnotationMirror {
-    return annotationMirrors.single { annotationMirror ->
-        annotationMirror.annotationType.asElement().simpleName.toString() == annotationName
-    }
-}
-
-private fun AnnotationMirror.getAnnotationValue(key: String): AnnotationValue {
-    return elementValues.toList().single { (it, _) -> it.simpleName.toString() == key }.second
 }

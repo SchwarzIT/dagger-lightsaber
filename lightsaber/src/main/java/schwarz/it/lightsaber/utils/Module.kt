@@ -2,6 +2,7 @@ package schwarz.it.lightsaber.utils
 
 import dagger.Binds
 import dagger.Provides
+import schwarz.it.lightsaber.CodePosition
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
@@ -20,6 +21,12 @@ value class Module(private val value: TypeElement) {
         return value.getAnnotation(dagger.Module::class.java)
             .getTypesMirrorsFromClass { includes }
             .map { Module(types.asElement(it) as TypeElement) }
+    }
+
+    fun getIncludesCodePosition(): CodePosition {
+        println(value)
+        val annotationMirror = value.findAnnotationMirrors("Module")!!
+        return CodePosition(value, annotationMirror, annotationMirror.getAnnotationValue("includes"))
     }
 
     @JvmInline
