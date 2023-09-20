@@ -23,11 +23,7 @@ internal fun checkUnusedBindInstance(
             val bindInstances = componentNode.getBindInstances()
 
             (bindInstances - usedInstances).map {
-                Finding(
-                    componentNode,
-                    "The @BindsInstance `$it` is not used.",
-                    it.toCodePosition()
-                )
+                Finding("The @BindsInstance `$it` is not used.", it.toCodePosition())
             }
         }
 }

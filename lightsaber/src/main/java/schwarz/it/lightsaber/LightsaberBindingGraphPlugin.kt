@@ -7,7 +7,6 @@ import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.DiagnosticSource
 import dagger.model.BindingGraph
-import dagger.model.BindingGraph.ComponentNode
 import dagger.spi.BindingGraphPlugin
 import dagger.spi.DiagnosticReporter
 import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
@@ -16,8 +15,6 @@ import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import java.io.PrintWriter
 import javax.annotation.processing.Filer
-import javax.lang.model.element.Element
-import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.StandardLocation
@@ -95,31 +92,22 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         return "${sourceFile.name}:$line:$column"
     }
 
-    private fun ComponentNode.getLocation(): String {
-        return this.componentPath().currentComponent().toCodePosition().getLocation()
-    }
-
     private fun Issue.getMessage(): String {
-        return if (codePosition != null) {
-            "${codePosition.getLocation()}: $message [$rule]"
-        } else {
-            "${component.getLocation()}: $message [$rule]"
-        }
+        return "${codePosition.getLocation()}: $message [$rule]"
     }
 }
 
 private fun runRule(reportType: ReportType, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (reportType == ReportType.Ignore) return emptyList()
 
-    return rule().map { Issue(it.component, it.message, reportType, ruleName, it.codePosition) }
+    return rule().map { Issue(it.codePosition, it.message, reportType, ruleName) }
 }
 
 private data class Issue(
-    val component: ComponentNode,
+    val codePosition: CodePosition,
     val message: String,
     val reportType: ReportType,
     val rule: String,
-    val codePosition: CodePosition? = null,
 )
 
 internal data class LightsaberConfig(

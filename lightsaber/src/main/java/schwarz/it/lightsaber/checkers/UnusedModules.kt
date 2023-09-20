@@ -2,6 +2,7 @@ package schwarz.it.lightsaber.checkers
 
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.Module
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
@@ -17,7 +18,9 @@ internal fun checkUnusedModules(
         .flatMap { component ->
             component.getDeclaredModules(bindingGraph, types)
                 .flatMap { getErrorMessages(used, it, types) }
-                .map { errorMessage -> Finding(component, errorMessage) }
+                .map { errorMessage ->
+                    Finding(errorMessage, component.componentPath().currentComponent().toCodePosition())
+                }
         }
 }
 
