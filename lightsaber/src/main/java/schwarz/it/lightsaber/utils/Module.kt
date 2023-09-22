@@ -35,7 +35,6 @@ value class Module(private val value: TypeElement) {
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
         }
 
-
         fun getCodePosition(): CodePosition {
             return value.toCodePosition()
         }

@@ -53,9 +53,9 @@ private fun getErrorMessages(
 
 private fun generateMessage(usedChildren: List<Module>, node: Module, path: List<String> = emptyList()): String {
     val prefix = if (path.isEmpty()) {
-        "The @Module `${node}`"
+        "The @Module `$node`"
     } else {
-        "The @Module `${node}` included by `${path.joinToString(" → ")}`"
+        "The @Module `$node` included by `${path.joinToString(" → ")}`"
     }
     return when (usedChildren.size) {
         0 -> "$prefix is not used."

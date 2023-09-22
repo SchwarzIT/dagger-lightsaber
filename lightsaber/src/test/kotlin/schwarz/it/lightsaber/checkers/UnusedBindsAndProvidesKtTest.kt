@@ -371,7 +371,7 @@ class UnusedBindsAndProvidesKtTest {
             message = "The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.",
             line = 12,
             column = 28,
-            fileName = "test/MyModuleB.java"
+            fileName = "test/MyModuleB.java",
         )
     }
 
@@ -484,7 +484,7 @@ class UnusedBindsAndProvidesKtTest {
             message = "The @Provides `myLong` declared on `schwarz.it.lightsaber.sample.MyModule` is not used.",
             line = 26,
             column = 27,
-            fileName = "schwarz/it/lightsaber/sample/MyModule.java"
+            fileName = "schwarz/it/lightsaber/sample/MyModule.java",
         )
     }
 }

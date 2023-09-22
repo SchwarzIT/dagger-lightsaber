@@ -2,8 +2,6 @@ package schwarz.it.lightsaber.utils
 
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.TypeElement
 import kotlin.jvm.optionals.getOrNull
 

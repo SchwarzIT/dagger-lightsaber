@@ -307,7 +307,7 @@ class UnusedModulesKtTest {
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used.",
             line = 6,
             column = 20,
-            fileName = "test/ModuleA.java"
+            fileName = "test/ModuleA.java",
         )
     }
 
@@ -377,7 +377,7 @@ class UnusedModulesKtTest {
             message = "The @Module `test.ModuleC` included by `test.ModuleA → test.ModuleB` is not used.",
             line = 6,
             column = 20,
-            fileName = "test/ModuleB.java"
+            fileName = "test/ModuleB.java",
         )
     }
 
@@ -566,7 +566,7 @@ class UnusedModulesKtTest {
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its child `test.ModuleC` is used.",
             line = 6,
             column = 20,
-            fileName = "test/ModuleA.java"
+            fileName = "test/ModuleA.java",
         )
     }
 
@@ -655,7 +655,7 @@ class UnusedModulesKtTest {
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its children `test.ModuleC`, `test.ModuleD` are used.",
             line = 6,
             column = 20,
-            fileName = "test/ModuleA.java"
+            fileName = "test/ModuleA.java",
         )
     }
 }
