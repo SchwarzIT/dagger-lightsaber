@@ -1,5 +1,7 @@
 package schwarz.it.lightsaber.utils
 
+import dagger.Component
+import dagger.Subcomponent
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
 import javax.lang.model.element.Element
@@ -40,4 +42,15 @@ internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosit
     val componentElement = componentPath().currentComponent()
     val annotationMirror = componentElement.findAnnotationMirrors("Component")!!
     return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("dependencies"))
+}
+
+internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List<FactoryOrBuilder> {
+    return componentPath()
+        .currentComponent()
+        .enclosedElements
+        .filter {
+            it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) ||
+                it.isAnnotatedWith(Component.Builder::class) || it.isAnnotatedWith(Subcomponent.Builder::class)
+        }
+        .map { FactoryOrBuilder(it) }
 }
