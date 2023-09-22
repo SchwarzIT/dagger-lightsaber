@@ -21,6 +21,16 @@ class UnusedDependenciesKtTest {
         """.trimIndent(),
     )
 
+    private val dependency2 = createSource(
+        """
+            package test;
+
+            public interface Dependency2 {
+                Integer dependency2();
+            }
+        """.trimIndent(),
+    )
+
     @Test
     fun dependencyNotUsed() {
         val component = createSource(
@@ -41,7 +51,7 @@ class UnusedDependenciesKtTest {
         compilation.assertUnusedDependencies(
             message = "The dependency `test.Dependency` is not used.",
             line = 5,
-            column = 27,
+            column = 28,
         )
     }
 
@@ -63,6 +73,33 @@ class UnusedDependenciesKtTest {
         val compilation = compiler.compile(component, dependency)
 
         compilation.assertNoFindings()
+    }
+
+    @Test
+    fun secondDependencyUnusedOnComponent() {
+        val component = createSource(
+            """
+                package test;
+
+                import dagger.Component;
+
+                @Component(dependencies = {
+                        Dependency.class, 
+                        Dependency2.class
+                })
+                public interface MyComponent {
+                    String dependency();
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component, dependency, dependency2)
+
+        compilation.assertUnusedDependencies(
+            message = "The dependency `test.Dependency2` is not used.",
+            line = 5,
+            column = 50,
+        )
     }
 
     @Test

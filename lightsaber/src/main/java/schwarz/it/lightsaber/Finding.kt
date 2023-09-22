@@ -13,6 +13,7 @@ data class CodePosition(
     val element: Element,
     val annotationMirror: AnnotationMirror? = null,
     val annotationValue: AnnotationValue? = null,
+    val errorOffset: Int = 0,
 )
 
 internal fun Element.toCodePosition(): CodePosition {

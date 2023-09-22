@@ -2,6 +2,7 @@ package schwarz.it.lightsaber.utils
 
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
+import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import kotlin.jvm.optionals.getOrNull
 
@@ -32,8 +33,18 @@ internal fun BindingGraph.ComponentNode.getModulesCodePosition(): CodePosition {
     return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("modules"))
 }
 
-internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosition {
+internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(element: Element): CodePosition {
     val componentElement = componentPath().currentComponent()
     val annotationMirror = componentElement.findAnnotationMirrors("Component")!!
-    return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("dependencies"))
+    val errorOffset = annotationMirror
+        .getAnnotationValue("dependencies")
+        .value
+        .toString()
+        .indexOf(element.toString()) + 1
+    return CodePosition(
+        componentElement,
+        annotationMirror,
+        annotationMirror.getAnnotationValue("dependencies"),
+        errorOffset,
+    )
 }

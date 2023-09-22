@@ -20,7 +20,11 @@ internal fun checkUnusedDependencies(
         .flatMap { component ->
             val declared = component.getDeclaredDependencies(types)
             (declared - used).map {
-                Finding("The dependency `$it` is not used.", component.getDependenciesCodePosition())
+                val codePosition = component.getDependenciesCodePosition(it)
+                Finding(
+                    "The dependency `$it` is not used.",
+                    codePosition,
+                )
             }
         }
 }

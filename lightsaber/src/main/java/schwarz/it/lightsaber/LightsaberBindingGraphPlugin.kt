@@ -90,7 +90,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
         val diagnosticSource = DiagnosticSource(sourceFile, null)
         val line = diagnosticSource.getLineNumber(pair.fst.pos)
-        val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
+        val column = diagnosticSource.getColumnNumber(pair.fst.pos, true) + errorOffset
         return "${sourceFile.name}:$line:$column"
     }
 
