@@ -7,7 +7,6 @@ import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.DiagnosticSource
 import dagger.model.BindingGraph
-import dagger.model.BindingGraph.ComponentNode
 import dagger.spi.BindingGraphPlugin
 import dagger.spi.DiagnosticReporter
 import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
@@ -16,7 +15,6 @@ import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import java.io.PrintWriter
 import javax.annotation.processing.Filer
-import javax.lang.model.element.Element
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.StandardLocation
@@ -85,8 +83,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         )
     }
 
-    private fun Element.getLocation(): String {
-        val pair = (elements as JavacElements).getTreeAndTopLevel(this, null, null)
+    private fun CodePosition.getLocation(): String {
+        val pair = (elements as JavacElements).getTreeAndTopLevel(this.element, this.annotationMirror, this.annotationValue)
         val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
         val diagnosticSource = DiagnosticSource(sourceFile, null)
         val line = diagnosticSource.getLineNumber(pair.fst.pos)
@@ -94,23 +92,19 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         return "${sourceFile.name}:$line:$column"
     }
 
-    private fun ComponentNode.getLocation(): String {
-        return this.componentPath().currentComponent().getLocation()
-    }
-
     private fun Issue.getMessage(): String {
-        return "${component.getLocation()}: $message [$rule]"
+        return "${codePosition.getLocation()}: $message [$rule]"
     }
 }
 
 private fun runRule(reportType: ReportType, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (reportType == ReportType.Ignore) return emptyList()
 
-    return rule().map { Issue(it.component, it.message, reportType, ruleName) }
+    return rule().map { Issue(it.codePosition, it.message, reportType, ruleName) }
 }
 
 private data class Issue(
-    val component: ComponentNode,
+    val codePosition: CodePosition,
     val message: String,
     val reportType: ReportType,
     val rule: String,

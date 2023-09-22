@@ -57,8 +57,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Binds `bindsMyInts` declared on `test.MyModule` is not used.",
-            line = 8,
-            column = 8,
+            line = 12,
+            column = 28,
         )
     }
 
@@ -107,8 +107,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-            line = 8,
-            column = 8,
+            line = 17,
+            column = 19,
         )
     }
 
@@ -169,9 +169,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-            line = 7,
-            column = 8,
-            fileName = "test/MySubcomponent.java",
+            line = 17,
+            column = 19,
         )
     }
 
@@ -245,17 +244,17 @@ class UnusedBindsAndProvidesKtTest {
         compilation.assertHasFindings(
             FindingInfo(
                 message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-                line = 7,
-                column = 8,
+                line = 17,
+                column = 19,
                 ruleName = "UnusedBindsAndProvides",
-                fileName = "test/MySubcomponent.java",
+                fileName = "test/MyModule.java",
             ),
             FindingInfo(
                 message = "The @Provides `providesMyInts` declared on `test.MyModule` is not used.",
-                line = 6,
-                column = 8,
+                line = 12,
+                column = 31,
                 ruleName = "UnusedBindsAndProvides",
-                fileName = "test/MyComponent2.java",
+                fileName = "test/MyModule.java",
             ),
         )
     }
@@ -370,8 +369,9 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.",
-            line = 8,
-            column = 8,
+            line = 12,
+            column = 28,
+            fileName = "test/MyModuleB.java",
         )
     }
 
@@ -482,8 +482,9 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `myLong` declared on `schwarz.it.lightsaber.sample.MyModule` is not used.",
-            line = 8,
-            column = 8,
+            line = 26,
+            column = 27,
+            fileName = "schwarz/it/lightsaber/sample/MyModule.java",
         )
     }
 }
@@ -492,7 +493,7 @@ private fun Compilation.assertUnusedBindsAndProvides(
     message: String,
     line: Int,
     column: Int,
-    fileName: String = "test/MyComponent.java",
+    fileName: String = "test/MyModule.java",
 ) {
     assertHasFinding(message, line, column, fileName, "UnusedBindsAndProvides")
 }

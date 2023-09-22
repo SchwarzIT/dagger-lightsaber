@@ -4,6 +4,7 @@ import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.utils.getComponentAnnotation
+import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.element.Element
 import javax.lang.model.util.Types
@@ -19,7 +20,7 @@ internal fun checkUnusedDependencies(
         .flatMap { component ->
             val declared = component.getDeclaredDependencies(types)
             (declared - used).map {
-                Finding(component, "The dependency `$it` is not used.")
+                Finding("The dependency `$it` is not used.", component.getDependenciesCodePosition())
             }
         }
 }

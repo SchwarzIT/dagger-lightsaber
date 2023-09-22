@@ -2,6 +2,8 @@ package schwarz.it.lightsaber.utils
 
 import dagger.Binds
 import dagger.Provides
+import schwarz.it.lightsaber.CodePosition
+import schwarz.it.lightsaber.toCodePosition
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
@@ -22,10 +24,19 @@ value class Module(private val value: TypeElement) {
             .map { Module(types.asElement(it) as TypeElement) }
     }
 
+    fun getIncludesCodePosition(): CodePosition {
+        val annotationMirror = value.findAnnotationMirrors("Module")!!
+        return CodePosition(value, annotationMirror, annotationMirror.getAnnotationValue("includes"))
+    }
+
     @JvmInline
     value class Binding(private val value: Element) {
         override fun toString(): String {
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
+        }
+
+        fun getCodePosition(): CodePosition {
+            return value.toCodePosition()
         }
     }
 }

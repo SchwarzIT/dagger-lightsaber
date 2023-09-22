@@ -21,7 +21,7 @@ internal fun checkUnusedBindsAndProvides(
             .map { module -> module to (module.getBindings() - usedBindsAndProvides) }
             .flatMap { (module, unusedBindings) ->
                 unusedBindings.map { binding ->
-                    Finding(component, "The $binding declared on `$module` is not used.")
+                    Finding("The $binding declared on `$module` is not used.", binding.getCodePosition())
                 }
             }
     }

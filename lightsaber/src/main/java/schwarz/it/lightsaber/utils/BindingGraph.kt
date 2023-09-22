@@ -1,6 +1,7 @@
 package schwarz.it.lightsaber.utils
 
 import dagger.model.BindingGraph
+import schwarz.it.lightsaber.CodePosition
 import javax.lang.model.element.TypeElement
 import kotlin.jvm.optionals.getOrNull
 
@@ -22,4 +23,17 @@ internal fun BindingGraph.getUsedModules(): Set<Module> {
         }
         .map { Module(it) }
         .toSet()
+}
+
+internal fun BindingGraph.ComponentNode.getModulesCodePosition(): CodePosition {
+    val componentElement = componentPath().currentComponent()
+    val annotationMirror = componentElement.findAnnotationMirrors("Component")
+        ?: componentElement.findAnnotationMirrors("Subcomponent")!!
+    return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("modules"))
+}
+
+internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosition {
+    val componentElement = componentPath().currentComponent()
+    val annotationMirror = componentElement.findAnnotationMirrors("Component")!!
+    return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("dependencies"))
 }
