@@ -6,9 +6,33 @@ import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 
+interface FactoryOrBuilder {
+
+    companion object {
+        operator fun invoke(element: Element): FactoryOrBuilder {
+            return FactoryOrBuilderJavac(element)
+        }
+    }
+
+    fun getBindInstance(): List<BindsInstance>
+    override fun toString(): String
+
+    interface BindsInstance {
+
+        companion object {
+            operator fun invoke(element: Element): BindsInstance {
+                return FactoryOrBuilderJavac.BindsInstance(element)
+            }
+        }
+
+        fun getCodePosition(): CodePosition
+        override fun toString(): String
+    }
+}
+
 @JvmInline
-value class FactoryOrBuilder(private val value: Element) {
-    fun getBindInstance(): List<BindsInstance> {
+private value class FactoryOrBuilderJavac(private val value: Element) : FactoryOrBuilder {
+    override fun getBindInstance(): List<BindsInstance> {
         return value.getMethods()
             .flatMap { it.parameters }
             .filter { it.isAnnotatedWith(dagger.BindsInstance::class) }
@@ -20,8 +44,8 @@ value class FactoryOrBuilder(private val value: Element) {
     }
 
     @JvmInline
-    value class BindsInstance(private val value: Element) {
-        fun getCodePosition(): CodePosition {
+    value class BindsInstance(private val value: Element) : FactoryOrBuilder.BindsInstance {
+        override fun getCodePosition(): CodePosition {
             return value.toCodePosition()
         }
 
