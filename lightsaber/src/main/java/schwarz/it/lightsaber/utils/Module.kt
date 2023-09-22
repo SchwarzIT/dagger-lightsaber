@@ -2,40 +2,77 @@ package schwarz.it.lightsaber.utils
 
 import dagger.Binds
 import dagger.Provides
+import dagger.spi.model.DaggerProcessingEnv
+import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.toCodePosition
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
 
+interface Module {
+    fun getIncludedModules(types: Types): List<Module>
+    fun getIncludesCodePosition(): CodePosition
+    fun getBindings(): List<Binding>
+
+    interface Binding {
+        companion object {
+            operator fun invoke(element: Element): Binding {
+                return ModuleJavac.Binding(element)
+            }
+        }
+
+        override fun toString(): String
+        fun getCodePosition(): CodePosition
+    }
+
+    companion object {
+        operator fun invoke(daggerTypeElement: DaggerTypeElement): Module {
+            return when (daggerTypeElement.backend()!!) {
+                DaggerProcessingEnv.Backend.JAVAC -> ModuleJavac(daggerTypeElement.javac())
+                DaggerProcessingEnv.Backend.KSP -> TODO()
+            }
+        }
+
+        operator fun invoke(typeElement: TypeElement): Module {
+            return ModuleJavac(typeElement)
+        }
+    }
+}
+
 @JvmInline
-value class Module(private val value: TypeElement) {
+private value class ModuleJavac(private val value: TypeElement) : Module {
+
     override fun toString(): String {
         return value.toString()
     }
 
-    fun getBindings(): List<Binding> {
+    override fun getBindings(): List<Module.Binding> {
         return value.getBindings() + value.getCompanion()?.getBindings().orEmpty()
     }
 
-    fun getIncludedModules(types: Types): List<Module> {
+    override fun getIncludedModules(types: Types): List<Module> {
         return value.getAnnotation(dagger.Module::class.java)
             .getTypesMirrorsFromClass { includes }
-            .map { Module(types.asElement(it) as TypeElement) }
+            .map { ModuleJavac(types.asElement(it) as TypeElement) }
     }
 
-    fun getIncludesCodePosition(): CodePosition {
+    override fun getIncludesCodePosition(): CodePosition {
         val annotationMirror = value.findAnnotationMirrors("Module")!!
-        return CodePosition(value, annotationMirror, annotationMirror.getAnnotationValue("includes"))
+        return CodePosition(
+            value,
+            annotationMirror,
+            annotationMirror.getAnnotationValue("includes"),
+        )
     }
 
     @JvmInline
-    value class Binding(private val value: Element) {
+    value class Binding(private val value: Element) : Module.Binding {
         override fun toString(): String {
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
         }
 
-        fun getCodePosition(): CodePosition {
+        override fun getCodePosition(): CodePosition {
             return value.toCodePosition()
         }
     }
@@ -46,7 +83,7 @@ private fun TypeElement.getCompanion(): Element? {
 }
 
 private fun Element.getBindings(): List<Module.Binding> {
-    return this.enclosedElements.filter { it.isABinding() }.map { Module.Binding(it) }
+    return this.enclosedElements.filter { it.isABinding() }.map { ModuleJavac.Binding(it) }
 }
 
 private fun Element.isABinding(): Boolean {
