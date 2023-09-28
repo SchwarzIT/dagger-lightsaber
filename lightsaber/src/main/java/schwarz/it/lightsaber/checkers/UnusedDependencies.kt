@@ -3,10 +3,10 @@ package schwarz.it.lightsaber.checkers
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.utils.Dependency
 import schwarz.it.lightsaber.utils.getComponentAnnotation
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
-import javax.lang.model.element.Element
 import javax.lang.model.util.Types
 import kotlin.jvm.optionals.getOrElse
 
@@ -25,7 +25,7 @@ internal fun checkUnusedDependencies(
         }
 }
 
-private fun BindingGraph.getUsedDependencies(): Set<Element> {
+private fun BindingGraph.getUsedDependencies(): Set<Dependency> {
     return bindings()
         .mapNotNull { binding ->
             when (binding.kind()) {
@@ -43,10 +43,11 @@ private fun BindingGraph.getUsedDependencies(): Set<Element> {
                 else -> null
             }
         }
+        .map { Dependency(it) }
         .toSet()
 }
 
-private fun BindingGraph.ComponentNode.getDeclaredDependencies(types: Types): Set<Element> {
+private fun BindingGraph.ComponentNode.getDeclaredDependencies(types: Types): Set<Dependency> {
     return getComponentAnnotation().getTypesMirrorsFromClass { dependencies }
-        .map { types.asElement(it) }.toSet()
+        .map { Dependency(types.asElement(it)) }.toSet()
 }
