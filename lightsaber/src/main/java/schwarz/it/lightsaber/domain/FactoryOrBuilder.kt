@@ -1,7 +1,8 @@
-package schwarz.it.lightsaber.utils
+package schwarz.it.lightsaber.domain
 
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.toCodePosition
+import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement

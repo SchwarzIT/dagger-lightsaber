@@ -3,7 +3,7 @@ package schwarz.it.lightsaber.checkers
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.Finding
-import schwarz.it.lightsaber.utils.Module
+import schwarz.it.lightsaber.domain.Module
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getModulesCodePosition

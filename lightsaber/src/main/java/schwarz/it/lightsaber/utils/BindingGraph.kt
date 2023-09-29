@@ -4,6 +4,8 @@ import dagger.Component
 import dagger.Subcomponent
 import dagger.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
+import schwarz.it.lightsaber.domain.FactoryOrBuilder
+import schwarz.it.lightsaber.domain.Module
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import kotlin.jvm.optionals.getOrNull

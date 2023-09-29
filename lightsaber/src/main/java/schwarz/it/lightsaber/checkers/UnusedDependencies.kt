@@ -3,7 +3,7 @@ package schwarz.it.lightsaber.checkers
 import dagger.model.BindingGraph
 import dagger.model.BindingKind
 import schwarz.it.lightsaber.Finding
-import schwarz.it.lightsaber.utils.Dependency
+import schwarz.it.lightsaber.domain.Dependency
 import schwarz.it.lightsaber.utils.getComponentAnnotation
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
