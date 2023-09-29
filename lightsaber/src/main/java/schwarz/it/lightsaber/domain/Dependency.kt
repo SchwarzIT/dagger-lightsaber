@@ -1,4 +1,4 @@
-package schwarz.it.lightsaber.utils
+package schwarz.it.lightsaber.domain
 
 import javax.lang.model.element.Element
 

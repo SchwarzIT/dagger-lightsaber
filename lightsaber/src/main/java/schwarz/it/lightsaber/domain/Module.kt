@@ -1,4 +1,4 @@
-package schwarz.it.lightsaber.utils
+package schwarz.it.lightsaber.domain
 
 import dagger.Binds
 import dagger.Provides
@@ -6,6 +6,10 @@ import dagger.spi.model.DaggerProcessingEnv
 import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.toCodePosition
+import schwarz.it.lightsaber.utils.findAnnotationMirrors
+import schwarz.it.lightsaber.utils.getAnnotationValue
+import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
+import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types

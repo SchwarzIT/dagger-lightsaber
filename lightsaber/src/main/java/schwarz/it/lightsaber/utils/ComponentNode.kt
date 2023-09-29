@@ -3,6 +3,7 @@ package schwarz.it.lightsaber.utils
 import dagger.Component
 import dagger.Subcomponent
 import dagger.model.BindingGraph
+import schwarz.it.lightsaber.domain.Module
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.MirroredTypesException
 import javax.lang.model.type.TypeMirror
