@@ -9,12 +9,11 @@ import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
+import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.fold
 import java.io.PrintWriter
-import javax.annotation.processing.Filer
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
-import javax.tools.StandardLocation
 
 @AutoService(BindingGraphPlugin::class)
 public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
@@ -23,7 +22,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     private lateinit var types: Types
-    private lateinit var filer: Filer
+    private lateinit var filer: FileGenerator
     private lateinit var elements: Elements
     private lateinit var config: LightsaberConfig
 
@@ -47,18 +46,15 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
         val qualifiedName = bindingGraph.rootComponentNode().componentPath().currentComponent()
             .fold(
-                { it.qualifiedName },
+                { it.qualifiedName.toString() },
                 { TODO("ksp is not supported yet") },
             )
-        val fileObject = filer.createResource(
-            StandardLocation.CLASS_OUTPUT,
-            "schwarz.it.lightsaber",
-            "$qualifiedName.lightsaber",
-        )
 
-        PrintWriter(fileObject.openWriter()).use { writer ->
-            issues.forEach { writer.println(it.getMessage()) }
-        }
+        filer.createFile("schwarz.it.lightsaber", qualifiedName, "lightsaber")
+            .let(::PrintWriter)
+            .use { writer ->
+                issues.forEach { writer.println(it.getMessage()) }
+            }
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
@@ -68,7 +64,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
-        this.filer = processingEnv.fold({ it.filer }, { TODO("ksp is not supported yet") })
+        this.filer = FileGenerator(processingEnv)
         this.elements = processingEnv.fold({ it.elementUtils }, { TODO("ksp is not supported yet") })
         this.types = processingEnv.fold({ it.typeUtils }, { TODO("ksp is not supported yet") })
     }
