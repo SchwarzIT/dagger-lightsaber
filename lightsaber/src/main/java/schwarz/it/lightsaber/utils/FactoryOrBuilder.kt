@@ -7,6 +7,8 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 
 interface FactoryOrBuilder {
+    fun getBindInstance(): List<BindsInstance>
+    override fun toString(): String
 
     companion object {
         operator fun invoke(element: Element): FactoryOrBuilder {
@@ -14,19 +16,15 @@ interface FactoryOrBuilder {
         }
     }
 
-    fun getBindInstance(): List<BindsInstance>
-    override fun toString(): String
-
     interface BindsInstance {
+        fun getCodePosition(): CodePosition
+        override fun toString(): String
 
         companion object {
             operator fun invoke(element: Element): BindsInstance {
                 return FactoryOrBuilderJavac.BindsInstance(element)
             }
         }
-
-        fun getCodePosition(): CodePosition
-        override fun toString(): String
     }
 }
 
