@@ -6,13 +6,15 @@ import com.google.auto.service.AutoService
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.DiagnosticSource
-import dagger.model.BindingGraph
-import dagger.spi.BindingGraphPlugin
-import dagger.spi.DiagnosticReporter
+import dagger.spi.model.BindingGraph
+import dagger.spi.model.BindingGraphPlugin
+import dagger.spi.model.DaggerProcessingEnv
+import dagger.spi.model.DiagnosticReporter
 import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
+import schwarz.it.lightsaber.utils.fold
 import java.io.PrintWriter
 import javax.annotation.processing.Filer
 import javax.lang.model.util.Elements
@@ -44,10 +46,15 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
+        val qualifiedName = bindingGraph.rootComponentNode().componentPath().currentComponent()
+            .fold(
+                { it.qualifiedName },
+                { TODO("ksp is not supported yet") },
+            )
         val fileObject = filer.createResource(
             StandardLocation.SOURCE_OUTPUT,
             "schwarz.it.lightsaber",
-            "${bindingGraph.rootComponentNode().componentPath().currentComponent().qualifiedName}.lightsaber",
+            "$qualifiedName.lightsaber",
         )
 
         PrintWriter(fileObject.openWriter()).use { writer ->
@@ -55,25 +62,16 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         }
     }
 
-    override fun initFiler(filer: Filer) {
-        this.filer = filer
-    }
-
-    override fun initElements(elements: Elements) {
-        this.elements = elements
-    }
-
-    override fun initTypes(types: Types) {
-        this.types = types
-    }
-
-    override fun initOptions(options: Map<String, String>) {
+    override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
         this.config = LightsaberConfig(
             checkUnusedBindInstance = options["Lightsaber.CheckUnusedBindInstance"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
+        this.filer = processingEnv.fold({ it.filer }, { TODO("ksp is not supported yet") })
+        this.elements = processingEnv.fold({ it.elementUtils }, { TODO("ksp is not supported yet") })
+        this.types = processingEnv.fold({ it.typeUtils }, { TODO("ksp is not supported yet") })
     }
 
     override fun supportedOptions(): Set<String> {

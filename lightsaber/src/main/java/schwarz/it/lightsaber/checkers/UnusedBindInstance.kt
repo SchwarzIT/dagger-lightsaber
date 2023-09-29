@@ -1,7 +1,7 @@
 package schwarz.it.lightsaber.checkers
 
-import dagger.model.BindingGraph
-import dagger.model.BindingKind
+import dagger.spi.model.BindingGraph
+import dagger.spi.model.BindingKind
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.utils.getComponentFactoriesAndBuilders
