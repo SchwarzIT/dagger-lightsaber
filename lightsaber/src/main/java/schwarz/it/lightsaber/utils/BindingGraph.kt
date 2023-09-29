@@ -2,7 +2,7 @@ package schwarz.it.lightsaber.utils
 
 import dagger.Component
 import dagger.Subcomponent
-import dagger.model.BindingGraph
+import dagger.spi.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.domain.Module
@@ -15,14 +15,18 @@ internal fun BindingGraph.getUsedModules(): Set<Module> {
         .asSequence()
         .mapNotNull { it.contributingModule().getOrNull() }
         .distinct()
-        .flatMap { element ->
-            if (element.isCompanionModule()) {
-                listOf(element, element.enclosingElement as TypeElement)
-            } else {
-                listOf(element)
-            }
+        .flatMap {
+            it.fold(
+                { element ->
+                    if (element.isCompanionModule()) {
+                        listOf(Module(element), Module(element.enclosingElement as TypeElement))
+                    } else {
+                        listOf(Module(element))
+                    }
+                },
+                { TODO("ksp is not supported yet") },
+            )
         }
-        .map { Module(it) }
         .toSet()
 }
 
@@ -34,25 +38,48 @@ private fun Element.isCompanionModule(): Boolean {
 }
 
 internal fun BindingGraph.ComponentNode.getModulesCodePosition(): CodePosition {
-    val componentElement = componentPath().currentComponent()
-    val annotationMirror = componentElement.findAnnotationMirrors("Component")
-        ?: componentElement.findAnnotationMirrors("Subcomponent")!!
-    return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("modules"))
+    return componentPath().currentComponent()
+        .fold(
+            { element ->
+                val annotationMirror = element.findAnnotationMirrors("Component")
+                    ?: element.findAnnotationMirrors("Subcomponent")!!
+                CodePosition(
+                    element,
+                    annotationMirror,
+                    annotationMirror.getAnnotationValue("modules"),
+                )
+            },
+            { TODO("ksp is not supported yet") },
+        )
 }
 
 internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosition {
-    val componentElement = componentPath().currentComponent()
-    val annotationMirror = componentElement.findAnnotationMirrors("Component")!!
-    return CodePosition(componentElement, annotationMirror, annotationMirror.getAnnotationValue("dependencies"))
+    return componentPath().currentComponent()
+        .fold(
+            { element ->
+                val annotationMirror = element.findAnnotationMirrors("Component")!!
+                CodePosition(
+                    element,
+                    annotationMirror,
+                    annotationMirror.getAnnotationValue("dependencies"),
+                )
+            },
+            { TODO("ksp is not supported yet") },
+        )
 }
 
 internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List<FactoryOrBuilder> {
     return componentPath()
         .currentComponent()
-        .enclosedElements
-        .filter {
-            it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) ||
-                it.isAnnotatedWith(Component.Builder::class) || it.isAnnotatedWith(Subcomponent.Builder::class)
-        }
-        .map { FactoryOrBuilder(it) }
+        .fold(
+            { element ->
+                element.enclosedElements
+                    .filter {
+                        it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) ||
+                            it.isAnnotatedWith(Component.Builder::class) || it.isAnnotatedWith(Subcomponent.Builder::class)
+                    }
+                    .map { FactoryOrBuilder(it) }
+            },
+            { TODO("ksp is not supported yet") },
+        )
 }

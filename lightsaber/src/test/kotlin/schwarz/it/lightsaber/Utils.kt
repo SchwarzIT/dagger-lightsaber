@@ -13,7 +13,7 @@ internal fun createCompiler(
     checkUnusedModules: Boolean = false,
 ): Compiler {
     return Compiler.javac()
-        .withProcessors(ComponentProcessor.forTesting(LightsaberBindingGraphPlugin()))
+        .withProcessors(ComponentProcessor.withTestPlugins(LightsaberBindingGraphPlugin()))
         .withOptions(
             createOptions(
                 checkUnusedBindInstance = checkUnusedBindInstance,

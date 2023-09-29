@@ -1,9 +1,10 @@
 package schwarz.it.lightsaber.checkers
 
-import dagger.model.BindingGraph
-import dagger.model.BindingKind
+import dagger.spi.model.BindingGraph
+import dagger.spi.model.BindingKind
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.Dependency
+import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getComponentAnnotation
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
@@ -32,18 +33,22 @@ private fun BindingGraph.getUsedDependencies(): Set<Dependency> {
                 BindingKind.COMPONENT_PROVISION -> {
                     binding.bindingElement()
                         .getOrElse { error("bindingElement() should never be empty in this context") }
-                        .enclosingElement
+                        .fold(
+                            { element -> Dependency(element.enclosingElement) },
+                            { TODO("ksp is not supported yet") },
+                        )
                 }
 
                 BindingKind.COMPONENT_DEPENDENCY -> {
-                    binding.bindingElement()
-                        .getOrElse { error("bindingElement() should never be empty in this context") }
+                    Dependency(
+                        binding.bindingElement()
+                            .getOrElse { error("bindingElement() should never be empty in this context") },
+                    )
                 }
 
                 else -> null
             }
         }
-        .map { Dependency(it) }
         .toSet()
 }
 

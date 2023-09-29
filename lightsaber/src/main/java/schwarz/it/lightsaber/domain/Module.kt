@@ -2,11 +2,12 @@ package schwarz.it.lightsaber.domain
 
 import dagger.Binds
 import dagger.Provides
-import dagger.spi.model.DaggerProcessingEnv
+import dagger.spi.model.DaggerElement
 import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.findAnnotationMirrors
+import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import schwarz.it.lightsaber.utils.isAnnotatedWith
@@ -19,28 +20,25 @@ interface Module {
     fun getIncludesCodePosition(): CodePosition
     fun getBindings(): List<Binding>
 
-    interface Binding {
-        companion object {
-            operator fun invoke(element: Element): Binding {
-                return ModuleJavac.Binding(element)
-            }
-        }
-
-        override fun toString(): String
-        fun getCodePosition(): CodePosition
-    }
-
     companion object {
-        operator fun invoke(daggerTypeElement: DaggerTypeElement): Module {
-            return when (daggerTypeElement.backend()!!) {
-                DaggerProcessingEnv.Backend.JAVAC -> ModuleJavac(daggerTypeElement.javac())
-                DaggerProcessingEnv.Backend.KSP -> TODO()
-            }
+        operator fun invoke(element: DaggerTypeElement): Module {
+            return element.fold(::ModuleJavac, { TODO("ksp is not supported yet") })
         }
 
         operator fun invoke(typeElement: TypeElement): Module {
             return ModuleJavac(typeElement)
         }
+    }
+
+    interface Binding {
+        companion object {
+            operator fun invoke(element: DaggerElement): Binding {
+                return element.fold(ModuleJavac::Binding, { TODO("ksp is not supported yet") })
+            }
+        }
+
+        override fun toString(): String
+        fun getCodePosition(): CodePosition
     }
 }
 

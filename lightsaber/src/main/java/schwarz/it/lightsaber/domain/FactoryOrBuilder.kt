@@ -1,7 +1,10 @@
 package schwarz.it.lightsaber.domain
 
+import dagger.spi.model.DaggerElement
+import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.toCodePosition
+import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -12,6 +15,10 @@ interface FactoryOrBuilder {
     override fun toString(): String
 
     companion object {
+        operator fun invoke(element: DaggerTypeElement): FactoryOrBuilder {
+            return element.fold(::FactoryOrBuilderJavac, { TODO("ksp is not supported yet") })
+        }
+
         operator fun invoke(element: Element): FactoryOrBuilder {
             return FactoryOrBuilderJavac(element)
         }
@@ -22,8 +29,8 @@ interface FactoryOrBuilder {
         override fun toString(): String
 
         companion object {
-            operator fun invoke(element: Element): BindsInstance {
-                return FactoryOrBuilderJavac.BindsInstance(element)
+            operator fun invoke(element: DaggerElement): BindsInstance {
+                return element.fold(FactoryOrBuilderJavac::BindsInstance, { TODO("ksp is not supported yet") })
             }
         }
     }
