@@ -2,10 +2,10 @@ package schwarz.it.lightsaber.checkers
 
 import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
-import schwarz.it.lightsaber.assertHasFinding
-import schwarz.it.lightsaber.assertNoFindings
-import schwarz.it.lightsaber.createCompiler
 import schwarz.it.lightsaber.createSource
+import schwarz.it.lightsaber.utils.assertHasFinding
+import schwarz.it.lightsaber.utils.assertNoFindings
+import schwarz.it.lightsaber.utils.createCompiler
 
 class UnusedDependenciesKtTest {
 

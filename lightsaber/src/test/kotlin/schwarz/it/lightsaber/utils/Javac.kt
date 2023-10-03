@@ -1,10 +1,11 @@
-package schwarz.it.lightsaber
+package schwarz.it.lightsaber.utils
 
 import com.google.common.truth.Truth.assertThat
 import com.google.testing.compile.Compilation
 import com.google.testing.compile.CompilationSubject.assertThat
 import com.google.testing.compile.Compiler
 import dagger.internal.codegen.ComponentProcessor
+import schwarz.it.lightsaber.LightsaberBindingGraphPlugin
 
 internal fun createCompiler(
     checkUnusedBindInstance: Boolean = false,
@@ -24,7 +25,7 @@ internal fun createCompiler(
         )
 }
 
-internal fun createOptions(
+private fun createOptions(
     checkUnusedBindInstance: Boolean = false,
     checkUnusedBindsAndProvides: Boolean = false,
     checkUnusedDependencies: Boolean = false,
@@ -67,19 +68,5 @@ internal fun Compilation.assertHasFindings(
 
 internal fun Compilation.assertNoFindings() {
     assertThat(this).succeededWithoutWarnings()
-    assertThat(
-        generatedFiles().filter { it.name.endsWith(".lightsaber") },
-    ).isEmpty()
-}
-
-internal data class FindingInfo(
-    val message: String,
-    val line: Int,
-    val column: Int,
-    val ruleName: String,
-    val fileName: String = "test/MyComponent.java",
-) {
-    override fun toString(): String {
-        return "$fileName:$line:$column: $message [$ruleName]"
-    }
+    assertThat(generatedFiles().filter { it.name.endsWith(".lightsaber") }).isEmpty()
 }
