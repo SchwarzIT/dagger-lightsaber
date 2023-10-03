@@ -2,6 +2,7 @@ package schwarz.it.lightsaber
 
 import com.google.testing.compile.CompilationSubject.assertThat
 import org.junit.jupiter.api.Test
+import schwarz.it.lightsaber.utils.createCompiler
 
 class LightsaberBindingGraphPluginTest {
 
