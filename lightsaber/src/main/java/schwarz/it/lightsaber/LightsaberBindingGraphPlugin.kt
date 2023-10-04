@@ -13,6 +13,7 @@ import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.KspElements
 import schwarz.it.lightsaber.utils.KspTypes
 import schwarz.it.lightsaber.utils.fold
+import schwarz.it.lightsaber.utils.getQualifiedName
 import java.io.PrintWriter
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
@@ -46,13 +47,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
-        val qualifiedName = bindingGraph.rootComponentNode().componentPath().currentComponent()
-            .fold(
-                { it.qualifiedName.toString() },
-                { TODO("ksp is not supported yet") },
-            )
-
-        filer.createFile("schwarz.it.lightsaber", qualifiedName, "lightsaber")
+        filer.createFile("schwarz.it.lightsaber", bindingGraph.getQualifiedName(), "lightsaber")
             .let(::PrintWriter)
             .use { writer ->
                 issues.forEach { writer.println(it.getMessage()) }
