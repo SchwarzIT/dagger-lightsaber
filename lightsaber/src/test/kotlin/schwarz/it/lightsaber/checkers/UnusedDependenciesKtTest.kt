@@ -1,22 +1,23 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.createSource
+import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
-import schwarz.it.lightsaber.utils.createCompiler
+import schwarz.it.lightsaber.utils.compile
+import schwarz.it.lightsaber.utils.createKotlinCompiler
 
 class UnusedDependenciesKtTest {
 
-    private val compiler = createCompiler(checkUnusedDependencies = true)
+    private val compiler = createKotlinCompiler(checkUnusedDependencies = true)
 
     private val dependency = createSource(
         """
-            package test;
+            package test
 
-            public interface Dependency {
-                String dependency();
+            interface Dependency {
+                fun dependency(): String
             }
         """.trimIndent(),
     )
@@ -25,12 +26,12 @@ class UnusedDependenciesKtTest {
     fun dependencyNotUsed() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(dependencies = {Dependency.class})
-                public interface MyComponent {
+                @Component(dependencies = [Dependency::class])
+                interface MyComponent {
                 }
             """.trimIndent(),
         )
@@ -40,8 +41,8 @@ class UnusedDependenciesKtTest {
 
         compilation.assertUnusedDependencies(
             message = "The dependency `test.Dependency` is not used.",
-            line = 5,
-            column = 27,
+            line = 6,
+            column = 34,
         )
     }
 
@@ -49,13 +50,13 @@ class UnusedDependenciesKtTest {
     fun dependencyUsedOnComponent() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(dependencies = {Dependency.class})
-                public interface MyComponent {
-                    String dependency();
+                @Component(dependencies = [Dependency::class])
+                interface MyComponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -69,25 +70,25 @@ class UnusedDependenciesKtTest {
     fun dependencyUsedOnSubcomponent() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(dependencies = {Dependency.class})
-                public interface MyComponent {
-                    MySubcomponent subcomponent();
+                @Component(dependencies = [Dependency::class])
+                interface MyComponent {
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
+                import dagger.Subcomponent
 
                 @Subcomponent
-                public interface MySubcomponent {
-                    String dependency();
+                interface MySubcomponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -98,11 +99,12 @@ class UnusedDependenciesKtTest {
     }
 }
 
-private fun Compilation.assertUnusedDependencies(message: String, line: Int, column: Int) {
+private fun CompilationResult.assertUnusedDependencies(message: String, line: Int, column: Int) {
     assertHasFinding(
         message = message,
         line = line,
         column = column,
         ruleName = "UnusedDependencies",
+        fileName = sourcesDir.resolve("test/MyComponent.java").toString(),
     )
 }

@@ -1,28 +1,29 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.createSource
+import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
-import schwarz.it.lightsaber.utils.createCompiler
+import schwarz.it.lightsaber.utils.compile
+import schwarz.it.lightsaber.utils.createKotlinCompiler
 
 class UnusedModulesKtTest {
 
-    private val compiler = createCompiler(checkUnusedModules = true)
+    private val compiler = createKotlinCompiler(checkUnusedModules = true)
 
     private val module = createSource(
         """
-            package test;
+            package test
 
-            import dagger.Module;
-            import dagger.Provides;
+            import dagger.Module
+            import dagger.Provides
 
             @Module
-            public class MyModule {
+            class MyModule {
                 @Provides
-                String dependency() {
-                    return "string";
+                fun dependency(): String {
+                    return "string"
                 }
             }
         """.trimIndent(),
@@ -32,13 +33,13 @@ class UnusedModulesKtTest {
     fun moduleUsedOnComponent() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    String dependency();
+                @Component(modules = [MyModule::class])
+                interface MyComponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -52,25 +53,24 @@ class UnusedModulesKtTest {
     fun moduleNotUsedOnSubcomponent() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    MySubcomponent subcomponent();
+                @Component(modules = [MyModule::class])
+                interface MyComponent {
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
+                import dagger.Subcomponent
 
                 @Subcomponent
-                public interface MySubcomponent {
-                }
+                interface MySubcomponent
             """.trimIndent(),
         )
 
@@ -78,8 +78,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 5,
-            column = 22,
+            line = 6,
+            column = 29,
         )
     }
 
@@ -87,25 +87,25 @@ class UnusedModulesKtTest {
     fun moduleUsedOnSubcomponent() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    MySubcomponent subcomponent();
+                @Component(modules = [MyModule::class])
+                interface MyComponent {
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
+                import dagger.Subcomponent
 
                 @Subcomponent
-                public interface MySubcomponent {
-                    String dependency();
+                interface MySubcomponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -119,25 +119,24 @@ class UnusedModulesKtTest {
     fun moduleUnusedOnSubcomponent2() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
                 @Component
-                public interface MyComponent {
-                    MySubcomponent subcomponent();
+                interface MyComponent {
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
+                import dagger.Subcomponent
 
-                @Subcomponent(modules = {MyModule.class})
-                public interface MySubcomponent {
-                }
+                @Subcomponent(modules = [MyModule::class])
+                interface MySubcomponent
             """.trimIndent(),
         )
 
@@ -145,8 +144,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 5,
-            column = 25,
+            line = 6,
+            column = 32,
             fileName = "test/MySubcomponent.java",
         )
     }
@@ -155,25 +154,25 @@ class UnusedModulesKtTest {
     fun moduleUsedOnSubcomponent2() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
                 @Component
-                public interface MyComponent {
-                    MySubcomponent subcomponent();
+                interface MyComponent {
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
+                import dagger.Subcomponent
 
-                @Subcomponent(modules = {MyModule.class})
-                public interface MySubcomponent {
-                    String dependency();
+                @Subcomponent(modules = [MyModule::class])
+                interface MySubcomponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -187,13 +186,12 @@ class UnusedModulesKtTest {
     fun includeModules0() {
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                }
+                @Component(modules = [MyModule::class])
+                interface MyComponent
             """.trimIndent(),
         )
 
@@ -201,8 +199,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 5,
-            column = 22,
+            line = 6,
+            column = 29,
         )
     }
 
@@ -210,41 +208,40 @@ class UnusedModulesKtTest {
     fun includeModules1() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class})
-                public class ModuleA {
-                }
+                @Module(includes = [ModuleB::class])
+                class ModuleA
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleB {
+                class ModuleB {
                     @Provides
-                    String dependency() {
-                        return "string";
+                    fun dependency(): String {
+                        return "string"
                     }
                 }
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                    String dependency();
+                @Component(modules = [ModuleA::class])
+                interface MyComponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -253,8 +250,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used but its child `test.ModuleB` is used.",
-            line = 5,
-            column = 22,
+            line = 6,
+            column = 29,
         )
     }
 
@@ -262,41 +259,40 @@ class UnusedModulesKtTest {
     fun includeModules2() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class})
-                public class ModuleA {
+                @Module(includes = [ModuleB::class])
+                class ModuleA {
                     @Provides
-                    String dependency() {
-                        return "string";
+                    fun dependency(): String {
+                        return "string"
                     }
                 }
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleB {
-                }
+                class ModuleB
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                    String dependency();
+                @Component(modules = [ModuleA::class])
+                interface MyComponent {
+                    fun dependency(): String
                 }
             """.trimIndent(),
         )
@@ -305,7 +301,7 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used.",
             line = 6,
-            column = 20,
+            column = 27,
             fileName = "test/ModuleA.java",
         )
     }
@@ -314,58 +310,57 @@ class UnusedModulesKtTest {
     fun includeModules3() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class})
-                public class ModuleA {
+                @Module(includes = [ModuleB::class])
+                class ModuleA {
                     @Provides
-                    String dependency() {
-                        return "string";
+                    fun dependency(): String {
+                        return "string"
                     }
                 }
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleC.class})
-                public class ModuleB {
+                @Module(includes = [ModuleC::class])
+                class ModuleB {
                     @Provides
-                    Integer intDependency() {
-                        return 0;
+                    fun intDependency(): Int {
+                        return 0
                     }
                 }
             """.trimIndent(),
         )
         val moduleC = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleC {
-                }
+                class ModuleC
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                    String dependency();
-                    Integer intDependency();
+                @Component(modules = [ModuleA::class])
+                interface MyComponent {
+                    fun dependency(): String
+                    fun intDependency(): Int
                 }
             """.trimIndent(),
         )
@@ -375,7 +370,7 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleC` included by `test.ModuleA → test.ModuleB` is not used.",
             line = 6,
-            column = 20,
+            column = 27,
             fileName = "test/ModuleB.java",
         )
     }
@@ -384,37 +379,35 @@ class UnusedModulesKtTest {
     fun includeModules4() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class})
-                public class ModuleA {
+                @Module(includes = [ModuleB::class])
+                class ModuleA {
                 }
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleB {
-                }
+                class ModuleB
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                }
+                @Component(modules = [ModuleA::class])
+                interface MyComponent
             """.trimIndent(),
         )
 
@@ -422,8 +415,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used.",
-            line = 5,
-            column = 22,
+            line = 6,
+            column = 29,
         )
     }
 
@@ -431,58 +424,57 @@ class UnusedModulesKtTest {
     fun includeModules5() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class, ModuleC.class})
-                public class ModuleA {
-                }
+                @Module(includes = [ModuleB::class, ModuleC::class])
+                class ModuleA
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleB {
+                class ModuleB {
                     @Provides
-                    int dependency() {
-                        return 0;
+                    fun dependency(): Int {
+                        return 0
                     }
                 }
             """.trimIndent(),
         )
         val moduleC = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleC {
+                class ModuleC {
                     @Provides
-                    String dependency() {
-                        return "string";
+                    fun dependency(): String {
+                        return "string"
                     }
                 }
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                    String dependency1();
-                    int dependency2();
+                @Component(modules = [ModuleA::class])
+                interface MyComponent {
+                    fun dependency1(): String
+                    fun dependency2(): Int
                     
                 }
             """.trimIndent(),
@@ -492,8 +484,8 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used but its children `test.ModuleB`, `test.ModuleC` are used.",
-            line = 5,
-            column = 22,
+            line = 6,
+            column = 29,
         )
     }
 
@@ -501,59 +493,57 @@ class UnusedModulesKtTest {
     fun includeModules6() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class})
-                public class ModuleA {
+                @Module(includes = [ModuleB::class])
+                class ModuleA {
                     @Provides
-                    int dependency() {
-                        return 0;
+                    fun dependency(): Int {
+                        return 0
                     }
                 }
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes={ModuleC.class})
-                public class ModuleB {
-                    
-                }
+                @Module(includes=[ModuleC::class])
+                class ModuleB
             """.trimIndent(),
         )
         val moduleC = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleC {
+                class ModuleC {
                     @Provides
-                    String dependency() {
-                        return "string";
+                    fun dependency(): String {
+                        return "string"
                     }
                 }
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                    String dependency1();
-                    int dependency2();
+                @Component(modules = [ModuleA::class])
+                interface MyComponent {
+                    fun dependency1(): String
+                    fun dependency2(): Int
                     
                 }
             """.trimIndent(),
@@ -564,7 +554,7 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its child `test.ModuleC` is used.",
             line = 6,
-            column = 20,
+            column = 27,
             fileName = "test/ModuleA.java",
         )
     }
@@ -573,76 +563,74 @@ class UnusedModulesKtTest {
     fun includeModules7() {
         val moduleA = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes = {ModuleB.class})
-                public class ModuleA {
+                @Module(includes = [ModuleB::class])
+                class ModuleA {
                     @Provides
-                    int dependency() {
-                        return 0;
+                    fun dependency(): Int {
+                        return 0
                     }
                 }
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
-                @Module(includes={ModuleC.class, ModuleD.class})
-                public class ModuleB {
-                    
-                }
+                @Module(includes=[ModuleC::class, ModuleD::class])
+                class ModuleB
             """.trimIndent(),
         )
         val moduleC = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleC {
+                class ModuleC {
                     @Provides
-                    String dependency() {
-                        return "string";
+                    fun dependency(): String {
+                        return "string"
                     }
                 }
             """.trimIndent(),
         )
         val moduleD = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Module;
-                import dagger.Provides;
+                import dagger.Module
+                import dagger.Provides
 
                 @Module
-                public class ModuleD {
+                class ModuleD {
                     @Provides
-                    Boolean dependency() {
-                        return true;
+                    fun dependency(): Boolean {
+                        return true
                     }
                 }
             """.trimIndent(),
         )
         val component = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {ModuleA.class})
-                public interface MyComponent {
-                    String dependency1();
-                    int dependency2();
-                    Boolean dependency3();
+                @Component(modules = [ModuleA::class])
+                interface MyComponent {
+                    fun dependency1(): String
+                    fun dependency2(): Int
+                    fun dependency3(): Boolean
                     
                 }
             """.trimIndent(),
@@ -653,13 +641,13 @@ class UnusedModulesKtTest {
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its children `test.ModuleC`, `test.ModuleD` are used.",
             line = 6,
-            column = 20,
+            column = 27,
             fileName = "test/ModuleA.java",
         )
     }
 }
 
-private fun Compilation.assertUnusedModules(
+private fun CompilationResult.assertUnusedModules(
     message: String,
     line: Int,
     column: Int,
@@ -670,6 +658,6 @@ private fun Compilation.assertUnusedModules(
         line = line,
         column = column,
         ruleName = "UnusedModules",
-        fileName = fileName,
+        fileName = sourcesDir.resolve(fileName).toString(),
     )
 }

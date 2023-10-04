@@ -1,12 +1,13 @@
 package schwarz.it.lightsaber
 
-import com.google.testing.compile.CompilationSubject.assertThat
 import org.junit.jupiter.api.Test
-import schwarz.it.lightsaber.utils.createCompiler
+import schwarz.it.lightsaber.truth.assertThat
+import schwarz.it.lightsaber.utils.compile
+import schwarz.it.lightsaber.utils.createKotlinCompiler
 
 class LightsaberBindingGraphPluginTest {
 
-    private val compiler = createCompiler(
+    private val compiler = createKotlinCompiler(
         checkUnusedBindInstance = true,
         checkUnusedBindsAndProvides = true,
         checkUnusedDependencies = true,
@@ -17,67 +18,63 @@ class LightsaberBindingGraphPluginTest {
     fun emptyComponent() {
         val component = createSource(
             """
-                import dagger.Component;
+                import dagger.Component
 
                 @Component
-                public interface MyComponent {
-                }
+                interface MyComponent
             """.trimIndent(),
         )
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation.result).succeeded()
     }
 
     @Test
     fun emptyComponent_emptyDependencies() {
         val component = createSource(
             """
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(dependencies = {})
-                public interface MyComponent {
-                }
+                @Component(dependencies = [])
+                interface MyComponent
             """.trimIndent(),
         )
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation.result).succeeded()
     }
 
     @Test
     fun emptyComponent_emptyModule() {
         val component = createSource(
             """
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {})
-                public interface MyComponent {
-                }
+                @Component(modules = [])
+                interface MyComponent
             """.trimIndent(),
         )
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation.result).succeeded()
     }
 
     @Test
     fun emptyComponent_emptyModuleAndDependencies() {
         val component = createSource(
             """
-                import dagger.Component;
+                import dagger.Component
 
-                @Component(modules = {}, dependencies = {})
-                public interface MyComponent {
-                }
+                @Component(modules = [], dependencies = [])
+                interface MyComponent
             """.trimIndent(),
         )
 
         val compilation = compiler.compile(component)
 
-        assertThat(compilation).succeededWithoutWarnings()
+        assertThat(compilation.result).succeeded()
     }
 }

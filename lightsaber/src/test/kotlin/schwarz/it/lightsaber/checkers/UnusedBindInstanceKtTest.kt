@@ -1,33 +1,34 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.createSource
+import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
-import schwarz.it.lightsaber.utils.createCompiler
+import schwarz.it.lightsaber.utils.compile
+import schwarz.it.lightsaber.utils.createKotlinCompiler
 
 internal class UnusedBindInstanceKtTest {
 
-    private val compiler = createCompiler(checkUnusedBindInstance = true)
+    private val compiler = createKotlinCompiler(checkUnusedBindInstance = true)
 
     @Test
     fun bindInstanceNotUsed_Factory() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
                     @Component.Factory
-                    public interface Factory {
-                        MyComponent create(
-                            @BindsInstance int myInt
-                        );
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myInt: Int
+                        ): MyComponent
                     }
                 }
             """.trimIndent(),
@@ -37,8 +38,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `myInt` is not used.",
-            line = 12,
-            column = 32,
+            line = 15,
+            column = 13,
         )
     }
 
@@ -46,18 +47,18 @@ internal class UnusedBindInstanceKtTest {
     fun bindInstanceNotUsed_Builder() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
                     @Component.Builder
-                    public interface Builder {
-                        MyComponent build();
-                        Builder myInt(@BindsInstance int myInt);
+                    interface Builder {
+                        fun build(): MyComponent
+                        fun myInt(@BindsInstance myInt: Int): Builder
                     }
                 }
             """.trimIndent(),
@@ -67,8 +68,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `myInt` is not used.",
-            line = 12,
-            column = 42,
+            line = 18,
+            column = 13,
         )
     }
 
@@ -76,21 +77,21 @@ internal class UnusedBindInstanceKtTest {
     fun bindInstanceIsUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
-                    int dependency();
+                    fun dependency(): Int
                     
                     @Component.Factory
-                    public interface Factory {
-                        MyComponent create(
-                            @BindsInstance int myInt
-                        );
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myInt: Int
+                        ): MyComponent
                     }
                 }
             """.trimIndent(),
@@ -105,23 +106,23 @@ internal class UnusedBindInstanceKtTest {
     fun bindInstanceNamedIsNotUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import javax.inject.Named;
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import javax.inject.Named
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
-                    int dependency();
+                    fun dependency(): Int
                     
                     @Component.Factory
-                    public interface Factory {
-                        MyComponent create(
-                            @BindsInstance int myInt,
-                            @BindsInstance @Named("secondInt") int secondInt
-                        );
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myInt: Int,
+                            @BindsInstance @Named("secondInt") secondInt: Int
+                        ): MyComponent
                     }
                 }
             """.trimIndent(),
@@ -131,8 +132,8 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `secondInt` is not used.",
-            line = 16,
-            column = 52,
+            line = 19,
+            column = 13,
         )
     }
 
@@ -140,21 +141,21 @@ internal class UnusedBindInstanceKtTest {
     fun componentWithBindInstanceAndSubcomponentIsUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
-                    MySubcomponent subcomponent();
+                    fun subcomponent(): MySubcomponent
                     
                     @Component.Factory
-                    public interface Factory {
-                        MyComponent create(
-                            @BindsInstance int myInt
-                        );
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myInt: Int
+                        ): MyComponent
                     }
                 }
             """.trimIndent(),
@@ -162,13 +163,13 @@ internal class UnusedBindInstanceKtTest {
 
         val subcomponent = createSource(
             """
-                package test;                
+                package test                
 
-                import dagger.Subcomponent;
+                import dagger.Subcomponent
                 
                 @Subcomponent
-                public interface MySubcomponent {
-                    int dependency();
+                interface MySubcomponent {
+                    fun dependency(): Int
                 }
             """.trimIndent(),
         )
@@ -182,35 +183,35 @@ internal class UnusedBindInstanceKtTest {
     fun bindInstanceInSubcomponentIsUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
-                    MySubcomponent.Factory subcomponentFactory();
+                    fun subcomponentFactory(): MySubcomponent.Factory
                 }
             """.trimIndent(),
         )
 
         val subcomponent = createSource(
             """
-                package test;                
+                package test                
                 
-                import dagger.BindsInstance;
-                import dagger.Subcomponent;
+                import dagger.BindsInstance
+                import dagger.Subcomponent
                 
                 @Subcomponent
-                public interface MySubcomponent {
-                    int dependency();
+                interface MySubcomponent {
+                    fun dependency(): Int
                                         
                     @Subcomponent.Factory
-                    public interface Factory {
-                        MySubcomponent create(
-                            @BindsInstance int myInt
-                        );
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myInt: Int
+                        ): MySubcomponent
                     }
                 }
             """.trimIndent(),
@@ -225,34 +226,34 @@ internal class UnusedBindInstanceKtTest {
     fun bindInstanceInSubcomponentIsNoUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {
+                interface MyComponent {
                     
-                    MySubcomponent.Factory subcomponentFactory();
+                    fun subcomponentFactory(): MySubcomponent.Factory
                 }
             """.trimIndent(),
         )
 
         val subcomponent = createSource(
             """
-                package test;                
+                package test                
                 
-                import dagger.BindsInstance;
-                import dagger.Subcomponent;
+                import dagger.BindsInstance
+                import dagger.Subcomponent
                 
                 @Subcomponent
-                public interface MySubcomponent {
+                interface MySubcomponent {
                 
                     @Subcomponent.Factory
-                    public interface Factory {
-                        MySubcomponent create(
-                            @BindsInstance int myInt
-                        );
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myInt: Int
+                        ): MySubcomponent
                     }
                 }
             """.trimIndent(),
@@ -262,18 +263,18 @@ internal class UnusedBindInstanceKtTest {
 
         compilation.assertUnusedBindInstance(
             message = "The @BindsInstance `myInt` is not used.",
-            line = 12,
-            column = 32,
+            line = 15,
+            column = 13,
             fileName = "test/MySubcomponent.java",
         )
     }
 }
 
-private fun Compilation.assertUnusedBindInstance(
+private fun CompilationResult.assertUnusedBindInstance(
     message: String,
     line: Int,
     column: Int,
     fileName: String = "test/MyComponent.java",
 ) {
-    assertHasFinding(message, line, column, fileName, "UnusedBindInstance")
+    assertHasFinding(message, line, column, sourcesDir.resolve(fileName).toString(), "UnusedBindInstance")
 }

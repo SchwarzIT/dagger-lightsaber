@@ -52,7 +52,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
                 { TODO("ksp is not supported yet") },
             )
         val fileObject = filer.createResource(
-            StandardLocation.SOURCE_OUTPUT,
+            StandardLocation.CLASS_OUTPUT,
             "schwarz.it.lightsaber",
             "$qualifiedName.lightsaber",
         )

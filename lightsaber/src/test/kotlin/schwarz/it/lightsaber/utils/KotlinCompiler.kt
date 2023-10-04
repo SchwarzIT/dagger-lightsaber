@@ -3,11 +3,8 @@ package schwarz.it.lightsaber.utils
 import com.google.common.truth.Truth
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import com.tschuchort.compiletesting.kspArgs
-import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.kspWithCompilation
-import com.tschuchort.compiletesting.symbolProcessorProviders
-import dagger.internal.codegen.KspComponentProcessor
+import dagger.internal.codegen.ComponentProcessor
 import schwarz.it.lightsaber.LightsaberBindingGraphPlugin
 import schwarz.it.lightsaber.truth.assertThat
 import java.io.File
@@ -20,10 +17,9 @@ internal fun createKotlinCompiler(
 ): KotlinCompilation {
     return KotlinCompilation().apply {
         inheritClassPath = true
-        symbolProcessorProviders = listOf(
-            KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()),
-        )
-        kspArgs = mutableMapOf(
+        annotationProcessors =
+            listOf(ComponentProcessor.withTestPlugins(LightsaberBindingGraphPlugin()))
+        kaptArgs = mutableMapOf(
             "Lightsaber.CheckUnusedBindInstance" to checkUnusedBindInstance.toString(),
             "Lightsaber.CheckUnusedBindsAndProvides" to checkUnusedBindsAndProvides.toString(),
             "Lightsaber.CheckUnusedDependencies" to checkUnusedDependencies.toString(),
@@ -36,7 +32,7 @@ internal fun createKotlinCompiler(
 
 internal fun KotlinCompilation.compile(vararg sourceFiles: SourceFile): CompilationResult {
     this.sources = sourceFiles.asList()
-    return CompilationResult(compile(), findGeneratedFiles(this), workingDir.resolve("sources"))
+    return CompilationResult(compile(), findGeneratedFiles(this), kaptStubsDir)
 }
 
 internal data class CompilationResult(
@@ -46,7 +42,7 @@ internal data class CompilationResult(
 )
 
 private fun findGeneratedFiles(compilation: KotlinCompilation): List<File> {
-    return compilation.kspSourcesDir
+    return compilation.classesDir
         .walkTopDown()
         .filter { it.isFile }
         .toList()
@@ -56,7 +52,7 @@ internal fun CompilationResult.assertHasFinding(
     message: String,
     line: Int,
     column: Int,
-    fileName: String = "test/MyComponent.java",
+    fileName: String,
     ruleName: String,
 ) {
     assertHasFindings(
