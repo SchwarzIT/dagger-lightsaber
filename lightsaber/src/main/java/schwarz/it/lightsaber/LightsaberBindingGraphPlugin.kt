@@ -10,6 +10,8 @@ import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
+import schwarz.it.lightsaber.utils.KspElements
+import schwarz.it.lightsaber.utils.KspTypes
 import schwarz.it.lightsaber.utils.fold
 import java.io.PrintWriter
 import javax.lang.model.util.Elements
@@ -65,8 +67,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
         this.filer = FileGenerator(processingEnv)
-        this.elements = processingEnv.fold({ it.elementUtils }, { TODO("ksp is not supported yet") })
-        this.types = processingEnv.fold({ it.typeUtils }, { TODO("ksp is not supported yet") })
+        this.elements = processingEnv.fold({ it.elementUtils }, { KspElements })
+        this.types = processingEnv.fold({ it.typeUtils }, { KspTypes })
     }
 
     override fun supportedOptions(): Set<String> {
