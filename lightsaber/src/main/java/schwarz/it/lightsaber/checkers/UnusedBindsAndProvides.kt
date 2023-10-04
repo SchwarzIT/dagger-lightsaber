@@ -6,11 +6,13 @@ import schwarz.it.lightsaber.domain.Module
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
 import schwarz.it.lightsaber.utils.toList
+import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 internal fun checkUnusedBindsAndProvides(
     bindingGraph: BindingGraph,
     types: Types,
+    elements: Elements,
 ): List<Finding> {
     val usedBindsAndProvides = bindingGraph.getUsedBindsAndProvides()
     val componentsWithItsDeclaredModules = bindingGraph.getComponentsWithItsDeclaredModules(types)
@@ -21,7 +23,7 @@ internal fun checkUnusedBindsAndProvides(
             .map { module -> module to (module.getBindings() - usedBindsAndProvides) }
             .flatMap { (module, unusedBindings) ->
                 unusedBindings.map { binding ->
-                    Finding("The $binding declared on `$module` is not used.", binding.getCodePosition())
+                    Finding("The $binding declared on `$module` is not used.", binding.getCodePosition(elements))
                 }
             }
     }

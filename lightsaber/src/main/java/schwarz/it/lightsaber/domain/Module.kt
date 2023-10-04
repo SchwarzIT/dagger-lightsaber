@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.spi.model.DaggerElement
 import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
-import schwarz.it.lightsaber.toCodePosition
+import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.utils.findAnnotationMirrors
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
@@ -13,11 +13,12 @@ import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 interface Module {
     fun getIncludedModules(types: Types): List<Module>
-    fun getIncludesCodePosition(): CodePosition
+    fun getIncludesCodePosition(elements: Elements): CodePosition
     fun getBindings(): List<Binding>
 
     companion object {
@@ -31,14 +32,14 @@ interface Module {
     }
 
     interface Binding {
+        override fun toString(): String
+        fun getCodePosition(elements: Elements): CodePosition
+
         companion object {
             operator fun invoke(element: DaggerElement): Binding {
                 return element.fold(ModuleJavac::Binding, { TODO("ksp is not supported yet") })
             }
         }
-
-        override fun toString(): String
-        fun getCodePosition(): CodePosition
     }
 }
 
@@ -59,9 +60,9 @@ private value class ModuleJavac(private val value: TypeElement) : Module {
             .map { ModuleJavac(types.asElement(it) as TypeElement) }
     }
 
-    override fun getIncludesCodePosition(): CodePosition {
+    override fun getIncludesCodePosition(elements: Elements): CodePosition {
         val annotationMirror = value.findAnnotationMirrors("Module")!!
-        return CodePosition(
+        return elements.getCodePosition(
             value,
             annotationMirror,
             annotationMirror.getAnnotationValue("includes"),
@@ -74,8 +75,8 @@ private value class ModuleJavac(private val value: TypeElement) : Module {
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
         }
 
-        override fun getCodePosition(): CodePosition {
-            return value.toCodePosition()
+        override fun getCodePosition(elements: Elements): CodePosition {
+            return elements.getCodePosition(value)
         }
     }
 }

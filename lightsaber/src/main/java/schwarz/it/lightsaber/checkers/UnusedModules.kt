@@ -8,17 +8,19 @@ import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getModulesCodePosition
 import schwarz.it.lightsaber.utils.getUsedModules
+import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 
 internal fun checkUnusedModules(
     bindingGraph: BindingGraph,
     types: Types,
+    elements: Elements,
 ): List<Finding> {
     val used = bindingGraph.getUsedModules()
     return bindingGraph.componentNodes()
         .flatMap { component ->
             component.getDeclaredModules(bindingGraph, types)
-                .flatMap { getErrorMessages(used, it, types, { component.getModulesCodePosition() }) }
+                .flatMap { getErrorMessages(used, it, types, elements, { component.getModulesCodePosition(elements) }) }
                 .map { (errorMessage, codePosition) -> Finding(errorMessage, codePosition) }
         }
 }
@@ -27,6 +29,7 @@ private fun getErrorMessages(
     used: Set<Module>,
     node: TreeNode<Module>,
     types: Types,
+    elements: Elements,
     codePosition: () -> CodePosition,
     path: List<String> = emptyList(),
 ): List<Pair<String, CodePosition>> {
@@ -37,14 +40,28 @@ private fun getErrorMessages(
             val newPath = path.plus(node.value.toString())
             addAll(
                 usedChildren.flatMap { child ->
-                    getErrorMessages(used, child, types, { node.value.getIncludesCodePosition() }, newPath)
+                    getErrorMessages(
+                        used = used,
+                        node = child,
+                        types = types,
+                        elements = elements,
+                        codePosition = { node.value.getIncludesCodePosition(elements) },
+                        path = newPath,
+                    )
                 },
             )
         } else {
             val newPath = path.plus(node.value.toString())
             addAll(
                 node.children.flatMap { child ->
-                    getErrorMessages(used, child, types, { node.value.getIncludesCodePosition() }, newPath)
+                    getErrorMessages(
+                        used = used,
+                        node = child,
+                        types = types,
+                        elements = elements,
+                        codePosition = { node.value.getIncludesCodePosition(elements) },
+                        path = newPath,
+                    )
                 },
             )
         }

@@ -6,8 +6,10 @@ import dagger.spi.model.BindingGraph
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.domain.Module
+import schwarz.it.lightsaber.getCodePosition
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Elements
 import kotlin.jvm.optionals.getOrNull
 
 internal fun BindingGraph.getUsedModules(): Set<Module> {
@@ -37,13 +39,13 @@ private fun Element.isCompanionModule(): Boolean {
         simpleName.toString() == "Companion"
 }
 
-internal fun BindingGraph.ComponentNode.getModulesCodePosition(): CodePosition {
+internal fun BindingGraph.ComponentNode.getModulesCodePosition(elements: Elements): CodePosition {
     return componentPath().currentComponent()
         .fold(
             { element ->
                 val annotationMirror = element.findAnnotationMirrors("Component")
                     ?: element.findAnnotationMirrors("Subcomponent")!!
-                CodePosition(
+                elements.getCodePosition(
                     element,
                     annotationMirror,
                     annotationMirror.getAnnotationValue("modules"),
@@ -53,12 +55,12 @@ internal fun BindingGraph.ComponentNode.getModulesCodePosition(): CodePosition {
         )
 }
 
-internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(): CodePosition {
+internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(elements: Elements): CodePosition {
     return componentPath().currentComponent()
         .fold(
             { element ->
                 val annotationMirror = element.findAnnotationMirrors("Component")!!
-                CodePosition(
+                elements.getCodePosition(
                     element,
                     annotationMirror,
                     annotationMirror.getAnnotationValue("dependencies"),

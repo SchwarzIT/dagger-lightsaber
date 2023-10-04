@@ -1,11 +1,6 @@
-@file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
-
 package schwarz.it.lightsaber
 
 import com.google.auto.service.AutoService
-import com.sun.tools.javac.model.JavacElements
-import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.util.DiagnosticSource
 import dagger.spi.model.BindingGraph
 import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DaggerProcessingEnv
@@ -35,12 +30,16 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
             runRule(config.checkUnusedDependencies, "UnusedDependencies") {
-                checkUnusedDependencies(bindingGraph, types)
+                checkUnusedDependencies(bindingGraph, types, elements)
             },
-            runRule(config.checkUnusedModules, "UnusedModules") { checkUnusedModules(bindingGraph, types) },
-            runRule(config.checkUnusedBindInstance, "UnusedBindInstance") { checkUnusedBindInstance(bindingGraph) },
+            runRule(config.checkUnusedModules, "UnusedModules") {
+                checkUnusedModules(bindingGraph, types, elements)
+            },
+            runRule(config.checkUnusedBindInstance, "UnusedBindInstance") {
+                checkUnusedBindInstance(bindingGraph, elements)
+            },
             runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
-                checkUnusedBindsAndProvides(bindingGraph, types)
+                checkUnusedBindsAndProvides(bindingGraph, types, elements)
             },
         )
             .flatten()
@@ -83,17 +82,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         )
     }
 
-    private fun CodePosition.getLocation(): String {
-        val pair = (elements as JavacElements).getTreeAndTopLevel(this.element, this.annotationMirror, this.annotationValue)
-        val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
-        val diagnosticSource = DiagnosticSource(sourceFile, null)
-        val line = diagnosticSource.getLineNumber(pair.fst.pos)
-        val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
-        return "${sourceFile.name}:$line:$column"
-    }
-
     private fun Issue.getMessage(): String {
-        return "${codePosition.getLocation()}: $message [$rule]"
+        return "$codePosition: $message [$rule]"
     }
 }
 
