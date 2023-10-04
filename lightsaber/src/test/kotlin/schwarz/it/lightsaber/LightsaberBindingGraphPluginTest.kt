@@ -2,17 +2,12 @@ package schwarz.it.lightsaber
 
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.truth.assertThat
-import schwarz.it.lightsaber.utils.compile
-import schwarz.it.lightsaber.utils.createKotlinCompiler
+import schwarz.it.lightsaber.utils.KaptKotlinCompiler
+import schwarz.it.lightsaber.utils.Rule
 
 class LightsaberBindingGraphPluginTest {
 
-    private val compiler = createKotlinCompiler(
-        checkUnusedBindInstance = true,
-        checkUnusedBindsAndProvides = true,
-        checkUnusedDependencies = true,
-        checkUnusedModules = true,
-    )
+    private val compiler = KaptKotlinCompiler(*Rule.entries.toTypedArray())
 
     @Test
     fun emptyComponent() {
