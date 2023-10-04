@@ -4,15 +4,15 @@ import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.createSource
 import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.FindingInfo
+import schwarz.it.lightsaber.utils.KaptKotlinCompiler
+import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertHasFindings
 import schwarz.it.lightsaber.utils.assertNoFindings
-import schwarz.it.lightsaber.utils.compile
-import schwarz.it.lightsaber.utils.createKotlinCompiler
 
 class UnusedBindsAndProvidesKtTest {
 
-    private val compiler = createKotlinCompiler(checkUnusedBindsAndProvides = true)
+    private val compiler = KaptKotlinCompiler(Rule.UnusedBindAndprovides)
 
     @Test
     fun bindsNotUsed() {
