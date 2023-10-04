@@ -8,12 +8,14 @@ import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getComponentAnnotation
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
+import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import kotlin.jvm.optionals.getOrElse
 
 internal fun checkUnusedDependencies(
     bindingGraph: BindingGraph,
     types: Types,
+    elements: Elements,
 ): List<Finding> {
     val used = bindingGraph.getUsedDependencies()
     return bindingGraph.componentNodes()
@@ -21,7 +23,7 @@ internal fun checkUnusedDependencies(
         .flatMap { component ->
             val declared = component.getDeclaredDependencies(types)
             (declared - used).map {
-                Finding("The dependency `$it` is not used.", component.getDependenciesCodePosition())
+                Finding("The dependency `$it` is not used.", component.getDependenciesCodePosition(elements))
             }
         }
 }

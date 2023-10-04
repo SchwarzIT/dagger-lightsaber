@@ -3,12 +3,13 @@ package schwarz.it.lightsaber.domain
 import dagger.spi.model.DaggerElement
 import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
-import schwarz.it.lightsaber.toCodePosition
+import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
+import javax.lang.model.util.Elements
 
 interface FactoryOrBuilder {
     fun getBindInstance(): List<BindsInstance>
@@ -25,7 +26,7 @@ interface FactoryOrBuilder {
     }
 
     interface BindsInstance {
-        fun getCodePosition(): CodePosition
+        fun getCodePosition(elements: Elements): CodePosition
         override fun toString(): String
 
         companion object {
@@ -51,8 +52,8 @@ private value class FactoryOrBuilderJavac(private val value: Element) : FactoryO
 
     @JvmInline
     value class BindsInstance(private val value: Element) : FactoryOrBuilder.BindsInstance {
-        override fun getCodePosition(): CodePosition {
-            return value.toCodePosition()
+        override fun getCodePosition(elements: Elements): CodePosition {
+            return elements.getCodePosition(value)
         }
 
         override fun toString(): String {

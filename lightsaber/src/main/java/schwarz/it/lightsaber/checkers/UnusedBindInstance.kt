@@ -5,9 +5,11 @@ import dagger.spi.model.BindingKind
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.utils.getComponentFactoriesAndBuilders
+import javax.lang.model.util.Elements
 
 internal fun checkUnusedBindInstance(
     bindingGraph: BindingGraph,
+    elements: Elements,
 ): List<Finding> {
     val usedInstances = bindingGraph.getUsedBindInstances()
 
@@ -17,7 +19,7 @@ internal fun checkUnusedBindInstance(
             val bindInstances = componentNode.getBindInstances()
 
             (bindInstances - usedInstances).map {
-                Finding("The @BindsInstance `$it` is not used.", it.getCodePosition())
+                Finding("The @BindsInstance `$it` is not used.", it.getCodePosition(elements))
             }
         }
 }
