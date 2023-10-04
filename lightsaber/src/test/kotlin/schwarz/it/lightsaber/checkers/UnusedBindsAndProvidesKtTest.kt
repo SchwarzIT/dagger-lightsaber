@@ -1,52 +1,52 @@
 package schwarz.it.lightsaber.checkers
 
-import com.google.testing.compile.Compilation
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.createSource
+import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.FindingInfo
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertHasFindings
 import schwarz.it.lightsaber.utils.assertNoFindings
-import schwarz.it.lightsaber.utils.createCompiler
+import schwarz.it.lightsaber.utils.compile
+import schwarz.it.lightsaber.utils.createKotlinCompiler
 
 class UnusedBindsAndProvidesKtTest {
 
-    private val compiler = createCompiler(checkUnusedBindsAndProvides = true)
+    private val compiler = createKotlinCompiler(checkUnusedBindsAndProvides = true)
 
     @Test
     fun bindsNotUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
-                import java.util.ArrayList;
+                import dagger.BindsInstance
+                import dagger.Component
                 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    ArrayList<Integer> myInts();
+                @Component(modules = [MyModule::class])
+                interface MyComponent {
+                    fun myInts(): ArrayList<Int>
                 }
             """.trimIndent(),
         )
         val module = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
                 @Module
-                public abstract class MyModule {
+                abstract class MyModule {
                     @Binds
-                    abstract List<Integer> bindsMyInts(ArrayList<Integer> impl);
+                    abstract fun bindsMyInts(impl: ArrayList<Int>): List<Int>
                     
-                    @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
+                    companion object {
+                        @Provides
+                        fun providesMyInts(): ArrayList<Int> {
+                            return ArrayList()
+                        }
                     }
                 }
             """.trimIndent(),
@@ -56,8 +56,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Binds `bindsMyInts` declared on `test.MyModule` is not used.",
-            line = 12,
-            column = 28,
+            line = 17,
+            column = 55,
         )
     }
 
@@ -65,38 +65,35 @@ class UnusedBindsAndProvidesKtTest {
     fun providesNotUsed() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
-                import java.util.ArrayList;
+                import dagger.BindsInstance
+                import dagger.Component
                 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    ArrayList<Integer> myInts();
+                @Component(modules = [MyModule::class])
+                interface MyComponent {
+                    fun myInts(): ArrayList<Int>
                 }
             """.trimIndent(),
         )
         val module = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
                 @Module
-                public abstract class MyModule {
+                object MyModule {
                     @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
+                    fun providesMyInts(): ArrayList<Int> {
+                        return ArrayList()
                     }
                     
                     @Provides
-                    static String providesMyString() {
-                        return "Hello there!";
+                    fun providesMyString(): String {
+                        return "Hello there!"
                     }
                 }
             """.trimIndent(),
@@ -106,8 +103,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-            line = 17,
-            column = 19,
+            line = 23,
+            column = 35,
         )
     }
 
@@ -115,50 +112,47 @@ class UnusedBindsAndProvidesKtTest {
     fun providesNotUsedReportedOnSubcomponent() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {                
-                    MySubcomponent subcomponent();
+                interface MyComponent {                
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
-                import java.util.ArrayList;
+                import dagger.Subcomponent
 
-                @Subcomponent(modules = {MyModule.class})
-                public interface MySubcomponent {
-                    ArrayList<Integer> myInts();
+                @Subcomponent(modules = [MyModule::class])
+                interface MySubcomponent {
+                    fun myInts(): ArrayList<Int>
                 }
             """.trimIndent(),
         )
         val module = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
                 @Module
-                public abstract class MyModule {
+                object MyModule {
                     @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
+                    fun providesMyInts(): ArrayList<Int> {
+                        return ArrayList()
                     }
                     
                     @Provides
-                    static String providesMyString() {
-                        return "Hello there!";
+                    fun providesMyString(): String {
+                        return "Hello there!"
                     }
                 }
             """.trimIndent(),
@@ -168,8 +162,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-            line = 17,
-            column = 19,
+            line = 23,
+            column = 35,
         )
     }
 
@@ -177,62 +171,59 @@ class UnusedBindsAndProvidesKtTest {
     fun providesNotUsedReportedOnSubcomponent2() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
+                import dagger.BindsInstance
+                import dagger.Component
                 
                 @Component
-                public interface MyComponent {                
-                    MySubcomponent subcomponent();
+                interface MyComponent {                
+                    fun subcomponent(): MySubcomponent
                 }
             """.trimIndent(),
         )
         val subcomponent = createSource(
             """
-                package test;
+                package test
 
-                import dagger.Subcomponent;
-                import java.util.ArrayList;
+                import dagger.Subcomponent
 
-                @Subcomponent(modules = {MyModule.class})
-                public interface MySubcomponent {
-                    ArrayList<Integer> myInts();
+                @Subcomponent(modules = [MyModule::class])
+                interface MySubcomponent {
+                    fun myInts(): ArrayList<Int>
                 }
             """.trimIndent(),
         )
         val component2 = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Component;
+                import dagger.Component
                 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent2 { 
-                    String myString();
+                @Component(modules = [MyModule::class])
+                interface MyComponent2 { 
+                    fun myString(): String
                 }
             """.trimIndent(),
         )
         val module = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
                 @Module
-                public abstract class MyModule {
+                object MyModule {
                     @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
+                    fun providesMyInts(): ArrayList<Int> {
+                        return ArrayList()
                     }
                     
                     @Provides
-                    static String providesMyString() {
-                        return "Hello there!";
+                    fun providesMyString(): String {
+                        return "Hello there!"
                     }
                 }
             """.trimIndent(),
@@ -242,18 +233,18 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertHasFindings(
             FindingInfo(
-                message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+                message = "The @Provides `providesMyInts` declared on `test.MyModule` is not used.",
                 line = 17,
-                column = 19,
+                column = 57,
                 ruleName = "UnusedBindsAndProvides",
-                fileName = "test/MyModule.java",
+                fileName = compilation.sourcesDir.resolve("test/MyModule.java").toString(),
             ),
             FindingInfo(
-                message = "The @Provides `providesMyInts` declared on `test.MyModule` is not used.",
-                line = 12,
-                column = 31,
+                message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+                line = 23,
+                column = 35,
                 ruleName = "UnusedBindsAndProvides",
-                fileName = "test/MyModule.java",
+                fileName = compilation.sourcesDir.resolve("test/MyModule.java").toString(),
             ),
         )
     }
@@ -262,43 +253,39 @@ class UnusedBindsAndProvidesKtTest {
     fun componentWithInterface() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Component;
+                import dagger.Component
                 
-                @Component(modules = {MyModule.class})
-                public interface MyComponent extends MyComponentInterface {
-                }
+                @Component(modules = [MyModule::class])
+                interface MyComponent : MyComponentInterface
             """.trimIndent(),
         )
 
         val componentInterface = createSource(
             """
-                package test;
+                package test
                 
-                import java.util.ArrayList;
                 
-                public interface MyComponentInterface {
-                    ArrayList<Integer> myInts();
+                interface MyComponentInterface {
+                    fun myInts(): ArrayList<Int>
                 }
             """.trimIndent(),
         )
 
         val module = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
                 @Module
-                public abstract class MyModule {
+                object MyModule {
                     @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
+                    fun providesMyInts(): ArrayList<Int> {
+                        return ArrayList()
                     }                
                 }
             """.trimIndent(),
@@ -313,36 +300,35 @@ class UnusedBindsAndProvidesKtTest {
     fun bindsNotUsedInAChildModule() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.BindsInstance;
-                import dagger.Component;
-                import java.util.ArrayList;
+                import dagger.BindsInstance
+                import dagger.Component
                 
-                @Component(modules = {MyModuleA.class})
-                public interface MyComponent {
-                    ArrayList<Integer> myInts();
+                @Component(modules = [MyModuleA::class])
+                interface MyComponent {
+                    fun myInts(): ArrayList<Int>
                 }
             """.trimIndent(),
         )
         val moduleB = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
                 @Module
-                public abstract class MyModuleB {
+                abstract class MyModuleB {
                     @Binds
-                    abstract List<Integer> bindsMyInts(ArrayList<Integer> impl);
-                    
-                    @Provides
-                    static ArrayList<Integer> providesMyInts() {
-                        return new ArrayList<>();
+                    abstract fun bindsMyInts(impl: ArrayList<Int>): List<Int>
+
+                    companion object {                    
+                        @Provides
+                        fun providesMyInts(): ArrayList<Int> {
+                            return ArrayList()
+                        }
                     }
                 }
             """.trimIndent(),
@@ -350,17 +336,14 @@ class UnusedBindsAndProvidesKtTest {
 
         val moduleA = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;
-                import dagger.Module;
-                import dagger.Provides;
-                import java.util.ArrayList;
-                import java.util.List;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
                 
-                @Module(includes = { MyModuleB.class })
-                public abstract class MyModuleA {
-                }
+                @Module(includes = [MyModuleB::class])
+                abstract class MyModuleA
             """.trimIndent(),
         )
 
@@ -368,8 +351,8 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.",
-            line = 12,
-            column = 28,
+            line = 17,
+            column = 55,
             fileName = "test/MyModuleB.java",
         )
     }
@@ -378,44 +361,46 @@ class UnusedBindsAndProvidesKtTest {
     fun testMultibinding() {
         val component = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Component;
-                import java.util.Set;
+                import dagger.Component
                 
-                @Component(modules = {MyModuleA.class})
-                public interface MyComponent {
-                    Set<Number> myInts();
+                @Component(modules = [MyModuleA::class])
+                interface MyComponent {
+                    fun myInts(): Set<Number>
                 }
             """.trimIndent(),
         )
         val moduleA = createSource(
             """
-                package test;
+                package test
                 
-                import dagger.Binds;import dagger.Module;
-                import dagger.Provides;
-                import dagger.multibindings.IntoSet;
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
+                import dagger.multibindings.IntoSet
                                 
                 @Module
-                public abstract class MyModuleA {
+                abstract class MyModuleA {
                         
                     @Binds
                     @IntoSet
-                    public abstract Number bindLong(Integer impl);
+                    abstract fun bindLong(impl: Int): Number
                     
                     @Binds
                     @IntoSet
-                    public abstract Number bindLong2(Long impl);
+                    abstract fun bindLong2(impl: Long): Number
                     
-                    @Provides
-                    static Integer providesMyInt() {
-                        return 1;
-                    }
-                    
-                    @Provides
-                    static Long providesMyLong2() {
-                        return 2L;
+                    companion object {
+                        @Provides
+                        fun providesMyInt(): Int {
+                            return 1
+                        }
+                        
+                        @Provides
+                        fun providesMyLong2(): Long {
+                            return 2L
+                        }
                     }
                 }
             """.trimIndent(),
@@ -425,74 +410,13 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertNoFindings()
     }
-
-    @Test
-    fun unusedInCompanion() {
-        val component = createSource(
-            """
-                package test;
-                
-                import dagger.BindsInstance;
-                import dagger.Component;
-                import schwarz.it.lightsaber.sample.MyModule;
-                
-                @Component(modules = {MyModule.class})
-                public interface MyComponent {
-                    Integer myInt();
-                }
-            """.trimIndent(),
-        )
-        val module = createSource(
-            """
-                package schwarz.it.lightsaber.sample;
-                
-                @dagger.Module
-                @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0003\b\'\u0018\u0000 \u00032\u00020\u0001:\u0001\u0003B\u0005\u00a2\u0006\u0002\u0010\u0002\u00a8\u0006\u0004"}, d2 = {"Lschwarz/it/lightsaber/sample/MyModule;", "", "()V", "Companion", "sample"})
-                public abstract class MyModule {
-                    @org.jetbrains.annotations.NotNull
-                    public static final schwarz.it.lightsaber.sample.MyModule.Companion Companion = null;
-                    
-                    public MyModule() {
-                        super();
-                    }
-                    
-                    @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\u0018\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\b\n\u0000\n\u0002\u0010\t\n\u0000\b\u0086\u0003\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J\b\u0010\u0003\u001a\u00020\u0004H\u0007J\b\u0010\u0005\u001a\u00020\u0006H\u0007\u00a8\u0006\u0007"}, d2 = {"Lschwarz/it/lightsaber/sample/MyModule${'$'}Companion;", "", "()V", "myInt", "", "myLong", "", "sample"})
-                    public static final class Companion {
-                        
-                        private Companion() {
-                            super();
-                        }
-                        
-                        @dagger.Provides
-                        public final int myInt() {
-                            return 0;
-                        }
-                        
-                        @dagger.Provides
-                        public final long myLong() {
-                            return 0L;
-                        }
-                    }
-                }
-            """.trimIndent(),
-        )
-
-        val compilation = compiler.compile(component, module)
-
-        compilation.assertUnusedBindsAndProvides(
-            message = "The @Provides `myLong` declared on `schwarz.it.lightsaber.sample.MyModule` is not used.",
-            line = 26,
-            column = 27,
-            fileName = "schwarz/it/lightsaber/sample/MyModule.java",
-        )
-    }
 }
 
-private fun Compilation.assertUnusedBindsAndProvides(
+private fun CompilationResult.assertUnusedBindsAndProvides(
     message: String,
     line: Int,
     column: Int,
     fileName: String = "test/MyModule.java",
 ) {
-    assertHasFinding(message, line, column, fileName, "UnusedBindsAndProvides")
+    assertHasFinding(message, line, column, sourcesDir.resolve(fileName).toString(), "UnusedBindsAndProvides")
 }
