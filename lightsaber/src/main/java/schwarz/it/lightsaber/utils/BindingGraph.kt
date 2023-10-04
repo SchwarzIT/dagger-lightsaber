@@ -85,3 +85,8 @@ internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List
             { TODO("ksp is not supported yet") },
         )
 }
+
+internal fun BindingGraph.getQualifiedName(): String {
+    return rootComponentNode().componentPath().currentComponent()
+        .fold({ it.qualifiedName.toString() }, { it.qualifiedName!!.asString() })
+}
