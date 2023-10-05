@@ -1,5 +1,8 @@
 package schwarz.it.lightsaber.utils
 
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.isAnnotationPresent
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import dagger.Component
 import dagger.Subcomponent
 import dagger.spi.model.BindingGraph
@@ -7,6 +10,7 @@ import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.domain.Module
 import schwarz.it.lightsaber.getCodePosition
+import schwarz.it.lightsaber.toCodePosition
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
@@ -26,7 +30,16 @@ internal fun BindingGraph.getUsedModules(): Set<Module> {
                         listOf(Module(element))
                     }
                 },
-                { TODO("ksp is not supported yet") },
+                { classDeclaration ->
+                    if (classDeclaration.isCompanionObject) {
+                        listOf(
+                            Module(classDeclaration),
+                            Module(classDeclaration.parent as KSClassDeclaration),
+                        )
+                    } else {
+                        listOf(Module(classDeclaration))
+                    }
+                },
             )
         }
         .toSet()
@@ -51,7 +64,7 @@ internal fun BindingGraph.ComponentNode.getModulesCodePosition(elements: Element
                     annotationMirror.getAnnotationValue("modules"),
                 )
             },
-            { TODO("ksp is not supported yet") },
+            { it.location.toCodePosition() },
         )
 }
 
@@ -66,10 +79,11 @@ internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(elements: El
                     annotationMirror.getAnnotationValue("dependencies"),
                 )
             },
-            { TODO("ksp is not supported yet") },
+            { it.location.toCodePosition() },
         )
 }
 
+@OptIn(KspExperimental::class)
 internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List<FactoryOrBuilder> {
     return componentPath()
         .currentComponent()
@@ -77,12 +91,24 @@ internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List
             { element ->
                 element.enclosedElements
                     .filter {
-                        it.isAnnotatedWith(Component.Factory::class) || it.isAnnotatedWith(Subcomponent.Factory::class) ||
-                            it.isAnnotatedWith(Component.Builder::class) || it.isAnnotatedWith(Subcomponent.Builder::class)
+                        it.isAnnotatedWith(Component.Factory::class) ||
+                            it.isAnnotatedWith(Subcomponent.Factory::class) ||
+                            it.isAnnotatedWith(Component.Builder::class) ||
+                            it.isAnnotatedWith(Subcomponent.Builder::class)
                     }
                     .map { FactoryOrBuilder(it) }
             },
-            { TODO("ksp is not supported yet") },
+            { ksClassDeclaration ->
+                ksClassDeclaration.declarations
+                    .filter {
+                        it.isAnnotationPresent(Component.Factory::class) ||
+                            it.isAnnotationPresent(Subcomponent.Factory::class) ||
+                            it.isAnnotationPresent(Component.Builder::class) ||
+                            it.isAnnotationPresent(Subcomponent.Builder::class)
+                    }
+                    .map { FactoryOrBuilder(it as KSClassDeclaration) }
+                    .toList()
+            },
         )
 }
 
