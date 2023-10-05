@@ -13,7 +13,7 @@ import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.findAnnotationMirrors
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
-import schwarz.it.lightsaber.utils.getDeclaredModules
+import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
@@ -102,7 +102,9 @@ private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
     }
 
     override fun getIncludedModules(types: Types): List<Module> {
-        return value.getDeclaredModules(dagger.Module::class, "includes")
+        return value
+            .getDeclaredArguments(dagger.Module::class, "includes")
+            .map { Module(it.declaration as KSClassDeclaration) }
     }
 
     override fun getIncludesCodePosition(elements: Elements): CodePosition {

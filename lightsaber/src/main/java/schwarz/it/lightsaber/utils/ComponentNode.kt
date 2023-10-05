@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber.utils
 
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import dagger.Component
 import dagger.Subcomponent
 import dagger.spi.model.BindingGraph
@@ -22,7 +23,11 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
                         .getTypesMirrorsFromClass { modules }
                         .map { Module(types.asElement(it) as TypeElement) }
                 },
-                { it.getDeclaredModules(dagger.Subcomponent::class, "modules") },
+                { ksDeclaration ->
+                    ksDeclaration
+                        .getDeclaredArguments(dagger.Subcomponent::class, "modules")
+                        .map { Module(it.declaration as KSClassDeclaration) }
+                },
             )
     } else {
         componentPath().currentComponent()
@@ -32,7 +37,11 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
                         .getTypesMirrorsFromClass { modules }
                         .map { Module(types.asElement(it) as TypeElement) }
                 },
-                { it.getDeclaredModules(dagger.Component::class, "modules") },
+                { ksDeclaration ->
+                    ksDeclaration
+                        .getDeclaredArguments(dagger.Component::class, "modules")
+                        .map { Module(it.declaration as KSClassDeclaration) }
+                },
             )
     }.map { module -> getModuleTree(usedModules, module, types) }
 }
