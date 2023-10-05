@@ -46,8 +46,9 @@ internal class KspKotlinCompiler(
 ) : KotlinCompiler {
     private val compiler = KotlinCompilation().apply {
         inheritClassPath = true
-        symbolProcessorProviders =
-            listOf(KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()))
+        symbolProcessorProviders = listOf(
+            KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()),
+        )
         kspArgs = getLightsaberArguments(*rules)
         kspWithCompilation = true
         verbose = false
@@ -65,7 +66,7 @@ internal class KspKotlinCompiler(
 
 enum class Rule {
     UnusedBindInstance,
-    UnusedBindAndprovides,
+    UnusedBindAndProvides,
     UnusedDependencies,
     UnusedModules,
 }
@@ -87,7 +88,7 @@ private fun getLightsaberArguments(
     vararg rules: Rule,
 ) = mutableMapOf(
     "Lightsaber.CheckUnusedBindInstance" to (Rule.UnusedBindInstance in rules).toString(),
-    "Lightsaber.CheckUnusedBindsAndProvides" to (Rule.UnusedBindAndprovides in rules).toString(),
+    "Lightsaber.CheckUnusedBindsAndProvides" to (Rule.UnusedBindAndProvides in rules).toString(),
     "Lightsaber.CheckUnusedDependencies" to (Rule.UnusedDependencies in rules).toString(),
     "Lightsaber.CheckUnusedModules" to (Rule.UnusedModules in rules).toString(),
 )

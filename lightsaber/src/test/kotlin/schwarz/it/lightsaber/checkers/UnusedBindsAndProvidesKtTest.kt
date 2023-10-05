@@ -12,7 +12,7 @@ import schwarz.it.lightsaber.utils.assertNoFindings
 
 class UnusedBindsAndProvidesKtTest {
 
-    private val compiler = KaptKotlinCompiler(Rule.UnusedBindAndprovides)
+    private val compiler = KaptKotlinCompiler(Rule.UnusedBindAndProvides)
 
     @Test
     fun bindsNotUsed() {
