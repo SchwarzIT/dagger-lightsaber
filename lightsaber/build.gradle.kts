@@ -28,6 +28,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
     testImplementation("com.google.dagger:dagger-compiler:2.48")
     testImplementation("com.google.testing.compile:compile-testing:0.21.0")
     testImplementation("com.google.truth:truth:1.1.3")

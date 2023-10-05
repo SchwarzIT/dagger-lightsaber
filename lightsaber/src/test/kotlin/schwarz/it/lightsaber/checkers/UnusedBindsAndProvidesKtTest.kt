@@ -1,21 +1,31 @@
 package schwarz.it.lightsaber.checkers
 
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ParameterContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.converter.ArgumentConverter
+import org.junit.jupiter.params.converter.ConvertWith
+import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.createSource
 import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.FindingInfo
 import schwarz.it.lightsaber.utils.KaptKotlinCompiler
+import schwarz.it.lightsaber.utils.KotlinCompiler
+import schwarz.it.lightsaber.utils.KspKotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertHasFindings
 import schwarz.it.lightsaber.utils.assertNoFindings
+import schwarz.it.lightsaber.utils.extension
 
-class UnusedBindsAndProvidesKtTest {
+internal class UnusedBindsAndProvidesKtTest {
 
-    private val compiler = KaptKotlinCompiler(Rule.UnusedBindAndProvides)
-
-    @Test
-    fun bindsNotUsed() {
+    @ParameterizedTest
+    @CsvSource("kapt,17,55", "ksp,10,")
+    fun bindsNotUsed(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -56,13 +66,18 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Binds `bindsMyInts` declared on `test.MyModule` is not used.",
-            line = 17,
-            column = 55,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun providesNotUsed() {
+    @ParameterizedTest
+    @CsvSource("kapt,23,35", "ksp,15,")
+    fun providesNotUsed(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -103,13 +118,18 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-            line = 23,
-            column = 35,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun providesNotUsedReportedOnSubcomponent() {
+    @ParameterizedTest
+    @CsvSource("kapt,23,35", "ksp,15,")
+    fun providesNotUsedReportedOnSubcomponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -162,13 +182,20 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-            line = 23,
-            column = 35,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun providesNotUsedReportedOnSubcomponent2() {
+    @ParameterizedTest
+    @CsvSource("kapt,17,57,23,35", "ksp,10,,15,")
+    fun providesNotUsedReportedOnSubcomponent2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line1: Int,
+        column1: Int?,
+        line2: Int,
+        column2: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -234,23 +261,26 @@ class UnusedBindsAndProvidesKtTest {
         compilation.assertHasFindings(
             FindingInfo(
                 message = "The @Provides `providesMyInts` declared on `test.MyModule` is not used.",
-                line = 17,
-                column = 57,
+                line = line1,
+                column = column1,
                 ruleName = "UnusedBindsAndProvides",
-                fileName = compilation.sourcesDir.resolve("test/MyModule.java").toString(),
+                fileName = compilation.sourcesDir.resolve("test/MyModule.${compilation.type.extension}").toString(),
             ),
             FindingInfo(
                 message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
-                line = 23,
-                column = 35,
+                line = line2,
+                column = column2,
                 ruleName = "UnusedBindsAndProvides",
-                fileName = compilation.sourcesDir.resolve("test/MyModule.java").toString(),
+                fileName = compilation.sourcesDir.resolve("test/MyModule.${compilation.type.extension}").toString(),
             ),
         )
     }
 
-    @Test
-    fun componentWithInterface() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun componentWithInterface(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -296,8 +326,13 @@ class UnusedBindsAndProvidesKtTest {
         compilation.assertNoFindings()
     }
 
-    @Test
-    fun bindsNotUsedInAChildModule() {
+    @ParameterizedTest
+    @CsvSource("kapt,17,55", "ksp,10,")
+    fun bindsNotUsedInAChildModule(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -351,14 +386,17 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertUnusedBindsAndProvides(
             message = "The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.",
-            line = 17,
-            column = 55,
-            fileName = "test/MyModuleB.java",
+            line = line,
+            column = column,
+            fileName = "test/MyModuleB",
         )
     }
 
-    @Test
-    fun testMultibinding() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun testMultibinding(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -410,13 +448,30 @@ class UnusedBindsAndProvidesKtTest {
 
         compilation.assertNoFindings()
     }
+
+    private class CompilerArgumentConverter : ArgumentConverter {
+        override fun convert(source: Any, context: ParameterContext): Any {
+            source as String
+            return when (source) {
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedBindAndProvides)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedBindAndProvides)
+                else -> error("Unknown compiler of type $source")
+            }
+        }
+    }
 }
 
 private fun CompilationResult.assertUnusedBindsAndProvides(
     message: String,
     line: Int,
-    column: Int,
-    fileName: String = "test/MyModule.java",
+    column: Int?,
+    fileName: String = "test/MyModule",
 ) {
-    assertHasFinding(message, line, column, sourcesDir.resolve(fileName).toString(), "UnusedBindsAndProvides")
+    assertHasFinding(
+        message = message,
+        line = line,
+        column = column,
+        fileName = sourcesDir.resolve("$fileName.${type.extension}").toString(),
+        ruleName = "UnusedBindsAndProvides",
+    )
 }

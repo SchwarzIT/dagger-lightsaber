@@ -33,11 +33,15 @@ private fun BindingGraph.getComponentsWithItsDeclaredModules(
     types: Types,
 ): Map<BindingGraph.ComponentNode, List<Module>> {
     return componentNodes().associateWith { component ->
-        component.getDeclaredModules(this, types).flatMap { it.toList() }
+        component
+            .getDeclaredModules(this, types)
+            .flatMap { it.toList() }
     }
 }
 
 private fun BindingGraph.getUsedBindsAndProvides(): Set<Module.Binding> {
-    return bindings().filter { !it.contributingModule().isEmpty }.map { Module.Binding(it.bindingElement().get()) }
+    return bindings()
+        .filter { !it.contributingModule().isEmpty }
+        .map { Module.Binding(it.bindingElement().get()) }
         .toSet()
 }
