@@ -2,6 +2,9 @@
 
 package schwarz.it.lightsaber
 
+import com.google.devtools.ksp.symbol.FileLocation
+import com.google.devtools.ksp.symbol.Location
+import com.google.devtools.ksp.symbol.NonExistLocation
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.DiagnosticSource
@@ -18,9 +21,9 @@ data class Finding(
 data class CodePosition(
     val path: String,
     val line: Int,
-    val column: Int,
+    val column: Int? = null,
 ) {
-    override fun toString() = "$path:$line:$column"
+    override fun toString() = if (column != null) "$path:$line:$column" else "$path:$line"
 }
 
 internal fun Elements.getCodePosition(
@@ -34,4 +37,11 @@ internal fun Elements.getCodePosition(
     val line = diagnosticSource.getLineNumber(pair.fst.pos)
     val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
     return CodePosition(sourceFile.name, line, column)
+}
+
+internal fun Location.toCodePosition(): CodePosition {
+    return when (this) {
+        is FileLocation -> CodePosition(filePath, lineNumber)
+        NonExistLocation -> error("Unknown location")
+    }
 }

@@ -95,7 +95,7 @@ private fun getLightsaberArguments(
 internal fun CompilationResult.assertHasFinding(
     message: String,
     line: Int,
-    column: Int,
+    column: Int?,
     fileName: String,
     ruleName: String,
 ) {
