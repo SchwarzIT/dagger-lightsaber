@@ -5,13 +5,13 @@ package schwarz.it.lightsaber.checkers
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import dagger.Component
 import dagger.spi.model.BindingGraph
 import dagger.spi.model.BindingKind
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.Dependency
 import schwarz.it.lightsaber.utils.fold
+import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.util.Elements
@@ -69,12 +69,9 @@ private fun BindingGraph.ComponentNode.getDeclaredDependencies(types: Types): Se
                     .map { Dependency(types.asElement(it)) }
             },
             { classDeclaration: KSClassDeclaration ->
-                classDeclaration.annotations
-                    .single()
-                    .arguments
-                    .single { it.name?.getShortName() == "dependencies" }
-                    .let { it.value as List<*> }
-                    .map { Dependency((it as KSType).declaration) }
+                classDeclaration
+                    .getDeclaredArguments(Component::class, "dependencies")
+                    .map { Dependency(it.declaration) }
             },
         )
         .toSet()
