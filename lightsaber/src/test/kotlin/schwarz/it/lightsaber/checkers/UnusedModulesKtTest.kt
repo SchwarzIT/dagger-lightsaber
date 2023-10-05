@@ -1,16 +1,21 @@
 package schwarz.it.lightsaber.checkers
 
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ParameterContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.converter.ArgumentConverter
+import org.junit.jupiter.params.converter.ConvertWith
+import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.createSource
 import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.KaptKotlinCompiler
+import schwarz.it.lightsaber.utils.KotlinCompiler
+import schwarz.it.lightsaber.utils.KspKotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
+import schwarz.it.lightsaber.utils.extension
 
-class UnusedModulesKtTest {
-
-    private val compiler = KaptKotlinCompiler(Rule.UnusedModules)
+internal class UnusedModulesKtTest {
 
     private val module = createSource(
         """
@@ -29,8 +34,11 @@ class UnusedModulesKtTest {
         """.trimIndent(),
     )
 
-    @Test
-    fun moduleUsedOnComponent() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun moduleUsedOnComponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -49,8 +57,13 @@ class UnusedModulesKtTest {
         compilation.assertNoFindings()
     }
 
-    @Test
-    fun moduleNotUsedOnSubcomponent() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,29", "ksp,6,")
+    fun moduleNotUsedOnSubcomponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -78,13 +91,16 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 6,
-            column = 29,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun moduleUsedOnSubcomponent() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun moduleUsedOnSubcomponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -115,8 +131,13 @@ class UnusedModulesKtTest {
         compilation.assertNoFindings()
     }
 
-    @Test
-    fun moduleUnusedOnSubcomponent2() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,32", "ksp,6,")
+    fun moduleUnusedOnSubcomponent2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -144,14 +165,17 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 6,
-            column = 32,
-            fileName = "test/MySubcomponent.java",
+            line = line,
+            column = column,
+            fileName = "test/MySubcomponent",
         )
     }
 
-    @Test
-    fun moduleUsedOnSubcomponent2() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun moduleUsedOnSubcomponent2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -182,8 +206,13 @@ class UnusedModulesKtTest {
         compilation.assertNoFindings()
     }
 
-    @Test
-    fun includeModules0() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,29", "ksp,6,")
+    fun includeModules0(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -199,13 +228,18 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.MyModule` is not used.",
-            line = 6,
-            column = 29,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun includeModules1() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,29", "ksp,6,")
+    fun includeModules1(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -250,13 +284,18 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used but its child `test.ModuleB` is used.",
-            line = 6,
-            column = 29,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun includeModules2() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,27", "ksp,7,")
+    fun includeModules2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -300,14 +339,19 @@ class UnusedModulesKtTest {
         val compilation = compiler.compile(component, moduleA, moduleB)
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used.",
-            line = 6,
-            column = 27,
-            fileName = "test/ModuleA.java",
+            line = line,
+            column = column,
+            fileName = "test/ModuleA",
         )
     }
 
-    @Test
-    fun includeModules3() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,27", "ksp,7,")
+    fun includeModules3(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -369,14 +413,19 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleC` included by `test.ModuleA → test.ModuleB` is not used.",
-            line = 6,
-            column = 27,
-            fileName = "test/ModuleB.java",
+            line = line,
+            column = column,
+            fileName = "test/ModuleB",
         )
     }
 
-    @Test
-    fun includeModules4() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,29", "ksp,6,")
+    fun includeModules4(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -415,13 +464,18 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used.",
-            line = 6,
-            column = 29,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun includeModules5() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,29", "ksp,6,")
+    fun includeModules5(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -484,13 +538,18 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleA` is not used but its children `test.ModuleB`, `test.ModuleC` are used.",
-            line = 6,
-            column = 29,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun includeModules6() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,27", "ksp,7,")
+    fun includeModules6(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -553,14 +612,19 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its child `test.ModuleC` is used.",
-            line = 6,
-            column = 27,
-            fileName = "test/ModuleA.java",
+            line = line,
+            column = column,
+            fileName = "test/ModuleA",
         )
     }
 
-    @Test
-    fun includeModules7() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,27", "ksp,7,")
+    fun includeModules7(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val moduleA = createSource(
             """
                 package test
@@ -640,24 +704,35 @@ class UnusedModulesKtTest {
 
         compilation.assertUnusedModules(
             message = "The @Module `test.ModuleB` included by `test.ModuleA` is not used but its children `test.ModuleC`, `test.ModuleD` are used.",
-            line = 6,
-            column = 27,
-            fileName = "test/ModuleA.java",
+            line = line,
+            column = column,
+            fileName = "test/ModuleA",
         )
+    }
+
+    private class CompilerArgumentConverter : ArgumentConverter {
+        override fun convert(source: Any, context: ParameterContext): Any {
+            source as String
+            return when (source) {
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedModules)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedModules)
+                else -> error("Unknown compiler of type $source")
+            }
+        }
     }
 }
 
 private fun CompilationResult.assertUnusedModules(
     message: String,
     line: Int,
-    column: Int,
-    fileName: String = "test/MyComponent.java",
+    column: Int?,
+    fileName: String = "test/MyComponent",
 ) {
     assertHasFinding(
         message = message,
         line = line,
         column = column,
         ruleName = "UnusedModules",
-        fileName = sourcesDir.resolve(fileName).toString(),
+        fileName = sourcesDir.resolve("$fileName.${type.extension}").toString(),
     )
 }

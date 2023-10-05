@@ -1,16 +1,21 @@
 package schwarz.it.lightsaber.checkers
 
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ParameterContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.converter.ArgumentConverter
+import org.junit.jupiter.params.converter.ConvertWith
+import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.createSource
 import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.KaptKotlinCompiler
+import schwarz.it.lightsaber.utils.KotlinCompiler
+import schwarz.it.lightsaber.utils.KspKotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
+import schwarz.it.lightsaber.utils.extension
 
-class UnusedDependenciesKtTest {
-
-    private val compiler = KaptKotlinCompiler(Rule.UnusedDependencies)
+internal class UnusedDependenciesKtTest {
 
     private val dependency = createSource(
         """
@@ -22,8 +27,13 @@ class UnusedDependenciesKtTest {
         """.trimIndent(),
     )
 
-    @Test
-    fun dependencyNotUsed() {
+    @ParameterizedTest
+    @CsvSource("kapt,6,34", "ksp,6,")
+    fun dependencyNotUsed(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val component = createSource(
             """
                 package test
@@ -41,13 +51,16 @@ class UnusedDependenciesKtTest {
 
         compilation.assertUnusedDependencies(
             message = "The dependency `test.Dependency` is not used.",
-            line = 6,
-            column = 34,
+            line = line,
+            column = column,
         )
     }
 
-    @Test
-    fun dependencyUsedOnComponent() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun dependencyUsedOnComponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -66,8 +79,11 @@ class UnusedDependenciesKtTest {
         compilation.assertNoFindings()
     }
 
-    @Test
-    fun dependencyUsedOnSubcomponent() {
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun dependencyUsedOnSubcomponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
         val component = createSource(
             """
                 package test
@@ -97,14 +113,25 @@ class UnusedDependenciesKtTest {
 
         compilation.assertNoFindings()
     }
+
+    private class CompilerArgumentConverter : ArgumentConverter {
+        override fun convert(source: Any, context: ParameterContext): Any {
+            source as String
+            return when (source) {
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedDependencies)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedDependencies)
+                else -> error("Unknown compiler of type $source")
+            }
+        }
+    }
 }
 
-private fun CompilationResult.assertUnusedDependencies(message: String, line: Int, column: Int) {
+private fun CompilationResult.assertUnusedDependencies(message: String, line: Int, column: Int?) {
     assertHasFinding(
         message = message,
         line = line,
         column = column,
         ruleName = "UnusedDependencies",
-        fileName = sourcesDir.resolve("test/MyComponent.java").toString(),
+        fileName = sourcesDir.resolve("test/MyComponent.${type.extension}").toString(),
     )
 }
