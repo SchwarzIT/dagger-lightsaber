@@ -1,14 +1,19 @@
 package schwarz.it.lightsaber.domain
 
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.isAnnotationPresent
+import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import dagger.Binds
 import dagger.Provides
 import dagger.spi.model.DaggerElement
-import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.getCodePosition
+import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.findAnnotationMirrors
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
+import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
@@ -22,12 +27,12 @@ interface Module {
     fun getBindings(): List<Binding>
 
     companion object {
-        operator fun invoke(element: DaggerTypeElement): Module {
-            return element.fold(::ModuleJavac, { TODO("ksp is not supported yet") })
-        }
-
         operator fun invoke(typeElement: TypeElement): Module {
             return ModuleJavac(typeElement)
+        }
+
+        operator fun invoke(classDeclaration: KSClassDeclaration): Module {
+            return ModuleKsp(classDeclaration)
         }
     }
 
@@ -37,7 +42,7 @@ interface Module {
 
         companion object {
             operator fun invoke(element: DaggerElement): Binding {
-                return element.fold(ModuleJavac::Binding, { TODO("ksp is not supported yet") })
+                return element.fold(ModuleJavac::Binding, ModuleKsp::Binding)
             }
         }
     }
@@ -77,6 +82,42 @@ private value class ModuleJavac(private val value: TypeElement) : Module {
 
         override fun getCodePosition(elements: Elements): CodePosition {
             return elements.getCodePosition(value)
+        }
+    }
+}
+
+@JvmInline
+private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
+
+    override fun toString(): String {
+        return value.qualifiedName!!.asString()
+    }
+
+    @OptIn(KspExperimental::class)
+    override fun getBindings(): List<Module.Binding> {
+        return value.getAllFunctions()
+            .filter { func -> bindingAnnotations.any { func.isAnnotationPresent(it) } }
+            .map { Binding(it) }
+            .toList()
+    }
+
+    override fun getIncludedModules(types: Types): List<Module> {
+        return value.getDeclaredModules(dagger.Module::class, "includes")
+    }
+
+    override fun getIncludesCodePosition(elements: Elements): CodePosition {
+        return value.location.toCodePosition()
+    }
+
+    @JvmInline
+    value class Binding(private val value: KSAnnotated) : Module.Binding {
+        @OptIn(KspExperimental::class)
+        override fun toString(): String {
+            return "@${bindingAnnotations.first { value.isAnnotationPresent(it) }.simpleName} `$value`"
+        }
+
+        override fun getCodePosition(elements: Elements): CodePosition {
+            return value.location.toCodePosition()
         }
     }
 }
