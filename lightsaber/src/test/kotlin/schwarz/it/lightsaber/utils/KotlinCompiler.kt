@@ -37,6 +37,7 @@ internal class KaptKotlinCompiler(
             compiler.compile(),
             findGeneratedFiles(compiler.classesDir),
             compiler.kaptStubsDir,
+            CompilationResult.Type.Kapt,
         )
     }
 }
@@ -60,6 +61,7 @@ internal class KspKotlinCompiler(
             compiler.compile(),
             findGeneratedFiles(compiler.kspSourcesDir),
             compiler.workingDir.resolve("sources"),
+            CompilationResult.Type.Ksp,
         )
     }
 }
@@ -75,7 +77,19 @@ internal data class CompilationResult(
     val result: KotlinCompilation.Result,
     val generatedFiles: List<File>,
     val sourcesDir: File,
-)
+    val type: Type,
+) {
+    enum class Type {
+        Kapt,
+        Ksp,
+    }
+}
+
+internal val CompilationResult.Type.extension
+    get() = when (this) {
+        CompilationResult.Type.Kapt -> "java"
+        CompilationResult.Type.Ksp -> "kt"
+    }
 
 private fun findGeneratedFiles(file: File): List<File> {
     return file
