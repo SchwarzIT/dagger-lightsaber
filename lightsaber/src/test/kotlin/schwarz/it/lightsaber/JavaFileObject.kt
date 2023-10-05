@@ -9,7 +9,7 @@ internal fun createSource(@Language("kotlin") code: String): SourceFile {
 
 private fun String.findFullQualifiedName(): String {
     val packageRegex = "package (.*)".toRegex()
-    val packageName = packageRegex.find(this)?.groupValues?.get(1)
+    val packageName = packageRegex.find(this)?.groupValues?.get(1)?.trim()
     val objectRegex = "(abstract )?(class|interface|object) ([^ ]*)".toRegex()
     val objectMatcher = checkNotNull(objectRegex.find(this)) { "No class/interface/object found" }
     val objectName = objectMatcher.groupValues[3]
