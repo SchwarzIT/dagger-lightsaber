@@ -17,14 +17,26 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
 ): List<TreeNode<Module>> {
     val usedModules = bindingGraph.getUsedModules()
     return if (isSubcomponent) {
-        getSubcomponentAnnotation().getTypesMirrorsFromClass { modules }
-            .map { Module(types.asElement(it) as TypeElement) }
+        componentPath().currentComponent()
+            .fold(
+                { element ->
+                    element.getAnnotation(Subcomponent::class.java)
+                        .getTypesMirrorsFromClass { modules }
+                        .map { Module(types.asElement(it) as TypeElement) }
+                },
+                { it.getDeclaredModules(dagger.Subcomponent::class, "modules") },
+            )
     } else {
-        getComponentAnnotation().getTypesMirrorsFromClass { modules }
-            .map { Module(types.asElement(it) as TypeElement) }
-    }.map { element ->
-        getModuleTree(usedModules, element, types)
-    }
+        componentPath().currentComponent()
+            .fold(
+                { element ->
+                    element.getAnnotation(Component::class.java)
+                        .getTypesMirrorsFromClass { modules }
+                        .map { Module(types.asElement(it) as TypeElement) }
+                },
+                { it.getDeclaredModules(dagger.Component::class, "modules") },
+            )
+    }.map { module -> getModuleTree(usedModules, module, types) }
 }
 
 private fun getModuleTree(
