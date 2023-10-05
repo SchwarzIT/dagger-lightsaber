@@ -1,6 +1,6 @@
 package schwarz.it.lightsaber.utils
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.kspWithCompilation
@@ -68,13 +68,13 @@ internal fun CompilationResult.assertHasFinding(
 
 internal fun CompilationResult.assertHasFindings(vararg findingsInfo: FindingInfo) {
     assertThat(result).succeeded()
-    Truth.assertThat(lightsaberFiles().joinToString("") { it.readText() })
-        .isEqualTo(findingsInfo.joinToString("\n", postfix = "\n") { it.toString() })
+    assertThat(lightsaberFiles().flatMap { it.readLines() })
+        .containsExactlyElementsIn(findingsInfo.map { it.toString() })
 }
 
 internal fun CompilationResult.assertNoFindings() {
     assertThat(result).succeeded()
-    Truth.assertThat(lightsaberFiles()).isEmpty()
+    assertThat(lightsaberFiles()).isEmpty()
 }
 
 private fun CompilationResult.lightsaberFiles(): List<File> {
