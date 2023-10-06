@@ -1,8 +1,5 @@
-@file:OptIn(KspExperimental::class)
-
 package schwarz.it.lightsaber.checkers
 
-import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import dagger.Component
