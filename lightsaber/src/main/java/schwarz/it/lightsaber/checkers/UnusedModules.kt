@@ -1,6 +1,7 @@
 package schwarz.it.lightsaber.checkers
 
 import dagger.spi.model.BindingGraph
+import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.Module
@@ -9,18 +10,17 @@ import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getModulesCodePosition
 import schwarz.it.lightsaber.utils.getUsedModules
 import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
 
 internal fun checkUnusedModules(
     bindingGraph: BindingGraph,
-    types: Types,
+    daggerProcessingEnv: DaggerProcessingEnv,
     elements: Elements,
 ): List<Finding> {
     val used = bindingGraph.getUsedModules()
     return bindingGraph.componentNodes()
         .flatMap { component ->
-            component.getDeclaredModules(bindingGraph, types)
-                .flatMap { getErrorMessages(used, it, types, elements, { component.getModulesCodePosition(elements) }) }
+            component.getDeclaredModules(bindingGraph, daggerProcessingEnv)
+                .flatMap { getErrorMessages(used, it, elements, { component.getModulesCodePosition(elements) }) }
                 .map { (errorMessage, codePosition) -> Finding(errorMessage, codePosition) }
         }
 }
@@ -28,7 +28,6 @@ internal fun checkUnusedModules(
 private fun getErrorMessages(
     used: Set<Module>,
     node: TreeNode<Module>,
-    types: Types,
     elements: Elements,
     codePosition: () -> CodePosition,
     path: List<String> = emptyList(),
@@ -43,7 +42,6 @@ private fun getErrorMessages(
                     getErrorMessages(
                         used = used,
                         node = child,
-                        types = types,
                         elements = elements,
                         codePosition = { node.value.getIncludesCodePosition(elements) },
                         path = newPath,
@@ -57,7 +55,6 @@ private fun getErrorMessages(
                     getErrorMessages(
                         used = used,
                         node = child,
-                        types = types,
                         elements = elements,
                         codePosition = { node.value.getIncludesCodePosition(elements) },
                         path = newPath,

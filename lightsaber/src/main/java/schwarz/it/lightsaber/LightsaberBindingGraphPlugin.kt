@@ -11,12 +11,10 @@ import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.KspElements
-import schwarz.it.lightsaber.utils.KspTypes
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getQualifiedName
 import java.io.PrintWriter
 import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
 
 @AutoService(BindingGraphPlugin::class)
 public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
@@ -24,7 +22,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         return "Lightsaber"
     }
 
-    private lateinit var types: Types
+    private lateinit var daggerProcessingEnv: DaggerProcessingEnv
     private lateinit var filer: FileGenerator
     private lateinit var elements: Elements
     private lateinit var config: LightsaberConfig
@@ -32,16 +30,16 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
             runRule(config.checkUnusedDependencies, "UnusedDependencies") {
-                checkUnusedDependencies(bindingGraph, types, elements)
+                checkUnusedDependencies(bindingGraph, daggerProcessingEnv, elements)
             },
             runRule(config.checkUnusedModules, "UnusedModules") {
-                checkUnusedModules(bindingGraph, types, elements)
+                checkUnusedModules(bindingGraph, daggerProcessingEnv, elements)
             },
             runRule(config.checkUnusedBindInstance, "UnusedBindInstance") {
                 checkUnusedBindInstance(bindingGraph, elements)
             },
             runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
-                checkUnusedBindsAndProvides(bindingGraph, types, elements)
+                checkUnusedBindsAndProvides(bindingGraph, daggerProcessingEnv, elements)
             },
         )
             .flatten()
@@ -61,9 +59,9 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
+        this.daggerProcessingEnv = processingEnv
         this.filer = FileGenerator(processingEnv)
         this.elements = processingEnv.fold({ it.elementUtils }, { KspElements })
-        this.types = processingEnv.fold({ it.typeUtils }, { KspTypes })
     }
 
     override fun supportedOptions(): Set<String> {
