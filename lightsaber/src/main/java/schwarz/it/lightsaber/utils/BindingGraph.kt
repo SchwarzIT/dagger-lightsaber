@@ -91,26 +91,31 @@ internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List
             { element ->
                 element.enclosedElements
                     .filter {
-                        it.isAnnotatedWith(Component.Factory::class) ||
-                            it.isAnnotatedWith(Subcomponent.Factory::class) ||
-                            it.isAnnotatedWith(Component.Builder::class) ||
-                            it.isAnnotatedWith(Subcomponent.Builder::class)
+                        factoryOrBuilderAnnotations.any { annotation ->
+                            it.isAnnotatedWith(annotation)
+                        }
                     }
                     .map { FactoryOrBuilder(it) }
             },
             { ksClassDeclaration ->
                 ksClassDeclaration.declarations
                     .filter {
-                        it.isAnnotationPresent(Component.Factory::class) ||
-                            it.isAnnotationPresent(Subcomponent.Factory::class) ||
-                            it.isAnnotationPresent(Component.Builder::class) ||
-                            it.isAnnotationPresent(Subcomponent.Builder::class)
+                        factoryOrBuilderAnnotations.any { annotation ->
+                            it.isAnnotationPresent(annotation)
+                        }
                     }
                     .map { FactoryOrBuilder(it as KSClassDeclaration) }
                     .toList()
             },
         )
 }
+
+private val factoryOrBuilderAnnotations = setOf(
+    Component.Factory::class,
+    Subcomponent.Factory::class,
+    Component.Builder::class,
+    Subcomponent.Builder::class,
+)
 
 internal fun BindingGraph.getQualifiedName(): String {
     return rootComponentNode().componentPath().currentComponent()
