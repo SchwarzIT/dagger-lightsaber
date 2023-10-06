@@ -34,25 +34,25 @@ enum class Rule {
 internal fun String.toIssue(severities: Map<Rule, Severity>): Issue? {
     val groups = requireNotNull(regex.matchEntire(this)) { "Impossible to parse '$this'" }.groupValues
     val rule = try {
-        Rule.valueOf(groups[3])
+        Rule.valueOf(groups[4])
     } catch (ex: IllegalArgumentException) {
-        throw IllegalArgumentException("Unknown rule '${groups[3]}'")
+        throw IllegalArgumentException("Unknown rule '${groups[4]}'")
     }
     return when (severities[rule] ?: throw IllegalArgumentException("Unknown severity for rule '$rule'")) {
         Severity.Error -> Error(
             rule = rule,
             position = groups[1],
-            message = groups[2],
+            message = groups[3],
         )
 
         Severity.Warning -> Warning(
             rule = rule,
             position = groups[1],
-            message = groups[2],
+            message = groups[3],
         )
 
         Severity.Ignore -> null
     }
 }
 
-private val regex = """^(.+:[0-9]+:[0-9]+): (.*) \[(.*)]$""".toRegex()
+private val regex = """^(.+:[0-9]+(:[0-9]+)?): (.*) \[(.*)]$""".toRegex()

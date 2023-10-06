@@ -53,4 +53,12 @@ class IssueTest {
         val e = assertThrows<IllegalArgumentException> { "position:1:1: message [UnusedModules]".toIssue(emptyMap()) }
         assertThat(e).hasMessageThat().isEqualTo("Unknown severity for rule 'UnusedModules'")
     }
+
+    @Test
+    fun testIssueWithoutColumn() {
+        val issue = "position:1: message [UnusedBindInstance]".toIssue(severities)
+
+        assertThat(issue).isInstanceOf(Error::class.java)
+        assertThat(issue.toString()).isEqualTo("e: position:1: message [UnusedBindInstance]")
+    }
 }
