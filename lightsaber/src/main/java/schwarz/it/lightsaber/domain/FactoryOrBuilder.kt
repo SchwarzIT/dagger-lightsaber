@@ -5,15 +5,16 @@ import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import dagger.spi.model.DaggerElement
+import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.fold
+import schwarz.it.lightsaber.utils.getElements
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
-import javax.lang.model.util.Elements
 
 interface FactoryOrBuilder {
     fun getBindInstance(): List<BindsInstance>
@@ -30,7 +31,7 @@ interface FactoryOrBuilder {
     }
 
     interface BindsInstance {
-        fun getCodePosition(elements: Elements): CodePosition
+        fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition
         override fun toString(): String
 
         companion object {
@@ -59,8 +60,8 @@ private value class FactoryOrBuilderJavac(private val value: Element) : FactoryO
 
     @JvmInline
     value class BindsInstance(private val value: Element) : FactoryOrBuilder.BindsInstance {
-        override fun getCodePosition(elements: Elements): CodePosition {
-            return elements.getCodePosition(value)
+        override fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
+            return daggerProcessingEnv.getElements().getCodePosition(value)
         }
 
         override fun toString(): String {
@@ -86,7 +87,7 @@ private value class FactoryOrBuilderKsp(private val value: KSClassDeclaration) :
 
     @JvmInline
     value class BindsInstance(private val value: KSAnnotated) : FactoryOrBuilder.BindsInstance {
-        override fun getCodePosition(elements: Elements): CodePosition {
+        override fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
             return value.location.toCodePosition()
         }
 

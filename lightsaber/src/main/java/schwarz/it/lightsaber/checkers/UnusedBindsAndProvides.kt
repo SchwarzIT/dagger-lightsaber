@@ -7,12 +7,10 @@ import schwarz.it.lightsaber.domain.Module
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getUsedModules
 import schwarz.it.lightsaber.utils.toList
-import javax.lang.model.util.Elements
 
 internal fun checkUnusedBindsAndProvides(
     bindingGraph: BindingGraph,
     daggerProcessingEnv: DaggerProcessingEnv,
-    elements: Elements,
 ): List<Finding> {
     val usedBindsAndProvides = bindingGraph.getUsedBindsAndProvides()
     val componentsWithItsDeclaredModules =
@@ -26,7 +24,7 @@ internal fun checkUnusedBindsAndProvides(
                 unusedBindings.map { binding ->
                     Finding(
                         "The $binding declared on `$module` is not used.",
-                        binding.getCodePosition(elements),
+                        binding.getCodePosition(daggerProcessingEnv),
                     )
                 }
             }
