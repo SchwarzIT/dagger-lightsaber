@@ -11,10 +11,9 @@ import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getElements
+import schwarz.it.lightsaber.utils.getMethods
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.ExecutableElement
 
 interface FactoryOrBuilder {
     fun getBindInstance(): List<BindsInstance>
@@ -95,9 +94,4 @@ private value class FactoryOrBuilderKsp(private val value: KSClassDeclaration) :
             return value.toString()
         }
     }
-}
-
-private fun Element.getMethods(): List<ExecutableElement> {
-    return enclosedElements.filter { it.kind == ElementKind.METHOD }
-        .mapNotNull { it as? ExecutableElement }
 }
