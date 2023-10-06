@@ -15,17 +15,17 @@ import schwarz.it.lightsaber.utils.findAnnotationMirrors
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
 import schwarz.it.lightsaber.utils.getDeclaredArguments
+import schwarz.it.lightsaber.utils.getElements
 import schwarz.it.lightsaber.utils.getTypes
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.Elements
 
 interface Module {
     fun getIncludedModules(daggerProcessingEnv: DaggerProcessingEnv): List<Module>
-    fun getIncludesCodePosition(elements: Elements): CodePosition
+    fun getIncludesCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition
     fun getBindings(): List<Binding>
 
     companion object {
@@ -47,7 +47,7 @@ interface Module {
 
     interface Binding {
         override fun toString(): String
-        fun getCodePosition(elements: Elements): CodePosition
+        fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition
 
         companion object {
             operator fun invoke(element: DaggerElement): Binding {
@@ -78,9 +78,9 @@ private value class ModuleJavac constructor(private val value: TypeElement) : Mo
             .map { ModuleJavac(daggerProcessingEnv, it) }
     }
 
-    override fun getIncludesCodePosition(elements: Elements): CodePosition {
+    override fun getIncludesCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
         val annotationMirror = value.findAnnotationMirrors("Module")!!
-        return elements.getCodePosition(
+        return daggerProcessingEnv.getElements().getCodePosition(
             value,
             annotationMirror,
             annotationMirror.getAnnotationValue("includes"),
@@ -93,8 +93,8 @@ private value class ModuleJavac constructor(private val value: TypeElement) : Mo
             return "@${bindingAnnotations.first { value.isAnnotatedWith(it) }.simpleName} `${value.simpleName}`"
         }
 
-        override fun getCodePosition(elements: Elements): CodePosition {
-            return elements.getCodePosition(value)
+        override fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
+            return daggerProcessingEnv.getElements().getCodePosition(value)
         }
     }
 }
@@ -120,7 +120,7 @@ private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
             .map { Module(it.declaration as KSClassDeclaration) }
     }
 
-    override fun getIncludesCodePosition(elements: Elements): CodePosition {
+    override fun getIncludesCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
         return value.location.toCodePosition()
     }
 
@@ -131,7 +131,7 @@ private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
             return "@${bindingAnnotations.first { value.isAnnotationPresent(it) }.simpleName} `$value`"
         }
 
-        override fun getCodePosition(elements: Elements): CodePosition {
+        override fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
             return value.location.toCodePosition()
         }
     }

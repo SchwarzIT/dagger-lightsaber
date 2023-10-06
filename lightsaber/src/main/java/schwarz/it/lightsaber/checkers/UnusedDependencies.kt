@@ -13,13 +13,11 @@ import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
 import schwarz.it.lightsaber.utils.getTypes
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
-import javax.lang.model.util.Elements
 import kotlin.jvm.optionals.getOrElse
 
 internal fun checkUnusedDependencies(
     bindingGraph: BindingGraph,
     daggerProcessingEnv: DaggerProcessingEnv,
-    elements: Elements,
 ): List<Finding> {
     val used = bindingGraph.getUsedDependencies()
     return bindingGraph.componentNodes()
@@ -29,7 +27,7 @@ internal fun checkUnusedDependencies(
             (declared - used).map {
                 Finding(
                     "The dependency `$it` is not used.",
-                    component.getDependenciesCodePosition(elements),
+                    component.getDependenciesCodePosition(daggerProcessingEnv),
                 )
             }
         }
