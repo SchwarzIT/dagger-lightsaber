@@ -4,15 +4,14 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import dagger.Component
 import dagger.Subcomponent
 import dagger.spi.model.BindingGraph
+import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.domain.Module
-import javax.lang.model.element.TypeElement
 import javax.lang.model.type.MirroredTypesException
 import javax.lang.model.type.TypeMirror
-import javax.lang.model.util.Types
 
 internal fun BindingGraph.ComponentNode.getDeclaredModules(
     bindingGraph: BindingGraph,
-    types: Types,
+    daggerProcessingEnv: DaggerProcessingEnv,
 ): List<TreeNode<Module>> {
     val usedModules = bindingGraph.getUsedModules()
     return if (isSubcomponent) {
@@ -21,7 +20,7 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
                 { element ->
                     element.getAnnotation(Subcomponent::class.java)
                         .getTypesMirrorsFromClass { modules }
-                        .map { Module(types.asElement(it) as TypeElement) }
+                        .map { Module(daggerProcessingEnv, it) }
                 },
                 { ksDeclaration ->
                     ksDeclaration
@@ -35,7 +34,7 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
                 { element ->
                     element.getAnnotation(Component::class.java)
                         .getTypesMirrorsFromClass { modules }
-                        .map { Module(types.asElement(it) as TypeElement) }
+                        .map { Module(daggerProcessingEnv, it) }
                 },
                 { ksDeclaration ->
                     ksDeclaration
@@ -43,18 +42,18 @@ internal fun BindingGraph.ComponentNode.getDeclaredModules(
                         .map { Module(it.declaration as KSClassDeclaration) }
                 },
             )
-    }.map { module -> getModuleTree(usedModules, module, types) }
+    }.map { module -> getModuleTree(usedModules, module, daggerProcessingEnv) }
 }
 
 private fun getModuleTree(
     usedModules: Set<Module>,
     module: Module,
-    types: Types,
+    daggerProcessingEnv: DaggerProcessingEnv,
 ): TreeNode<Module> {
     return TreeNode(
         value = module,
-        children = module.getIncludedModules(types)
-            .map { getModuleTree(usedModules, it, types) },
+        children = module.getIncludedModules(daggerProcessingEnv)
+            .map { getModuleTree(usedModules, it, daggerProcessingEnv) },
     )
 }
 

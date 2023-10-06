@@ -7,6 +7,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import dagger.Binds
 import dagger.Provides
 import dagger.spi.model.DaggerElement
+import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
@@ -14,19 +15,27 @@ import schwarz.it.lightsaber.utils.findAnnotationMirrors
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
 import schwarz.it.lightsaber.utils.getDeclaredArguments
+import schwarz.it.lightsaber.utils.getTypes
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
+import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
 
 interface Module {
-    fun getIncludedModules(types: Types): List<Module>
+    fun getIncludedModules(daggerProcessingEnv: DaggerProcessingEnv): List<Module>
     fun getIncludesCodePosition(elements: Elements): CodePosition
     fun getBindings(): List<Binding>
 
     companion object {
+        operator fun invoke(
+            daggerProcessingEnv: DaggerProcessingEnv,
+            typeMirror: TypeMirror,
+        ): Module {
+            return ModuleJavac(daggerProcessingEnv, typeMirror)
+        }
+
         operator fun invoke(typeElement: TypeElement): Module {
             return ModuleJavac(typeElement)
         }
@@ -49,7 +58,11 @@ interface Module {
 }
 
 @JvmInline
-private value class ModuleJavac(private val value: TypeElement) : Module {
+private value class ModuleJavac constructor(private val value: TypeElement) : Module {
+
+    constructor(daggerProcessingEnv: DaggerProcessingEnv, typeMirror: TypeMirror) : this(
+        daggerProcessingEnv.getTypes().asElement(typeMirror) as TypeElement,
+    )
 
     override fun toString(): String {
         return value.toString()
@@ -59,10 +72,10 @@ private value class ModuleJavac(private val value: TypeElement) : Module {
         return value.getBindings() + value.getCompanion()?.getBindings().orEmpty()
     }
 
-    override fun getIncludedModules(types: Types): List<Module> {
+    override fun getIncludedModules(daggerProcessingEnv: DaggerProcessingEnv): List<Module> {
         return value.getAnnotation(dagger.Module::class.java)
             .getTypesMirrorsFromClass { includes }
-            .map { ModuleJavac(types.asElement(it) as TypeElement) }
+            .map { ModuleJavac(daggerProcessingEnv, it) }
     }
 
     override fun getIncludesCodePosition(elements: Elements): CodePosition {
@@ -101,7 +114,7 @@ private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
             .toList()
     }
 
-    override fun getIncludedModules(types: Types): List<Module> {
+    override fun getIncludedModules(daggerProcessingEnv: DaggerProcessingEnv): List<Module> {
         return value
             .getDeclaredArguments(dagger.Module::class, "includes")
             .map { Module(it.declaration as KSClassDeclaration) }

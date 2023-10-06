@@ -9,6 +9,7 @@ import dagger.spi.model.DaggerTypeElement
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Types
 
 fun <T> DaggerProcessingEnv.fold(
     javac: (ProcessingEnvironment) -> T,
@@ -16,6 +17,13 @@ fun <T> DaggerProcessingEnv.fold(
 ): T = when (backend()!!) {
     DaggerProcessingEnv.Backend.JAVAC -> javac(javac())
     DaggerProcessingEnv.Backend.KSP -> ksp(ksp())
+}
+
+fun DaggerProcessingEnv.getTypes(): Types {
+    return when (backend()!!) {
+        DaggerProcessingEnv.Backend.JAVAC -> javac().typeUtils
+        DaggerProcessingEnv.Backend.KSP -> error("KSP doesn't have Types.")
+    }
 }
 
 fun <T> DaggerTypeElement.fold(

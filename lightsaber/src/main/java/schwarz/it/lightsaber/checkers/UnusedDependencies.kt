@@ -5,28 +5,32 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import dagger.Component
 import dagger.spi.model.BindingGraph
 import dagger.spi.model.BindingKind
+import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.Dependency
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
+import schwarz.it.lightsaber.utils.getTypes
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import javax.lang.model.util.Elements
-import javax.lang.model.util.Types
 import kotlin.jvm.optionals.getOrElse
 
 internal fun checkUnusedDependencies(
     bindingGraph: BindingGraph,
-    types: Types,
+    daggerProcessingEnv: DaggerProcessingEnv,
     elements: Elements,
 ): List<Finding> {
     val used = bindingGraph.getUsedDependencies()
     return bindingGraph.componentNodes()
         .filterNot { it.isSubcomponent }
         .flatMap { component ->
-            val declared = component.getDeclaredDependencies(types)
+            val declared = component.getDeclaredDependencies(daggerProcessingEnv)
             (declared - used).map {
-                Finding("The dependency `$it` is not used.", component.getDependenciesCodePosition(elements))
+                Finding(
+                    "The dependency `$it` is not used.",
+                    component.getDependenciesCodePosition(elements),
+                )
             }
         }
 }
@@ -57,13 +61,13 @@ private fun BindingGraph.getUsedDependencies(): Set<Dependency> {
         .toSet()
 }
 
-private fun BindingGraph.ComponentNode.getDeclaredDependencies(types: Types): Set<Dependency> {
+private fun BindingGraph.ComponentNode.getDeclaredDependencies(daggerProcessingEnv: DaggerProcessingEnv): Set<Dependency> {
     return componentPath().currentComponent()
         .fold(
             { element ->
                 element.getAnnotation(Component::class.java)
                     .getTypesMirrorsFromClass { dependencies }
-                    .map { Dependency(types.asElement(it)) }
+                    .map { Dependency(daggerProcessingEnv.getTypes().asElement(it)) }
             },
             { classDeclaration: KSClassDeclaration ->
                 classDeclaration
