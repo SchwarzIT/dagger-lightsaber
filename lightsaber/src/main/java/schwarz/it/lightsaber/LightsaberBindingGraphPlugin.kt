@@ -20,7 +20,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     }
 
     private lateinit var daggerProcessingEnv: DaggerProcessingEnv
-    private lateinit var filer: FileGenerator
+    private lateinit var fileGenerator: FileGenerator
     private lateinit var config: LightsaberConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
@@ -41,7 +41,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
-        filer.createFile("schwarz.it.lightsaber", bindingGraph.getQualifiedName(), "lightsaber")
+        fileGenerator.createFile("schwarz.it.lightsaber", bindingGraph.getQualifiedName(), "lightsaber")
             .let(::PrintWriter)
             .use { writer ->
                 issues.forEach { writer.println(it.getMessage()) }
@@ -56,7 +56,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
         this.daggerProcessingEnv = processingEnv
-        this.filer = FileGenerator(processingEnv)
+        this.fileGenerator = FileGenerator(processingEnv)
     }
 
     override fun supportedOptions(): Set<String> {
