@@ -14,7 +14,7 @@ class LightsaberTaskTest {
     )
 
     @Test
-    fun failWhenNoIssues() {
+    fun errorWhenNoIssues() {
         val e = assertThrows<IllegalArgumentException> { checkIssues(emptyList(), severities, false) }
         assertThat(e).hasMessageThat().isEqualTo("The .lightsaber files should never be empty")
     }

@@ -9,7 +9,6 @@ import org.gradle.api.tasks.VerificationTask
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 abstract class LightsaberTask : SourceTask(), VerificationTask {
-
     init {
         group = LifecycleBasePlugin.VERIFICATION_GROUP
         description = "Check for unused dagger code"
