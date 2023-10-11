@@ -6,7 +6,6 @@ import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.Location
 import com.google.devtools.ksp.symbol.NonExistLocation
 import com.sun.tools.javac.model.JavacElements
-import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.DiagnosticSource
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -32,7 +31,7 @@ internal fun Elements.getCodePosition(
     annotationValue: AnnotationValue? = null,
 ): CodePosition {
     val pair = (this as JavacElements).getTreeAndTopLevel(element, annotationMirror, annotationValue)
-    val sourceFile = (pair.snd as JCTree.JCCompilationUnit).sourcefile
+    val sourceFile = pair.snd.sourcefile
     val diagnosticSource = DiagnosticSource(sourceFile, null)
     val line = diagnosticSource.getLineNumber(pair.fst.pos)
     val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
