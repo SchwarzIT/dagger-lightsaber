@@ -23,6 +23,10 @@ data class CodePosition(
     val column: Int? = null,
 ) {
     override fun toString() = if (column != null) "$path:$line:$column" else "$path:$line"
+
+    companion object {
+        val Unknown = CodePosition("Unknown", 0)
+    }
 }
 
 internal fun Elements.getCodePosition(
@@ -30,7 +34,8 @@ internal fun Elements.getCodePosition(
     annotationMirror: AnnotationMirror? = null,
     annotationValue: AnnotationValue? = null,
 ): CodePosition {
-    val pair = (this as JavacElements).getTreeAndTopLevel(element, annotationMirror, annotationValue)
+    this as JavacElements
+    val pair = getTreeAndTopLevel(element, annotationMirror, annotationValue) ?: return CodePosition.Unknown
     val sourceFile = pair.snd.sourcefile
     val diagnosticSource = DiagnosticSource(sourceFile, null)
     val line = diagnosticSource.getLineNumber(pair.fst.pos)
