@@ -72,3 +72,11 @@ internal fun <T : Annotation> T.getTypesMirrorsFromClass(block: T.() -> Unit): L
         ex.typeMirrors.orEmpty()
     }
 }
+
+internal fun BindingGraph.ComponentNode.getFullQualifiedName(): String {
+    return this.componentPath().currentComponent()
+        .fold(
+            { it.qualifiedName.toString() },
+            { it.qualifiedName!!.asString() },
+        )
+}

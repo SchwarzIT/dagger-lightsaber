@@ -23,7 +23,7 @@ internal fun checkUnusedBindsAndProvides(
             .flatMap { (module, unusedBindings) ->
                 unusedBindings.map { binding ->
                     Finding(
-                        "The $binding declared on `$module` is not used.",
+                        "The $binding declared in `$module` is not used.",
                         binding.getCodePosition(daggerProcessingEnv),
                     )
                 }

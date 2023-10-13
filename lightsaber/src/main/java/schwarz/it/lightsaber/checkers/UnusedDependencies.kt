@@ -26,7 +26,7 @@ internal fun checkUnusedDependencies(
             val declared = component.getDeclaredDependencies(daggerProcessingEnv)
             (declared - used).map {
                 Finding(
-                    "The dependency `$it` is not used.",
+                    "The dependency `$it` declared in `$component` is not used.",
                     component.getDependenciesCodePosition(daggerProcessingEnv),
                 )
             }

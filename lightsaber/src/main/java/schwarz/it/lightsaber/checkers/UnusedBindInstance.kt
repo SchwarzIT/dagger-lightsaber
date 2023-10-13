@@ -6,6 +6,7 @@ import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.utils.getComponentFactoriesAndBuilders
+import schwarz.it.lightsaber.utils.getFullQualifiedName
 
 internal fun checkUnusedBindInstance(
     bindingGraph: BindingGraph,
@@ -20,7 +21,7 @@ internal fun checkUnusedBindInstance(
 
             (bindInstances - usedInstances).map {
                 Finding(
-                    "The @BindsInstance `$it` is not used.",
+                    "The @BindsInstance `$it` declared in `${componentNode.getFullQualifiedName()}` is not used.",
                     it.getCodePosition(daggerProcessingEnv),
                 )
             }
