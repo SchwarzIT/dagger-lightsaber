@@ -11,6 +11,7 @@ import schwarz.it.lightsaber.domain.Dependency
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
+import schwarz.it.lightsaber.utils.getFullQualifiedName
 import schwarz.it.lightsaber.utils.getTypes
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import kotlin.jvm.optionals.getOrElse
@@ -26,7 +27,7 @@ internal fun checkUnusedDependencies(
             val declared = component.getDeclaredDependencies(daggerProcessingEnv)
             (declared - used).map {
                 Finding(
-                    "The dependency `$it` is not used.",
+                    "The dependency `$it` declared in `$component` is not used.",
                     component.getDependenciesCodePosition(daggerProcessingEnv),
                 )
             }

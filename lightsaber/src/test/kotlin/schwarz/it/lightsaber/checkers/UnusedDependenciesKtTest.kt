@@ -50,7 +50,7 @@ internal class UnusedDependenciesKtTest {
             .compile(component, dependency)
 
         compilation.assertUnusedDependencies(
-            message = "The dependency `test.Dependency` is not used.",
+            message = "The dependency `test.Dependency` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
         )
