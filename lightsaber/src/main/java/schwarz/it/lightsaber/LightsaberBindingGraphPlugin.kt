@@ -29,17 +29,17 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             runRule(config.checkEmptyComponent, "EmptyComponent") {
                 checkEmptyComponent(bindingGraph, daggerProcessingEnv)
             },
+            runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
+                checkUnusedBindsAndProvides(bindingGraph, daggerProcessingEnv)
+            },
+            runRule(config.checkUnusedBindInstance, "UnusedBindInstance") {
+                checkUnusedBindInstance(bindingGraph, daggerProcessingEnv)
+            },
             runRule(config.checkUnusedDependencies, "UnusedDependencies") {
                 checkUnusedDependencies(bindingGraph, daggerProcessingEnv)
             },
             runRule(config.checkUnusedModules, "UnusedModules") {
                 checkUnusedModules(bindingGraph, daggerProcessingEnv)
-            },
-            runRule(config.checkUnusedBindInstance, "UnusedBindInstance") {
-                checkUnusedBindInstance(bindingGraph, daggerProcessingEnv)
-            },
-            runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
-                checkUnusedBindsAndProvides(bindingGraph, daggerProcessingEnv)
             },
         )
             .flatten()
