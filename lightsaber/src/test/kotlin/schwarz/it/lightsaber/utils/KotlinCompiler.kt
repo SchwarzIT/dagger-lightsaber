@@ -72,10 +72,10 @@ internal class KspKotlinCompiler(
 
 enum class Rule {
     EmptyComponent,
-    Asdf,
     UnusedBindInstance,
     UnusedBindAndProvides,
     UnusedDependencies,
+    UnusedMembersInjectionMethods,
     UnusedModules,
 }
 
