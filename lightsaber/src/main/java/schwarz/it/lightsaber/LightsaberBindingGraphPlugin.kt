@@ -5,6 +5,7 @@ import dagger.spi.model.BindingGraph
 import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DaggerProcessingEnv
 import dagger.spi.model.DiagnosticReporter
+import schwarz.it.lightsaber.checkers.checkEmptyComponent
 import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
@@ -25,6 +26,9 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
+            runRule(config.checkEmptyComponent, "EmptyComponent") {
+                checkEmptyComponent(bindingGraph, daggerProcessingEnv)
+            },
             runRule(config.checkUnusedDependencies, "UnusedDependencies") {
                 checkUnusedDependencies(bindingGraph, daggerProcessingEnv)
             },
@@ -50,6 +54,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
         this.config = LightsaberConfig(
+            checkEmptyComponent = options["Lightsaber.CheckEmptyComponent"] != "false",
             checkUnusedBindInstance = options["Lightsaber.CheckUnusedBindInstance"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
@@ -61,6 +66,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun supportedOptions(): Set<String> {
         return setOf(
+            "Lightsaber.CheckEmptyComponent",
             "Lightsaber.CheckUnusedBindInstance",
             "Lightsaber.CheckUnusedBindsAndProvides",
             "Lightsaber.CheckUnusedDependencies",
@@ -86,6 +92,7 @@ private data class Issue(
 )
 
 internal data class LightsaberConfig(
+    val checkEmptyComponent: Boolean,
     val checkUnusedBindInstance: Boolean,
     val checkUnusedBindsAndProvides: Boolean,
     val checkUnusedDependencies: Boolean,

@@ -67,6 +67,7 @@ internal class KspKotlinCompiler(
 }
 
 enum class Rule {
+    EmptyComponent,
     UnusedBindInstance,
     UnusedBindAndProvides,
     UnusedDependencies,
@@ -101,6 +102,7 @@ private fun findGeneratedFiles(file: File): List<File> {
 private fun getLightsaberArguments(
     vararg rules: Rule,
 ) = mutableMapOf(
+    "Lightsaber.CheckEmptyComponent" to (Rule.EmptyComponent in rules).toString(),
     "Lightsaber.CheckUnusedBindInstance" to (Rule.UnusedBindInstance in rules).toString(),
     "Lightsaber.CheckUnusedBindsAndProvides" to (Rule.UnusedBindAndProvides in rules).toString(),
     "Lightsaber.CheckUnusedDependencies" to (Rule.UnusedDependencies in rules).toString(),
