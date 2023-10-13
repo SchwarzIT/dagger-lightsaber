@@ -47,7 +47,7 @@ internal class UnusedBindInstanceKtTest {
         val compilation = compiler.compile(component)
 
         compilation.assertUnusedBindInstance(
-            message = "The @BindsInstance `myInt` is not used.",
+            message = "The @BindsInstance `myInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
         )
@@ -82,7 +82,7 @@ internal class UnusedBindInstanceKtTest {
         val compilation = compiler.compile(component)
 
         compilation.assertUnusedBindInstance(
-            message = "The @BindsInstance `myInt` is not used.",
+            message = "The @BindsInstance `myInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
         )
@@ -154,7 +154,7 @@ internal class UnusedBindInstanceKtTest {
         val compilation = compiler.compile(component)
 
         compilation.assertUnusedBindInstance(
-            message = "The @BindsInstance `secondInt` is not used.",
+            message = "The @BindsInstance `secondInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
         )
@@ -296,7 +296,7 @@ internal class UnusedBindInstanceKtTest {
         val compilation = compiler.compile(component, subcomponent)
 
         compilation.assertUnusedBindInstance(
-            message = "The @BindsInstance `myInt` is not used.",
+            message = "The @BindsInstance `myInt` declared in `test.MySubcomponent` is not used.",
             line = line,
             column = column,
             fileName = "test/MySubcomponent",
