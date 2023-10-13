@@ -11,7 +11,6 @@ import schwarz.it.lightsaber.domain.Dependency
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
-import schwarz.it.lightsaber.utils.getFullQualifiedName
 import schwarz.it.lightsaber.utils.getTypes
 import schwarz.it.lightsaber.utils.getTypesMirrorsFromClass
 import kotlin.jvm.optionals.getOrElse
