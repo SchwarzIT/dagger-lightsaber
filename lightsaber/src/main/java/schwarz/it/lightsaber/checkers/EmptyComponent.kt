@@ -8,6 +8,7 @@ import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getElements
+import schwarz.it.lightsaber.utils.getFullQualifiedName
 import schwarz.it.lightsaber.utils.getMethods
 
 internal fun checkEmptyComponent(
@@ -48,14 +49,6 @@ internal fun checkEmptyComponent(
                 it.getCodePosition(daggerProcessingEnv),
             )
         }
-}
-
-private fun BindingGraph.ComponentNode.getFullQualifiedName(): String {
-    return this.componentPath().currentComponent()
-        .fold(
-            { it.qualifiedName.toString() },
-            { it.qualifiedName!!.asString() },
-        )
 }
 
 private val kspDefaultDeclaredFunctions = listOf(
