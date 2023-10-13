@@ -65,7 +65,7 @@ internal class UnusedBindsAndProvidesKtTest {
         val compilation = compiler.compile(component, module)
 
         compilation.assertUnusedBindsAndProvides(
-            message = "The @Binds `bindsMyInts` declared on `test.MyModule` is not used.",
+            message = "The @Binds `bindsMyInts` declared in `test.MyModule` is not used.",
             line = line,
             column = column,
         )
@@ -117,7 +117,7 @@ internal class UnusedBindsAndProvidesKtTest {
         val compilation = compiler.compile(component, module)
 
         compilation.assertUnusedBindsAndProvides(
-            message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+            message = "The @Provides `providesMyString` declared in `test.MyModule` is not used.",
             line = line,
             column = column,
         )
@@ -181,7 +181,7 @@ internal class UnusedBindsAndProvidesKtTest {
         val compilation = compiler.compile(component, subcomponent, module)
 
         compilation.assertUnusedBindsAndProvides(
-            message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+            message = "The @Provides `providesMyString` declared in `test.MyModule` is not used.",
             line = line,
             column = column,
         )
@@ -260,14 +260,14 @@ internal class UnusedBindsAndProvidesKtTest {
 
         compilation.assertHasFindings(
             FindingInfo(
-                message = "The @Provides `providesMyInts` declared on `test.MyModule` is not used.",
+                message = "The @Provides `providesMyInts` declared in `test.MyModule` is not used.",
                 line = line1,
                 column = column1,
                 ruleName = "UnusedBindsAndProvides",
                 fileName = compilation.sourcesDir.resolve("test/MyModule.${compilation.type.extension}").toString(),
             ),
             FindingInfo(
-                message = "The @Provides `providesMyString` declared on `test.MyModule` is not used.",
+                message = "The @Provides `providesMyString` declared in `test.MyModule` is not used.",
                 line = line2,
                 column = column2,
                 ruleName = "UnusedBindsAndProvides",
@@ -385,7 +385,7 @@ internal class UnusedBindsAndProvidesKtTest {
         val compilation = compiler.compile(component, moduleA, moduleB)
 
         compilation.assertUnusedBindsAndProvides(
-            message = "The @Binds `bindsMyInts` declared on `test.MyModuleB` is not used.",
+            message = "The @Binds `bindsMyInts` declared in `test.MyModuleB` is not used.",
             line = line,
             column = column,
             fileName = "test/MyModuleB",
