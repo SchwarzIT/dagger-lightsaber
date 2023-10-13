@@ -9,6 +9,7 @@ import schwarz.it.lightsaber.checkers.checkEmptyComponent
 import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
+import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
@@ -38,6 +39,9 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             runRule(config.checkUnusedDependencies, "UnusedDependencies") {
                 checkUnusedDependencies(bindingGraph, daggerProcessingEnv)
             },
+            runRule(config.checkUnusedMembersInjectionMethods, "UnusedMembersInjectionMethods") {
+                checkUnusedMembersInjectionMethods(bindingGraph, daggerProcessingEnv)
+            },
             runRule(config.checkUnusedModules, "UnusedModules") {
                 checkUnusedModules(bindingGraph, daggerProcessingEnv)
             },
@@ -58,6 +62,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             checkUnusedBindInstance = options["Lightsaber.CheckUnusedBindInstance"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
+            checkUnusedMembersInjectionMethods = options["Lightsaber.CheckUnusedMembersInjectionMethods"] != "false",
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
         )
         this.daggerProcessingEnv = processingEnv
@@ -70,6 +75,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             "Lightsaber.CheckUnusedBindInstance",
             "Lightsaber.CheckUnusedBindsAndProvides",
             "Lightsaber.CheckUnusedDependencies",
+            "Lightsaber.CheckUnusedMembersInjectionMethods",
             "Lightsaber.CheckUnusedModules",
         )
     }
@@ -96,5 +102,6 @@ internal data class LightsaberConfig(
     val checkUnusedBindInstance: Boolean,
     val checkUnusedBindsAndProvides: Boolean,
     val checkUnusedDependencies: Boolean,
+    val checkUnusedMembersInjectionMethods: Boolean,
     val checkUnusedModules: Boolean,
 )

@@ -17,7 +17,7 @@ import schwarz.it.lightsaber.utils.extension
 internal class UnusedMembersInjectionMethodsKtTest {
 
     @ParameterizedTest
-    @CsvSource("kapt,7,17", "ksp,6,")
+    @CsvSource("kapt,9,26", "ksp,7,")
     fun UnusedMembersInjectionMethodsReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -33,15 +33,14 @@ internal class UnusedMembersInjectionMethodsKtTest {
             interface MyComponent {
                 fun inject(str: String)
             }
-
-            class Foo()
             """.trimIndent(),
         )
 
         val compilation = compiler.compile(component)
 
         compilation.assertUnusedMembersInjectionMethods(
-            message = "The @Component `test.MyComponent` is not used and could be removed.",
+            message = "The members-injection method `inject` declared in `test.MyComponent` is not used. " +
+                "`java.lang.String` doesn't have any variable or method annotated with @Inject.",
             line = line,
             column = column,
         )
