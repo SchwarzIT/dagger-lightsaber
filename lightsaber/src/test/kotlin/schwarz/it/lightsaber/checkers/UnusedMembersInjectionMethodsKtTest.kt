@@ -14,11 +14,11 @@ import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.extension
 
-internal class AsdfKtTest {
+internal class UnusedMembersInjectionMethodsKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,7,17", "ksp,6,")
-    fun asdfReportsError(
+    fun UnusedMembersInjectionMethodsReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
         column: Int?,
@@ -40,7 +40,7 @@ internal class AsdfKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertAsdf(
+        compilation.assertUnusedMembersInjectionMethods(
             message = "The @Component `test.MyComponent` is not used and could be removed.",
             line = line,
             column = column,
@@ -51,15 +51,15 @@ internal class AsdfKtTest {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
             return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.Asdf)
-                "ksp" -> KspKotlinCompiler(Rule.Asdf)
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedMembersInjectionMethods)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedMembersInjectionMethods)
                 else -> error("Unknown compiler of type $source")
             }
         }
     }
 }
 
-private fun CompilationResult.assertAsdf(
+private fun CompilationResult.assertUnusedMembersInjectionMethods(
     message: String,
     line: Int,
     column: Int?,
@@ -70,7 +70,7 @@ private fun CompilationResult.assertAsdf(
         line = line,
         column = column,
         fileName = sourcesDir.resolve("$fileName.${type.extension}").toString(),
-        ruleName = "Asdf",
+        ruleName = "UnusedMembersInjectionMethods",
     )
 }
 
