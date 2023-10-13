@@ -79,7 +79,7 @@ internal class EmptyComponentKtTest {
         val compilation = compiler.compile(subcomponent, component)
 
         compilation.assertEmptyComponent(
-            message = "The @Subcomponent `test.MyComponent → test.MySubcomponent` is empty and could be removed.",
+            message = "The @Subcomponent `test.MySubcomponent` is empty and could be removed.",
             line = line,
             column = column,
             fileName = "test/MySubcomponent",

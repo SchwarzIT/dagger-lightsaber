@@ -43,8 +43,19 @@ internal fun checkEmptyComponent(
                 "@Component"
             }
 
-            Finding("The $annotation `$it` is empty and could be removed.", it.getCodePosition(daggerProcessingEnv))
+            Finding(
+                "The $annotation `${it.getFullQualifiedName()}` is empty and could be removed.",
+                it.getCodePosition(daggerProcessingEnv),
+            )
         }
+}
+
+private fun BindingGraph.ComponentNode.getFullQualifiedName(): String {
+    return this.componentPath().currentComponent()
+        .fold(
+            { it.qualifiedName.toString() },
+            { it.qualifiedName!!.asString() },
+        )
 }
 
 private val kspDefaultDeclaredFunctions = listOf(
