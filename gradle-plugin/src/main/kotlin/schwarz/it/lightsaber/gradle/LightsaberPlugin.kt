@@ -25,6 +25,7 @@ private fun Project.apply() {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
+                arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get())
                 arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get())
                 arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get())
                 arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get())
@@ -46,6 +47,7 @@ private fun Project.apply() {
                         put(
                             rule,
                             when (rule) {
+                                Rule.EmptyComponent -> extension.emptyComponent
                                 Rule.UnusedBindInstance -> extension.unusedBindInstance
                                 Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
                                 Rule.UnusedDependencies -> extension.unusedDependencies
@@ -62,6 +64,7 @@ private fun Project.apply() {
 }
 
 interface LightsaberExtension {
+    val emptyComponent: Property<Severity>
     val unusedBindInstance: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>
