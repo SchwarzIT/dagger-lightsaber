@@ -31,36 +31,34 @@ private fun Project.apply() {
                 arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get())
             }
         }
-    }
 
-    val lightsaberCheck = tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
-        pluginManager.withPlugin("kotlin-kapt") {
+        val lightsaberCheck = tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
             task.dependsOn(provider { tasks.withType(BaseKapt::class.java) })
+
+            task.source = tasks.withType(BaseKapt::class.java)
+                .map { fileTree(it.destinationDir.dir("schwarz/it/lightsaber")).asFileTree }
+                .reduce { acc, fileTree -> acc.plus(fileTree) }
+                .matching { it.include("*.lightsaber") }
+
+            task.severities.set(
+                objects.mapProperty(Rule::class.java, Severity::class.java).apply {
+                    Rule.entries.forEach { rule ->
+                        put(
+                            rule,
+                            when (rule) {
+                                Rule.UnusedBindInstance -> extension.unusedBindInstance
+                                Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
+                                Rule.UnusedDependencies -> extension.unusedDependencies
+                                Rule.UnusedModules -> extension.unusedModules
+                            },
+                        )
+                    }
+                },
+            )
         }
 
-        task.source = tasks.withType(BaseKapt::class.java)
-            .map { fileTree(it.destinationDir.dir("schwarz/it/lightsaber")).asFileTree }
-            .reduce { acc, fileTree -> acc.plus(fileTree) }
-            .matching { it.include("*.lightsaber") }
-
-        task.severities.set(
-            objects.mapProperty(Rule::class.java, Severity::class.java).apply {
-                Rule.entries.forEach { rule ->
-                    put(
-                        rule,
-                        when (rule) {
-                            Rule.UnusedBindInstance -> extension.unusedBindInstance
-                            Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
-                            Rule.UnusedDependencies -> extension.unusedDependencies
-                            Rule.UnusedModules -> extension.unusedModules
-                        },
-                    )
-                }
-            },
-        )
+        tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
     }
-
-    tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
 interface LightsaberExtension {
