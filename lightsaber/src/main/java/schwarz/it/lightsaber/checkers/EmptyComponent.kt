@@ -24,14 +24,11 @@ internal fun checkEmptyComponent(
                 { classDeclaration ->
                     val hasNoDeclaredFunctions = classDeclaration
                         .getAllFunctions()
-                        .filter { it.simpleName.asString() !in kspDefaultDeclaredFunctions }
-                        .toList()
-                        .isEmpty()
+                        .none { it.simpleName.asString() !in kspDefaultDeclaredFunctions }
 
                     val hasNoDeclaredProperties = classDeclaration
                         .getAllProperties()
-                        .toList()
-                        .isEmpty()
+                        .none()
 
                     hasNoDeclaredFunctions && hasNoDeclaredProperties
                 },
