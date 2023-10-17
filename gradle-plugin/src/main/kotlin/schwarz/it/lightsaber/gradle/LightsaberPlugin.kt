@@ -15,6 +15,7 @@ class LightsaberPlugin : Plugin<Project> {
 
 private fun Project.apply() {
     val extension = extensions.create("lightsaber", LightsaberExtension::class.java).apply {
+        emptyComponent.convention(Severity.Error)
         unusedBindInstance.convention(Severity.Error)
         unusedBindsAndProvides.convention(Severity.Error)
         unusedDependencies.convention(Severity.Error)
