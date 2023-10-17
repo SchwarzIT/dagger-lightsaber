@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalCompilerApi::class)
+
 package schwarz.it.lightsaber.utils
 
 import com.google.common.truth.Truth.assertThat
+import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.kspArgs
@@ -9,6 +12,7 @@ import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import dagger.internal.codegen.ComponentProcessor
 import dagger.internal.codegen.KspComponentProcessor
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import schwarz.it.lightsaber.LightsaberBindingGraphPlugin
 import schwarz.it.lightsaber.truth.assertThat
 import java.io.File
@@ -33,6 +37,8 @@ internal class KaptKotlinCompiler(
 
     override fun compile(vararg sourceFiles: SourceFile): CompilationResult {
         compiler.sources = sourceFiles.asList()
+        // workaround for https://github.com/ZacSweers/kotlin-compile-testing/issues/188
+        compiler.workingDir.resolve("sources").resolve("test").mkdirs()
         return CompilationResult(
             compiler.compile(),
             findGeneratedFiles(compiler.classesDir),
@@ -57,6 +63,8 @@ internal class KspKotlinCompiler(
 
     override fun compile(vararg sourceFiles: SourceFile): CompilationResult {
         compiler.sources = sourceFiles.asList()
+        // workaround for https://github.com/ZacSweers/kotlin-compile-testing/issues/188
+        compiler.workingDir.resolve("sources").resolve("test").mkdirs()
         return CompilationResult(
             compiler.compile(),
             findGeneratedFiles(compiler.kspSourcesDir),
@@ -75,7 +83,7 @@ enum class Rule {
 }
 
 internal data class CompilationResult(
-    val result: KotlinCompilation.Result,
+    val result: JvmCompilationResult,
     val generatedFiles: List<File>,
     val sourcesDir: File,
     val type: Type,

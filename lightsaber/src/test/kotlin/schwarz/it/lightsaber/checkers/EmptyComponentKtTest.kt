@@ -17,7 +17,7 @@ import schwarz.it.lightsaber.utils.extension
 
 internal class EmptyComponentKtTest {
     @ParameterizedTest
-    @CsvSource("kapt,7,17", "ksp,6,")
+    @CsvSource("kapt,5,17", "ksp,6,")
     fun emptyComponentReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -45,7 +45,7 @@ internal class EmptyComponentKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,7,17", "ksp,6,")
+    @CsvSource("kapt,5,17", "ksp,6,")
     fun emptySubcomponentReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -149,7 +149,7 @@ internal class EmptyComponentKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,7,17", "ksp,7,")
+    @CsvSource("kapt,5,17", "ksp,7,")
     fun emptyComponentWithFactoryButNoProvidesReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,

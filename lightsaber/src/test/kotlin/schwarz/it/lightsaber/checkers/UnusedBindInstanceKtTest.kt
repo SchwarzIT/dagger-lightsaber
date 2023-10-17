@@ -18,7 +18,7 @@ import schwarz.it.lightsaber.utils.extension
 internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
-    @CsvSource("kapt,15,13", "ksp,12,")
+    @CsvSource("kapt,13,13", "ksp,12,")
     fun bindInstanceNotUsed_Factory(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -54,7 +54,7 @@ internal class UnusedBindInstanceKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,18,13", "ksp,12,")
+    @CsvSource("kapt,16,13", "ksp,12,")
     fun bindInstanceNotUsed_Builder(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -121,7 +121,7 @@ internal class UnusedBindInstanceKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,19,13", "ksp,16,")
+    @CsvSource("kapt,17,13", "ksp,16,")
     fun bindInstanceNamedIsNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -252,7 +252,7 @@ internal class UnusedBindInstanceKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,15,13", "ksp,12,")
+    @CsvSource("kapt,13,13", "ksp,12,")
     fun bindInstanceInSubcomponentIsNoUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,

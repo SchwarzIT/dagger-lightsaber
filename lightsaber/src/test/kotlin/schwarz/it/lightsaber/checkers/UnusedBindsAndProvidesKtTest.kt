@@ -20,7 +20,7 @@ import schwarz.it.lightsaber.utils.extension
 internal class UnusedBindsAndProvidesKtTest {
 
     @ParameterizedTest
-    @CsvSource("kapt,17,55", "ksp,10,")
+    @CsvSource("kapt,15,55", "ksp,10,")
     fun bindsNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -72,7 +72,7 @@ internal class UnusedBindsAndProvidesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,23,35", "ksp,15,")
+    @CsvSource("kapt,21,35", "ksp,15,")
     fun providesNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -124,7 +124,7 @@ internal class UnusedBindsAndProvidesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,23,35", "ksp,15,")
+    @CsvSource("kapt,21,35", "ksp,15,")
     fun providesNotUsedReportedOnSubcomponent(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -188,7 +188,7 @@ internal class UnusedBindsAndProvidesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,17,57,23,35", "ksp,10,,15,")
+    @CsvSource("kapt,15,57,21,35", "ksp,10,,15,")
     fun providesNotUsedReportedOnSubcomponent2(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line1: Int,
@@ -327,7 +327,7 @@ internal class UnusedBindsAndProvidesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,17,55", "ksp,10,")
+    @CsvSource("kapt,15,55", "ksp,10,")
     fun bindsNotUsedInAChildModule(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,

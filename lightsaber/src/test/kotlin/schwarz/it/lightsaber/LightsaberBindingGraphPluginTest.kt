@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalCompilerApi::class)
+
 package schwarz.it.lightsaber
 
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.converter.ArgumentConverter

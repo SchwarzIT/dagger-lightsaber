@@ -28,7 +28,7 @@ internal class UnusedDependenciesKtTest {
     )
 
     @ParameterizedTest
-    @CsvSource("kapt,6,34", "ksp,5,")
+    @CsvSource("kapt,3,34", "ksp,5,")
     fun dependencyNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
