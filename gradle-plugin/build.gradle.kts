@@ -29,8 +29,6 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation(project(":lightsaber"))
-
     compileOnly(gradleApi())
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
 
