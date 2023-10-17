@@ -58,7 +58,7 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,6,29", "ksp,6,")
+    @CsvSource("kapt,6,29", "ksp,5,")
     fun moduleNotUsedOnSubcomponent(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -132,7 +132,7 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,6,32", "ksp,6,")
+    @CsvSource("kapt,6,32", "ksp,5,")
     fun moduleUnusedOnSubcomponent2(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -207,7 +207,7 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,6,29", "ksp,6,")
+    @CsvSource("kapt,6,29", "ksp,5,")
     fun includeModules0(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -234,7 +234,7 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,6,29", "ksp,6,")
+    @CsvSource("kapt,6,29", "ksp,5,")
     fun includeModules1(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -420,7 +420,7 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,6,29", "ksp,6,")
+    @CsvSource("kapt,6,29", "ksp,5,")
     fun includeModules4(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -470,7 +470,7 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,6,29", "ksp,6,")
+    @CsvSource("kapt,6,29", "ksp,5,")
     fun includeModules5(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,

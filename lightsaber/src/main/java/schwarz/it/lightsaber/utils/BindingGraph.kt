@@ -64,7 +64,12 @@ internal fun BindingGraph.ComponentNode.getModulesCodePosition(daggerProcessingE
                     annotationMirror.getAnnotationValue("modules"),
                 )
             },
-            { it.location.toCodePosition() },
+            { classDeclaration ->
+                classDeclaration.annotations
+                    .single { it.shortName.asString() == "Component" || it.shortName.asString() == "Subcomponent" }
+                    .location
+                    .toCodePosition()
+            },
         )
 }
 
@@ -79,7 +84,12 @@ internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(daggerProces
                     annotationMirror.getAnnotationValue("dependencies"),
                 )
             },
-            { it.location.toCodePosition() },
+            { classDeclaration ->
+                classDeclaration.annotations
+                    .single { it.shortName.asString() == "Component" }
+                    .location
+                    .toCodePosition()
+            },
         )
 }
 
