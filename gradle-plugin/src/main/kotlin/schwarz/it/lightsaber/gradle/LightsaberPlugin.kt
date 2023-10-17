@@ -38,7 +38,7 @@ private fun Project.apply() {
             task.dependsOn(provider { tasks.withType(BaseKapt::class.java) })
 
             task.source = tasks.withType(BaseKapt::class.java)
-                .map { fileTree(it.destinationDir.dir("schwarz/it/lightsaber")).asFileTree }
+                .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
                 .reduce { acc, fileTree -> acc.plus(fileTree) }
                 .matching { it.include("*.lightsaber") }
 
