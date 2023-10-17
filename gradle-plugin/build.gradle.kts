@@ -29,7 +29,6 @@ gradlePlugin {
 }
 
 dependencies {
-    compileOnly(gradleApi())
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
