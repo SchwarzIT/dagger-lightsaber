@@ -31,8 +31,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
     testImplementation("com.google.dagger:dagger-compiler:2.48")
     testImplementation("com.google.truth:truth:1.1.3")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.5.0")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:1.5.0")
+    testImplementation("dev.zacsweers.kctfork:core:0.3.2")
+    testImplementation("dev.zacsweers.kctfork:ksp:0.3.2")
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
