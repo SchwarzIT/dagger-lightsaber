@@ -10,6 +10,10 @@ import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getElements
 import schwarz.it.lightsaber.utils.getFullQualifiedName
 import schwarz.it.lightsaber.utils.getMethods
+import schwarz.it.lightsaber.utils.getTypes
+import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.TypeElement
+import javax.lang.model.util.Types
 
 internal fun checkEmptyComponent(
     bindingGraph: BindingGraph,
@@ -18,9 +22,7 @@ internal fun checkEmptyComponent(
     return bindingGraph.componentNodes()
         .filter { componentNode ->
             componentNode.componentPath().currentComponent().fold(
-                {
-                    it.getMethods().isEmpty()
-                },
+                { it.getAllFunctions(daggerProcessingEnv.getTypes()).none() },
                 { classDeclaration ->
                     val hasNoDeclaredFunctions = classDeclaration
                         .getAllFunctions()
@@ -46,6 +48,14 @@ internal fun checkEmptyComponent(
                 it.getCodePosition(daggerProcessingEnv),
             )
         }
+}
+
+private fun TypeElement.getAllFunctions(types: Types): Sequence<ExecutableElement> {
+    return sequence {
+        yieldAll(getMethods())
+        yieldAll(interfaces.asSequence().flatMap { (types.asElement(it) as TypeElement).getAllFunctions(types) })
+        yieldAll((types.asElement(superclass) as TypeElement?)?.getAllFunctions(types).orEmpty())
+    }
 }
 
 private val kspDefaultDeclaredFunctions = listOf(
