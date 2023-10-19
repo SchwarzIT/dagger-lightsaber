@@ -58,7 +58,7 @@ interface Module {
 }
 
 @JvmInline
-private value class ModuleJavac constructor(private val value: TypeElement) : Module {
+private value class ModuleJavac(private val value: TypeElement) : Module {
 
     constructor(daggerProcessingEnv: DaggerProcessingEnv, typeMirror: TypeMirror) : this(
         daggerProcessingEnv.getTypes().asElement(typeMirror) as TypeElement,
