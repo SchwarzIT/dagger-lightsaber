@@ -21,17 +21,17 @@ fun <T> DaggerProcessingEnv.fold(
 }
 
 fun DaggerProcessingEnv.getTypes(): Types {
-    return when (backend()!!) {
-        DaggerProcessingEnv.Backend.JAVAC -> javac().typeUtils
-        DaggerProcessingEnv.Backend.KSP -> error("KSP doesn't have Types.")
-    }
+    return fold(
+        { javac().typeUtils },
+        { error("KSP doesn't have Types.") },
+    )
 }
 
 fun DaggerProcessingEnv.getElements(): Elements {
-    return when (backend()!!) {
-        DaggerProcessingEnv.Backend.JAVAC -> javac().elementUtils
-        DaggerProcessingEnv.Backend.KSP -> error("KSP doesn't have Elements.")
-    }
+    return fold(
+        { javac().elementUtils },
+        { error("KSP doesn't have Elements.") },
+    )
 }
 
 fun <T> DaggerTypeElement.fold(
