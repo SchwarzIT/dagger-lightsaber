@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber.checkers
 
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.converter.ArgumentConverter
@@ -16,6 +17,106 @@ import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
 internal class EmptyComponentKtTest {
+
+    @Nested
+    inner class ComponentInheritance {
+
+        @ParameterizedTest
+        @CsvSource("kapt,5,17", "ksp,6,")
+        fun emptyComponentReportsError(
+            @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+            line: Int,
+            column: Int?,
+        ) {
+            val component = createSource(
+                """
+                    package test
+
+                    import dagger.Component
+
+                    @Component
+                    interface MyComponent : MyComponentInterface
+
+                    interface MyComponentInterface
+                """.trimIndent(),
+            )
+
+            val compilation = compiler.compile(component)
+
+            compilation.assertEmptyComponent(
+                message = "The @Component `test.MyComponent` is empty and could be removed.",
+                line = line,
+                column = column,
+            )
+        }
+
+        @ParameterizedTest
+        @CsvSource("kapt", "ksp")
+        fun noEmptyComponentDoesNotReportError(
+            @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        ) {
+            val component = createSource(
+                """
+                    package test
+
+                    import dagger.BindsInstance
+                    import dagger.Component
+
+                    @Component
+                    interface MyComponent : MyComponentInterface {
+                        @Component.Factory
+                        interface Factory {
+                            fun create(
+                                @BindsInstance myInt: Int,
+                            ): MyComponent
+                        }
+                    }
+
+                    interface MyComponentInterface {
+                        fun myInt(): Int
+                    }
+                """.trimIndent(),
+            )
+
+            val compilation = compiler.compile(component)
+
+            compilation.assertNoFindings()
+        }
+
+        @ParameterizedTest
+        @CsvSource("kapt", "ksp")
+        fun noEmptyComponentDoesNotReportError_property(
+            @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        ) {
+            val component = createSource(
+                """
+                    package test
+
+                    import dagger.BindsInstance
+                    import dagger.Component
+
+                    @Component
+                    interface MyComponent : MyComponentInterface {
+                        @Component.Factory
+                        interface Factory {
+                            fun create(
+                                @BindsInstance myInt: Int,
+                            ): MyComponent
+                        }
+                    }
+
+                    interface MyComponentInterface {
+                        val myInt: Int
+                    }
+                """.trimIndent(),
+            )
+
+            val compilation = compiler.compile(component)
+
+            compilation.assertNoFindings()
+        }
+    }
+
     @ParameterizedTest
     @CsvSource("kapt,5,17", "ksp,6,")
     fun emptyComponentReportsError(
@@ -99,7 +200,7 @@ internal class EmptyComponentKtTest {
             import dagger.Component
 
             @Component
-            interface MyComponent {    
+            interface MyComponent {
                 fun myInt(): Int
 
                 @Component.Factory
@@ -130,7 +231,7 @@ internal class EmptyComponentKtTest {
             import dagger.Component
 
             @Component
-            interface MyComponent {    
+            interface MyComponent {
                 val myInt: Int
 
                 @Component.Factory
@@ -163,7 +264,7 @@ internal class EmptyComponentKtTest {
             import dagger.Component
 
             @Component
-            interface MyComponent {    
+            interface MyComponent {
                 @Component.Factory
                 interface Factory {
                     fun create(
