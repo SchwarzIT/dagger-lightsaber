@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 
 plugins {
@@ -10,14 +12,32 @@ kotlin {
     jvmToolchain(11)
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 group = "schwarz.it.lightsaber"
 version = properties["version"]!!
 
-@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        getByName("test", JvmTestSuite::class) {
+            useJUnitJupiter("5.10.0")
+
+            dependencies {
+                implementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+                implementation("com.google.truth:truth:1.1.3")
+            }
+        }
+        register("functionalTest", JvmTestSuite::class) {
+            useJUnitJupiter("5.10.0")
+
+            dependencies {
+                implementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+                implementation("com.google.truth:truth:1.1.3")
+            }
+        }
+    }
+}
+
 gradlePlugin {
     vcsUrl = "https://github.com/SchwarzIT/dagger-lightsaber"
     plugins {
@@ -26,14 +46,24 @@ gradlePlugin {
             implementationClass = "schwarz.it.lightsaber.gradle.LightsaberPlugin"
         }
     }
+    testSourceSets(sourceSets["functionalTest"])
 }
+
+val testKitRuntimeOnly: Configuration by configurations.creating
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
-    testImplementation("com.google.truth:truth:1.1.3")
+    testKitRuntimeOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
+}
+
+// Manually inject dependency to gradle-testkit since the default injected plugin classpath is from `main.runtime`.
+tasks.pluginUnderTestMetadata {
+    pluginClasspath.from(testKitRuntimeOnly)
+}
+
+tasks.named("functionalTest") {
+    dependsOn(provider { rootProject.project(":lightsaber").tasks.named("publishToMavenLocal") })
 }
 
 private val createVersionsKtFile by tasks.registering(Task::class) {
@@ -49,7 +79,7 @@ private val createVersionsKtFile by tasks.registering(Task::class) {
                     
                     const val lightsaberVersion = "${inputs.properties["version"]}"
                     
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
