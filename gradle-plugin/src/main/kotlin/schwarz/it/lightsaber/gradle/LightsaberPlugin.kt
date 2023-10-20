@@ -1,5 +1,7 @@
 package schwarz.it.lightsaber.gradle
 
+import com.google.devtools.ksp.gradle.KspExtension
+import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -23,6 +25,30 @@ private fun Project.apply() {
         unusedModules.convention(Severity.Error)
     }
 
+    pluginManager.withPlugin("com.google.devtools.ksp") {
+        dependencies.add("ksp", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
+        extensions.configure(KspExtension::class.java) {
+            it.arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get().toString())
+        }
+
+        val lightsaberCheck = registerTask(extension)
+        lightsaberCheck.configure { task ->
+            val taskProvider = provider { tasks.withType(KspTaskJvm::class.java) }
+            task.dependsOn(taskProvider)
+
+            task.source = taskProvider.get()
+                .map { fileTree(it.destination.get().resolve("resources/schwarz/it/lightsaber")).asFileTree }
+                .reduce { acc, fileTree -> acc.plus(fileTree) }
+                .matching { it.include("*.lightsaber") }
+        }
+
+        tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+    }
+
     pluginManager.withPlugin("kotlin-kapt") {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
@@ -36,6 +62,15 @@ private fun Project.apply() {
         }
 
         val lightsaberCheck = registerTask(extension)
+        lightsaberCheck.configure { task ->
+            val taskProvider = provider { tasks.withType(BaseKapt::class.java) }
+            task.dependsOn(taskProvider)
+
+            task.source = taskProvider.get()
+                .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
+                .reduce { acc, fileTree -> acc.plus(fileTree) }
+                .matching { it.include("*.lightsaber") }
+        }
 
         tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
     }
@@ -43,14 +78,6 @@ private fun Project.apply() {
 
 private fun Project.registerTask(extension: LightsaberExtension): TaskProvider<LightsaberTask> {
     return tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
-        val taskProvider = provider { tasks.withType(BaseKapt::class.java) }
-        task.dependsOn(taskProvider)
-
-        task.source = taskProvider.get()
-            .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
-            .reduce { acc, fileTree -> acc.plus(fileTree) }
-            .matching { it.include("*.lightsaber") }
-
         task.severities.set(
             objects.mapProperty(Rule::class.java, Severity::class.java).apply {
                 Rule.entries.forEach { rule -> put(rule, rule.toPropertySeverity(extension)) }
