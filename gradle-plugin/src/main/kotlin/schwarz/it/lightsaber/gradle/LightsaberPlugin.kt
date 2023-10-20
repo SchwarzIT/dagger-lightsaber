@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 
@@ -34,33 +35,37 @@ private fun Project.apply() {
             }
         }
 
-        val lightsaberCheck = tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
-            task.dependsOn(provider { tasks.withType(BaseKapt::class.java) })
-
-            task.source = tasks.withType(BaseKapt::class.java)
-                .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
-                .reduce { acc, fileTree -> acc.plus(fileTree) }
-                .matching { it.include("*.lightsaber") }
-
-            task.severities.set(
-                objects.mapProperty(Rule::class.java, Severity::class.java).apply {
-                    Rule.entries.forEach { rule ->
-                        put(
-                            rule,
-                            when (rule) {
-                                Rule.EmptyComponent -> extension.emptyComponent
-                                Rule.UnusedBindInstance -> extension.unusedBindInstance
-                                Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
-                                Rule.UnusedDependencies -> extension.unusedDependencies
-                                Rule.UnusedModules -> extension.unusedModules
-                            },
-                        )
-                    }
-                },
-            )
-        }
+        val lightsaberCheck = registerTask(extension)
 
         tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+    }
+}
+
+private fun Project.registerTask(extension: LightsaberExtension): TaskProvider<LightsaberTask> {
+    return tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
+        val taskProvider = provider { tasks.withType(BaseKapt::class.java) }
+        task.dependsOn(taskProvider)
+
+        task.source = taskProvider.get()
+            .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
+            .reduce { acc, fileTree -> acc.plus(fileTree) }
+            .matching { it.include("*.lightsaber") }
+
+        task.severities.set(
+            objects.mapProperty(Rule::class.java, Severity::class.java).apply {
+                Rule.entries.forEach { rule -> put(rule, rule.toPropertySeverity(extension)) }
+            },
+        )
+    }
+}
+
+private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Severity> {
+    return when (this) {
+        Rule.EmptyComponent -> extension.emptyComponent
+        Rule.UnusedBindInstance -> extension.unusedBindInstance
+        Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
+        Rule.UnusedDependencies -> extension.unusedDependencies
+        Rule.UnusedModules -> extension.unusedModules
     }
 }
 
