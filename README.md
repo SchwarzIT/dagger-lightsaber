@@ -8,7 +8,7 @@ Lightsaber is a [Dagger 2][dagger] plugin that detects unused code in your `Modu
 /path/module/com/example/MyComponent.java:6:8: e: The @BindsInstance `myInt` declared in `test.MyComponent` is not used. [UnusedBindInstance]
 ```
 
-This plugin contains 6 rules:
+This plugin contains several rules:
 - Empty `@Component` and `@Subcomponent`
 - Unused `@BindInstance`
 - Unused `@Provides` or `@Binds` inside `@Module`s
@@ -23,7 +23,7 @@ Add the plugin to your project:
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("io.github.schwarzit.lightsaber") version "<version>"
+    id("io.github.schwarzit.lightsaber") version "0.0.11"
 }
 ```
 
