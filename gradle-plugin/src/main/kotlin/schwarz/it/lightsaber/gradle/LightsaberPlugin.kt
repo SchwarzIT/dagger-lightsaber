@@ -52,7 +52,7 @@ private fun Project.apply() {
     }
 
     pluginManager.withPlugin("kotlin-kapt") {
-        dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
+        dependencies.add("kapt", "io.github.schwarzit:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
             it.arguments {
                 arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get())

@@ -12,7 +12,7 @@ kotlin {
     jvmToolchain(11)
 }
 
-group = "schwarz.it.lightsaber"
+group = "io.github.schwarzit"
 version = properties["version"]!!
 
 testing {
