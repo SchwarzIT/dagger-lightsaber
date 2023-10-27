@@ -1,9 +1,9 @@
 package schwarz.it.lightsaber.gradle
 
-import com.google.common.truth.Truth.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
+import schwarz.it.lightsaber.gradle.truth.assertThat
 import java.io.File
 import java.nio.file.Files
 
@@ -17,13 +17,13 @@ class LightsaberPluginTest {
             .withArguments("lightsaberCheck")
             .buildAndFail()
 
-        assertThat(buildResult.task(":kaptKotlin")).isNotNull()
-        assertThat(buildResult.task(":kaptTestKotlin")).isNotNull()
-        assertThat(buildResult.task(":compileTestJava")).isNull()
-        assertThat(buildResult.task(":lightsaberCheck")?.outcome).isEqualTo(TaskOutcome.FAILED)
+        assertThat(buildResult).hasTask(":kaptKotlin")
+        assertThat(buildResult).hasTask(":kaptTestKotlin")
+        assertThat(buildResult).hasNotTask(":compileTestJava")
+        assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
 
-        assertThat(buildResult.output).contains("MyModule.java:26:27: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
-        assertThat(buildResult.output).contains("> Analysis failed with 1 error")
+        assertThat(buildResult).contains("MyModule.java:26:27: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("> Analysis failed with 1 error")
     }
 }
 
