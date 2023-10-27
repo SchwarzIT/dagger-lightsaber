@@ -53,8 +53,10 @@ val testKitRuntimeOnly: Configuration by configurations.creating
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
+    compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.10-1.0.13")
 
     testKitRuntimeOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
+    testKitRuntimeOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.10-1.0.13")
 }
 
 // Manually inject dependency to gradle-testkit since the default injected plugin classpath is from `main.runtime`.

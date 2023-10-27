@@ -25,6 +25,23 @@ class LightsaberPluginTest {
         assertThat(buildResult).contains("MyModule.java:26:27: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
         assertThat(buildResult).contains("> Analysis failed with 1 error")
     }
+
+    @Test
+    fun ksp() {
+        val buildResult = GradleRunner.create()
+            .withProjectDirFromResources("ksp")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck")
+            .buildAndFail()
+
+        assertThat(buildResult).hasTask(":kspKotlin")
+        assertThat(buildResult).hasTask(":kspTestKotlin")
+        assertThat(buildResult).hasNotTask(":compileTestJava")
+        assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
+
+        assertThat(buildResult).contains("MyComponent.kt:22: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("> Analysis failed with 1 error")
+    }
 }
 
 // From https://github.com/detekt/detekt/blob/92a5aa5624d8d7bd20ee70ed24cfccc208b25fdb/detekt-gradle-plugin/src/testFixtures/kotlin/io/gitlab/arturbosch/detekt/testkit/GradleRunnerExtensions.kt#L7-L16

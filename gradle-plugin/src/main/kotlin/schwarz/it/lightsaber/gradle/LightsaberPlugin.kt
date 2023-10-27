@@ -1,9 +1,12 @@
 package schwarz.it.lightsaber.gradle
 
+import com.google.devtools.ksp.gradle.KspExtension
+import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 
@@ -22,6 +25,30 @@ private fun Project.apply() {
         unusedModules.convention(Severity.Error)
     }
 
+    pluginManager.withPlugin("com.google.devtools.ksp") {
+        dependencies.add("ksp", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
+        extensions.configure(KspExtension::class.java) {
+            it.arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get().toString())
+        }
+
+        val lightsaberCheck = registerTask(extension)
+        lightsaberCheck.configure { task ->
+            val taskProvider = provider { tasks.withType(KspTaskJvm::class.java) }
+            task.dependsOn(taskProvider)
+
+            task.source = taskProvider.get()
+                .map { fileTree(it.destination.get().resolve("resources/schwarz/it/lightsaber")).asFileTree }
+                .reduce { acc, fileTree -> acc.plus(fileTree) }
+                .matching { it.include("*.lightsaber") }
+        }
+
+        tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+    }
+
     pluginManager.withPlugin("kotlin-kapt") {
         dependencies.add("kapt", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
         extensions.configure(KaptExtension::class.java) {
@@ -34,33 +61,38 @@ private fun Project.apply() {
             }
         }
 
-        val lightsaberCheck = tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
-            task.dependsOn(provider { tasks.withType(BaseKapt::class.java) })
+        val lightsaberCheck = registerTask(extension)
+        lightsaberCheck.configure { task ->
+            val taskProvider = provider { tasks.withType(BaseKapt::class.java) }
+            task.dependsOn(taskProvider)
 
-            task.source = tasks.withType(BaseKapt::class.java)
+            task.source = taskProvider.get()
                 .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
                 .reduce { acc, fileTree -> acc.plus(fileTree) }
                 .matching { it.include("*.lightsaber") }
-
-            task.severities.set(
-                objects.mapProperty(Rule::class.java, Severity::class.java).apply {
-                    Rule.entries.forEach { rule ->
-                        put(
-                            rule,
-                            when (rule) {
-                                Rule.EmptyComponent -> extension.emptyComponent
-                                Rule.UnusedBindInstance -> extension.unusedBindInstance
-                                Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
-                                Rule.UnusedDependencies -> extension.unusedDependencies
-                                Rule.UnusedModules -> extension.unusedModules
-                            },
-                        )
-                    }
-                },
-            )
         }
 
         tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+    }
+}
+
+private fun Project.registerTask(extension: LightsaberExtension): TaskProvider<LightsaberTask> {
+    return tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
+        task.severities.set(
+            objects.mapProperty(Rule::class.java, Severity::class.java).apply {
+                Rule.entries.forEach { rule -> put(rule, rule.toPropertySeverity(extension)) }
+            },
+        )
+    }
+}
+
+private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Severity> {
+    return when (this) {
+        Rule.EmptyComponent -> extension.emptyComponent
+        Rule.UnusedBindInstance -> extension.unusedBindInstance
+        Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
+        Rule.UnusedDependencies -> extension.unusedDependencies
+        Rule.UnusedModules -> extension.unusedModules
     }
 }
 
