@@ -15,3 +15,7 @@ internal fun KSClassDeclaration.getDeclaredArguments(kClass: KClass<*>, argument
         .orEmpty()
         .map { it as KSType }
 }
+
+fun KSClassDeclaration.getCompanion(): KSClassDeclaration? {
+    return this.declarations.singleOrNull { (it as? KSClassDeclaration)?.isCompanionObject == true } as KSClassDeclaration?
+}

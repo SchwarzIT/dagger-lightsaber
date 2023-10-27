@@ -124,6 +124,60 @@ internal class UnusedBindsAndProvidesKtTest {
     }
 
     @ParameterizedTest
+    @CsvSource("kapt,28,39", "ksp,16,")
+    fun providesNotUsed_WithCompanion(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val component = createSource(
+            """
+                package test
+                
+                import dagger.BindsInstance
+                import dagger.Component
+                
+                @Component(modules = [MyModule::class])
+                interface MyComponent {
+                    fun myInts(): ArrayList<Int>
+                }
+            """.trimIndent(),
+        )
+        val module = createSource(
+            """
+                package test
+                
+                import dagger.Binds
+                import dagger.Module
+                import dagger.Provides
+                
+                @Module
+                abstract class MyModule {
+                    companion object {
+                        @Provides
+                        fun providesMyInts(): ArrayList<Int> {
+                            return ArrayList()
+                        }
+                        
+                        @Provides
+                        fun providesMyString(): String {
+                            return "Hello there!"
+                        }
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component, module)
+
+        compilation.assertUnusedBindsAndProvides(
+            message = "The @Provides `providesMyString` declared in `test.MyModule` is not used.",
+            line = line,
+            column = column,
+        )
+    }
+
+    @ParameterizedTest
     @CsvSource("kapt,21,35", "ksp,15,")
     fun providesNotUsedReportedOnSubcomponent(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,

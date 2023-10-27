@@ -14,6 +14,7 @@ import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.findAnnotationMirrors
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getAnnotationValue
+import schwarz.it.lightsaber.utils.getCompanion
 import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getElements
 import schwarz.it.lightsaber.utils.getTypes
@@ -108,7 +109,9 @@ private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
 
     @OptIn(KspExperimental::class)
     override fun getBindings(): List<Module.Binding> {
-        return value.getAllFunctions()
+        val allFunctions = value.getAllFunctions() + value.getCompanion()?.getAllFunctions().orEmpty()
+
+        return allFunctions
             .filter { func -> bindingAnnotations.any { func.isAnnotationPresent(it) } }
             .map { Binding(it) }
             .toList()
