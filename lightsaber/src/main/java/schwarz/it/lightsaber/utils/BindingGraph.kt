@@ -21,23 +21,20 @@ internal fun BindingGraph.getUsedModules(): Set<Module> {
         .asSequence()
         .mapNotNull { it.contributingModule().getOrNull() }
         .distinct()
-        .flatMap {
+        .map {
             it.fold(
                 { element ->
                     if (element.isCompanionModule()) {
-                        listOf(Module(element), Module(element.enclosingElement as TypeElement))
+                        Module(element.enclosingElement as TypeElement)
                     } else {
-                        listOf(Module(element))
+                        Module(element)
                     }
                 },
                 { classDeclaration ->
                     if (classDeclaration.isCompanionObject) {
-                        listOf(
-                            Module(classDeclaration),
-                            Module(classDeclaration.parent as KSClassDeclaration),
-                        )
+                        Module(classDeclaration.parent as KSClassDeclaration)
                     } else {
-                        listOf(Module(classDeclaration))
+                        Module(classDeclaration)
                     }
                 },
             )
