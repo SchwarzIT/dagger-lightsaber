@@ -9,6 +9,21 @@
       "matchPackagePrefixes": [
         "com.google.dagger:"
       ]
+    },
+    {
+      "groupName": "kctfork",
+      "matchPackagePrefixes": [
+        "dev.zacsweers.kctfork:"
+      ]
+    },
+    {
+      "groupName": "kotlin",
+      "matchPackageNames": [
+        "com.google.devtools.ksp"
+      ],
+      "matchPackagePrefixes": [
+        "org.jetbrains.kotlin:"
+      ]
     }
   ]
 }
