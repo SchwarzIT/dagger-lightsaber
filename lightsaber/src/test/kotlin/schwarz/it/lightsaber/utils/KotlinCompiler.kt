@@ -37,8 +37,6 @@ internal class KaptKotlinCompiler(
 
     override fun compile(vararg sourceFiles: SourceFile): CompilationResult {
         compiler.sources = sourceFiles.asList()
-        // workaround for https://github.com/ZacSweers/kotlin-compile-testing/issues/188
-        compiler.workingDir.resolve("sources").resolve("test").mkdirs()
         return CompilationResult(
             compiler.compile(),
             findGeneratedFiles(compiler.classesDir),
@@ -63,8 +61,6 @@ internal class KspKotlinCompiler(
 
     override fun compile(vararg sourceFiles: SourceFile): CompilationResult {
         compiler.sources = sourceFiles.asList()
-        // workaround for https://github.com/ZacSweers/kotlin-compile-testing/issues/188
-        compiler.workingDir.resolve("sources").resolve("test").mkdirs()
         return CompilationResult(
             compiler.compile(),
             findGeneratedFiles(compiler.kspSourcesDir),
