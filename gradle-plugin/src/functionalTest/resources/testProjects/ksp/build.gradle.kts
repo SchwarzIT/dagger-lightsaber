@@ -1,8 +1,8 @@
 import schwarz.it.lightsaber.gradle.Severity
 
 plugins {
-    kotlin("jvm") version "1.9.10"
-    id("com.google.devtools.ksp") version "1.9.10-1.0.13"
+    kotlin("jvm") version "1.9.20"
+    id("com.google.devtools.ksp") version "1.9.20-1.0.13"
     id("schwarz.it.lightsaber")
 }
 
