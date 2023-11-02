@@ -18,11 +18,9 @@
     },
     {
       "groupName": "kotlin",
-      "matchPackageNames": [
-        "com.google.devtools.ksp"
-      ],
       "matchPackagePrefixes": [
-        "org.jetbrains.kotlin:"
+        "org.jetbrains.kotlin",
+        "com.google.devtools.ksp"
       ]
     }
   ]
