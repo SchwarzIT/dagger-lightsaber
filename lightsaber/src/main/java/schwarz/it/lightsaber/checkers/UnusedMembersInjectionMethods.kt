@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package schwarz.it.lightsaber.checkers
 
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
@@ -17,24 +19,37 @@ internal fun checkUnusedMembersInjectionMethods(
     daggerProcessingEnv: DaggerProcessingEnv,
 ): List<Finding> {
     return bindingGraph.componentNodes().flatMap { component ->
-        component.entryPoints().filter {
-            it.kind() == RequestKind.MEMBERS_INJECTION
-        }.mapNotNull {
-            Finding(
-                "The members-injection method `${it.getMethodName()}` declared in `${component.getFullQualifiedName()}` is not used. " +
-                    "`${it.key()}` doesn't have any variable or method annotated with @Inject.",
-                it.requestElement().get().fold(
-                    { daggerProcessingEnv.getElements().getCodePosition(it) },
-                    { it.location.toCodePosition() },
-                ),
-            )
-        }
+        component.entryPoints()
+            .filter { it.kind() == RequestKind.MEMBERS_INJECTION }
+            .filter {
+                println("${bindingGraph.network()}")
+                val depEdge = bindingGraph.network().edges()
+                    .filterIsInstance<BindingGraph.DependencyEdge>()
+                    .first()
+
+                val target = bindingGraph.network().incidentNodes(depEdge).target()
+
+                bindingGraph.network().adjacentNodes(target)
+                    .none {
+                        bindingGraph.network().hasEdgeConnecting(target, it)
+                    }
+            }
+            .map {
+                Finding(
+                    "The members-injection method `${it.getMethodName()}` declared in `${component.getFullQualifiedName()}` is not used. " +
+                        "`${it.key()}` doesn't have any variable or method annotated with @Inject.",
+                    it.requestElement().get().fold(
+                        { daggerProcessingEnv.getElements().getCodePosition(it) },
+                        { it.location.toCodePosition() },
+                    ),
+                )
+            }
     }
 }
 
 private fun DependencyRequest.getMethodName(): String {
     return this.requestElement().get().fold(
         { it.simpleName.toString() },
-        { (it as KSFunctionDeclaration).simpleName.asString() }
+        { (it as KSFunctionDeclaration).simpleName.asString() },
     )
 }
