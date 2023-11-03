@@ -20,17 +20,19 @@ internal fun checkUnusedMembersInjectionMethods(
     daggerProcessingEnv: DaggerProcessingEnv,
 ): List<Finding> {
     val network = bindingGraph.network()
+    val dependencyEdges = network.edges()
+        .filterIsInstance<BindingGraph.DependencyEdge>()
+        .filter { it.isEntryPoint }
 
     return bindingGraph.componentNodes().flatMap { component ->
         component.entryPoints()
             .filter { it.kind() == RequestKind.MEMBERS_INJECTION }
             .filter { entryPoint ->
-                val depEdge = network.edges()
-                    .filterIsInstance<BindingGraph.DependencyEdge>()
+                val memberInjectionUsage = dependencyEdges
                     .single { it.dependencyRequest() == entryPoint }
+                    .let { network.incidentNodes(it).target() }
 
-                network.directChildren(network.incidentNodes(depEdge).target())
-                    .isEmpty()
+                network.directChildren(memberInjectionUsage).isEmpty()
             }
             .map { entryPoint ->
                 Finding(
