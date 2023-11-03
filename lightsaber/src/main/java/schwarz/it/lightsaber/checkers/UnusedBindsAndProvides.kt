@@ -13,32 +13,29 @@ internal fun checkUnusedBindsAndProvides(
     daggerProcessingEnv: DaggerProcessingEnv,
 ): List<Finding> {
     val usedBindsAndProvides = bindingGraph.getUsedBindsAndProvides()
-    val componentsWithItsDeclaredModules =
-        bindingGraph.getComponentsWithItsDeclaredModules(daggerProcessingEnv)
+    val declaredModules = bindingGraph.getDeclaredModules(daggerProcessingEnv)
 
-    return componentsWithItsDeclaredModules.flatMap { (component, declaredModulesAtThisComponent) ->
-        bindingGraph.getUsedModules()
-            .filter { module -> declaredModulesAtThisComponent.contains(module) }
-            .map { module -> module to (module.getBindings() - usedBindsAndProvides) }
-            .flatMap { (module, unusedBindings) ->
-                unusedBindings.map { binding ->
-                    Finding(
-                        "The $binding declared in `$module` is not used.",
-                        binding.getCodePosition(daggerProcessingEnv),
-                    )
-                }
+    return bindingGraph.getUsedModules()
+        .filter { module -> module in declaredModules }
+        .associateWith { module -> module.getBindings() - usedBindsAndProvides }
+        .flatMap { (module, unusedBindings) ->
+            unusedBindings.map { binding ->
+                Finding(
+                    "The $binding declared in `$module` is not used.",
+                    binding.getCodePosition(daggerProcessingEnv),
+                )
             }
-    }
+        }
 }
 
-private fun BindingGraph.getComponentsWithItsDeclaredModules(
-    daggerProcessingEnv: DaggerProcessingEnv,
-): Map<BindingGraph.ComponentNode, List<Module>> {
-    return componentNodes().associateWith { component ->
-        component
-            .getDeclaredModules(this, daggerProcessingEnv)
-            .flatMap { it.toList() }
-    }
+private fun BindingGraph.getDeclaredModules(daggerProcessingEnv: DaggerProcessingEnv): Set<Module> {
+    return componentNodes()
+        .flatMap { component ->
+            component
+                .getDeclaredModules(this, daggerProcessingEnv)
+                .flatMap { it.toList() }
+        }
+        .toSet()
 }
 
 private fun BindingGraph.getUsedBindsAndProvides(): Set<Module.Binding> {
