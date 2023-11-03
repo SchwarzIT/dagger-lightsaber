@@ -1,23 +1,19 @@
 # Lightsaber
 
-Lightsaber is a [Dagger 2][dagger] plugin that flags the unused dependencies declared in your `Module`s and `Component`s.
+Lightsaber is a [Dagger 2][dagger] plugin that detects unused code in your `Module`s, `Component`s and `Subcomponent`s
 
 ## What to expect
 
 ```
-/path/module/build/tmp/kapt3/stubs/release/com/example/MyComponent.java:6: error: [Lightsaber] The @BindsInstance `context` is not used.
-public abstract interface MyComponent {
-                ^
+/path/module/com/example/MyComponent.java:6:8: e: The @BindsInstance `myInt` declared in `test.MyComponent` is not used. [UnusedBindInstance]
 ```
 
-This plugin contains 4 rules:
+This plugin contains 5 rules:
+- Empty `@Component` and `@Subcomponent`
 - Unused `@BindInstance`
 - Unused `@Provides` or `@Binds` inside `@Module`s
 - Unused `@Component(dependencies)`
 - Unused `@Module`s
-
-By default, anything flagged by those rules is treated as a compilation error.
-
 
 ## How to use it
 
@@ -40,14 +36,13 @@ You can change that default for each rule from error to warnings or even ignore 
 import schwarz.it.lightsaber.gradle.Severity
 
 lightsaber {
+  emptyComponent = Severity.Error
   unusedBindInstance = Severity.Error
   unusedBindsAndProvides = Severity.Error
   unusedDependencies = Severity.Error
   unusedModules = Severity.Error
 }
 ```
-
-*Caution*: The `kapt` gradle plugin has a bug [KT-58326] that if you change its arguments it doesn't re-execute the task. This bug impacts Lightsaber so if you change the configuration for the rules you should execute the compilation with `--rerun-tasks` to ensure that the current configuration is applied.
 
 ## How to build it
 
@@ -58,4 +53,3 @@ Clone the repo and execute:
 ```
 
   [dagger]: https://dagger.dev/
-  [KT-58326]: https://youtrack.jetbrains.com/issue/KT-58326
