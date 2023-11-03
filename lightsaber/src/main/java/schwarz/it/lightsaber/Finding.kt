@@ -34,7 +34,12 @@ internal fun Elements.getCodePosition(
     annotationMirror: AnnotationMirror? = null,
     annotationValue: AnnotationValue? = null,
 ): CodePosition {
-    this as JavacElements
+    try {
+        this as JavacElements
+    } catch (_: IllegalAccessError) {
+        println("w: To get the correct issue position you should run the compilation with `--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED`. More information here: https://github.com/SchwarzIT/dagger-lightsaber/issues/102  [Lightsaber]")
+        return CodePosition.Unknown
+    }
     val pair = getTreeAndTopLevel(element, annotationMirror, annotationValue) ?: return CodePosition.Unknown
     val sourceFile = pair.snd.sourcefile
     val diagnosticSource = DiagnosticSource(sourceFile, null)
