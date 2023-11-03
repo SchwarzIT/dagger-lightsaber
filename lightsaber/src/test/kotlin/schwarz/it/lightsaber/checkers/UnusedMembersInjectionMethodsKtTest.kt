@@ -12,12 +12,13 @@ import schwarz.it.lightsaber.utils.KotlinCompiler
 import schwarz.it.lightsaber.utils.KspKotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
+import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
 internal class UnusedMembersInjectionMethodsKtTest {
 
     @ParameterizedTest
-    @CsvSource("kapt,9,26", "ksp,7,")
+    @CsvSource("kapt,7,26", "ksp,7,")
     fun UnusedMembersInjectionMethodsReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -44,6 +45,44 @@ internal class UnusedMembersInjectionMethodsKtTest {
             line = line,
             column = column,
         )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun UnusedMembersInjectionMethodsDoesNotReportError(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val component = createSource(
+            """
+            package test
+
+            import dagger.Component 
+            import dagger.BindsInstance
+            import javax.inject.Inject
+
+            @Component
+            interface MyComponent {
+                fun inject(foo: Foo)
+                
+                @Component.Factory
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myString: String
+                        ): MyComponent
+                    }
+            }
+
+            class Foo() {
+                @Inject 
+                lateinit var myInject : String
+            }
+            """.trimIndent(),
+
+        )
+
+        val compilation = compiler.compile(component)
+
+        compilation.assertNoFindings()
     }
 
     private class CompilerArgumentConverter : ArgumentConverter {
