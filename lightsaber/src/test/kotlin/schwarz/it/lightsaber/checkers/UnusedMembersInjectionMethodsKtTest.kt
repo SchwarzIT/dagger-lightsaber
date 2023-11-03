@@ -85,6 +85,51 @@ internal class UnusedMembersInjectionMethodsKtTest {
         compilation.assertNoFindings()
     }
 
+    @ParameterizedTest
+    @CsvSource("kapt,10,26", "ksp,10,")
+    fun UnusedMembersInjectionWithUsedAndUnusedMethodsReportsError(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val component = createSource(
+            """
+            package test
+
+            import dagger.Component 
+            import dagger.BindsInstance
+            import javax.inject.Inject
+
+            @Component
+            interface MyComponent {
+                fun inject(foo: Foo)    
+                fun inject(str: String)
+                
+                @Component.Factory
+                    interface Factory {
+                        fun create(
+                            @BindsInstance myString: String
+                        ): MyComponent
+                    }
+            }
+
+            class Foo() {
+                @Inject
+                lateinit var myInject : String
+            }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component)
+
+        compilation.assertUnusedMembersInjectionMethods(
+            message = "The members-injection method `inject` declared in `test.MyComponent` is not used. " +
+                "`java.lang.String` doesn't have any variable or method annotated with @Inject.",
+            line = line,
+            column = column,
+        )
+    }
+
     private class CompilerArgumentConverter : ArgumentConverter {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
