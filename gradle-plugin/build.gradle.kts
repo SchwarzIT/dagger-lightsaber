@@ -21,8 +21,8 @@ testing {
             useJUnitJupiter("5.10.0")
 
             dependencies {
-                implementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+                implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
                 implementation("com.google.truth:truth:1.1.3")
             }
         }
@@ -30,8 +30,8 @@ testing {
             useJUnitJupiter("5.10.0")
 
             dependencies {
-                implementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+                implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
                 implementation("com.google.truth:truth:1.1.3")
             }
         }
