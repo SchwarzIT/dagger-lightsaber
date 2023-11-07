@@ -22,6 +22,7 @@ private fun Project.apply() {
         unusedBindInstance.convention(Severity.Error)
         unusedBindsAndProvides.convention(Severity.Error)
         unusedDependencies.convention(Severity.Error)
+        unusedMembersInjectionMethods.convention(Severity.Error)
         unusedModules.convention(Severity.Error)
     }
 
@@ -32,6 +33,7 @@ private fun Project.apply() {
             it.arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get().toString())
             it.arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get().toString())
             it.arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get().toString())
+            it.arg("Lightsaber.CheckUnusedMembersInjectionMethods", extension.unusedMembersInjectionMethods.toProcessor().get().toString())
             it.arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get().toString())
         }
 
@@ -57,6 +59,7 @@ private fun Project.apply() {
                 arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get())
                 arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get())
                 arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get())
+                arg("Lightsaber.CheckUnusedMembersInjectionMethods", extension.unusedMembersInjectionMethods.toProcessor().get())
                 arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get())
             }
         }
@@ -92,6 +95,7 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
         Rule.UnusedBindInstance -> extension.unusedBindInstance
         Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
         Rule.UnusedDependencies -> extension.unusedDependencies
+        Rule.UnusedMembersInjectionMethods -> extension.unusedMembersInjectionMethods
         Rule.UnusedModules -> extension.unusedModules
     }
 }
@@ -101,6 +105,7 @@ interface LightsaberExtension {
     val unusedBindInstance: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>
+    val unusedMembersInjectionMethods: Property<Severity>
     val unusedModules: Property<Severity>
 }
 
