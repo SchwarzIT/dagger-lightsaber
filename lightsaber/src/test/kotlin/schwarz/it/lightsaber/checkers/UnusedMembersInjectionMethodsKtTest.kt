@@ -56,7 +56,7 @@ internal class UnusedMembersInjectionMethodsKtTest {
             """
             package test
 
-            import dagger.Component 
+            import dagger.Component
             import dagger.BindsInstance
             import javax.inject.Inject
 
@@ -72,8 +72,8 @@ internal class UnusedMembersInjectionMethodsKtTest {
                     }
             }
 
-            class Foo() {
-                @Inject 
+            class Foo {
+                @Inject
                 lateinit var myInject : String
             }
             """.trimIndent(),
@@ -96,13 +96,13 @@ internal class UnusedMembersInjectionMethodsKtTest {
             """
             package test
 
-            import dagger.Component 
+            import dagger.Component
             import dagger.BindsInstance
             import javax.inject.Inject
 
             @Component
             interface MyComponent {
-                fun inject(foo: Foo)    
+                fun inject(foo: Foo)
                 fun inject(str: String)
                 
                 @Component.Factory
@@ -113,7 +113,7 @@ internal class UnusedMembersInjectionMethodsKtTest {
                     }
             }
 
-            class Foo() {
+            class Foo {
                 @Inject
                 lateinit var myInject : String
             }
@@ -156,5 +156,3 @@ private fun CompilationResult.assertUnusedMembersInjectionMethods(
         ruleName = "UnusedMembersInjectionMethods",
     )
 }
-
-
