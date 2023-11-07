@@ -47,7 +47,7 @@ internal fun checkUnusedMembersInjectionMethods(
     }
 }
 
-private fun <N: Any, E: Any> Network<N, E>.directChildren(target: N): List<N> {
+private fun <N : Any, E : Any> Network<N, E>.directChildren(target: N): List<N> {
     return this.adjacentNodes(target)
         .filter { hasEdgeConnecting(target, it) }
 }
