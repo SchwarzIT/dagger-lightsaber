@@ -23,7 +23,7 @@ Add the plugin to your project:
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("schwarz.it.lightsaber") version "<version>"
+    id("io.github.schwarzit.lightsaber") version "<version>"
 }
 ```
 

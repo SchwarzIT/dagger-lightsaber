@@ -42,7 +42,7 @@ gradlePlugin {
     vcsUrl = "https://github.com/SchwarzIT/dagger-lightsaber"
     plugins {
         create("LightsaberPlugin") {
-            id = "schwarz.it.lightsaber"
+            id = "io.github.schwarzit.lightsaber"
             implementationClass = "schwarz.it.lightsaber.gradle.LightsaberPlugin"
         }
     }
