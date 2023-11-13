@@ -1,5 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 
 plugins {
@@ -12,7 +13,7 @@ kotlin {
     jvmToolchain(11)
 }
 
-group = "schwarz.it.lightsaber"
+group = "io.github.schwarzit"
 version = properties["version"]!!
 
 testing {
@@ -96,6 +97,7 @@ sourceSets {
 }
 
 mavenPublishing {
+    publishToMavenCentral(S01)
     coordinates(group.toString(), "lightsaber-gradle-plugin", version.toString())
 
     pom {
@@ -108,6 +110,28 @@ mavenPublishing {
                 name.set("The Apache License, Version 2.0")
                 url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
                 distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                name.set("Jenifer Arias Gallego")
+                url.set("https://github.com/jenni-arias")
+            }
+            developer {
+                name.set("Javier Luque Sanabria")
+                url.set("https://github.com/javils")
+            }
+            developer {
+                name.set("Raul Moreno Garcia")
+                url.set("https://github.com/raul19")
+            }
+            developer {
+                name.set("Brais Gabín")
+                url.set("https://github.com/braisgabin")
+            }
+            developer {
+                name.set("Alvaro Girona Arias")
+                url.set("https://github.com/alvarogirona")
             }
         }
         scm {

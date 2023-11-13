@@ -1,3 +1,5 @@
+import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
+
 plugins {
     id("kotlin")
     id("kotlin-kapt")
@@ -18,7 +20,7 @@ tasks
     .matching { it.name.startsWith("kapt") && it.name.endsWith("TestKotlin") }
     .configureEach { enabled = false }
 
-group = "schwarz.it.lightsaber"
+group = "io.github.schwarzit"
 version = properties["version"]!!
 
 dependencies {
@@ -42,6 +44,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 
 mavenPublishing {
+    publishToMavenCentral(S01)
     coordinates(group.toString(), "lightsaber", version.toString())
 
     pom {
@@ -54,6 +57,28 @@ mavenPublishing {
                 name.set("The Apache License, Version 2.0")
                 url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
                 distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        developers {
+            developer {
+                name.set("Jenifer Arias Gallego")
+                url.set("https://github.com/jenni-arias")
+            }
+            developer {
+                name.set("Javier Luque Sanabria")
+                url.set("https://github.com/javils")
+            }
+            developer {
+                name.set("Raul Moreno Garcia")
+                url.set("https://github.com/raul19")
+            }
+            developer {
+                name.set("Brais Gabín")
+                url.set("https://github.com/braisgabin")
+            }
+            developer {
+                name.set("Alvaro Girona Arias")
+                url.set("https://github.com/alvarogirona")
             }
         }
         scm {
