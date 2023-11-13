@@ -32,7 +32,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
     testImplementation("com.google.dagger:dagger-compiler:2.48.1")
-    testImplementation("com.google.truth:truth:1.1.3")
+    testImplementation("com.google.truth:truth:1.1.5")
     testImplementation("dev.zacsweers.kctfork:core:0.4.0")
     testImplementation("dev.zacsweers.kctfork:ksp:0.4.0")
 }
