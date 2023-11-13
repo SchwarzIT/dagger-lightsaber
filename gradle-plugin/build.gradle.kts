@@ -98,7 +98,6 @@ sourceSets {
 
 mavenPublishing {
     publishToMavenCentral(S01)
-    signAllPublications()
     coordinates(group.toString(), "lightsaber-gradle-plugin", version.toString())
 
     pom {
