@@ -27,7 +27,7 @@ private fun Project.apply() {
     }
 
     pluginManager.withPlugin("com.google.devtools.ksp") {
-        dependencies.add("ksp", "schwarz.it.lightsaber:lightsaber:$lightsaberVersion")
+        dependencies.add("ksp", "io.github.schwarzit:lightsaber:$lightsaberVersion")
         extensions.configure(KspExtension::class.java) {
             it.arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get().toString())
             it.arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get().toString())
