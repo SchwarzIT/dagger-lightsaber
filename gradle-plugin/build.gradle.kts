@@ -24,7 +24,7 @@ testing {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-                implementation("com.google.truth:truth:1.1.3")
+                implementation("com.google.truth:truth:1.1.5")
             }
         }
         register("functionalTest", JvmTestSuite::class) {
@@ -33,7 +33,7 @@ testing {
             dependencies {
                 implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-                implementation("com.google.truth:truth:1.1.3")
+                implementation("com.google.truth:truth:1.1.5")
             }
         }
     }
