@@ -1,6 +1,5 @@
 package schwarz.it.lightsaber.gradle.truth
 
-import com.google.common.truth.Fact
 import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
 import com.google.common.truth.Truth
