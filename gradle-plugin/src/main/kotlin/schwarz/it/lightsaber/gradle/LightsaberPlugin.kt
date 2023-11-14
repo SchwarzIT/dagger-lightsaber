@@ -4,6 +4,7 @@ import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
@@ -27,11 +28,19 @@ private fun Project.apply() {
     }
 
     pluginManager.withPlugin("com.google.devtools.ksp") { _ ->
-        applyKsp(extension)
+        afterEvaluate {
+            if (configurations.getByName("ksp").dependencies.any { it.isDaggerCompiler() }) {
+                applyKsp(extension)
+            }
+        }
     }
 
     pluginManager.withPlugin("kotlin-kapt") { _ ->
-        applyKapt(extension)
+        afterEvaluate {
+            if (configurations.getByName("kapt").dependencies.any { it.isDaggerCompiler() }) {
+                applyKapt(extension)
+            }
+        }
     }
 }
 
@@ -131,4 +140,8 @@ private fun Property<Severity>.toProcessor(): Provider<Boolean> {
             Severity.Ignore -> false
         }
     }
+}
+
+private fun Dependency.isDaggerCompiler(): Boolean {
+    return group == "com.google.dagger" && name == "dagger-compiler"
 }

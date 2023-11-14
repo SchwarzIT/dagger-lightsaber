@@ -28,6 +28,7 @@ testing {
                 implementation("com.google.truth:truth:1.1.5")
                 implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.20-1.0.14")
                 implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
+                implementation(gradleKotlinDsl())
             }
         }
         register("functionalTest", JvmTestSuite::class) {

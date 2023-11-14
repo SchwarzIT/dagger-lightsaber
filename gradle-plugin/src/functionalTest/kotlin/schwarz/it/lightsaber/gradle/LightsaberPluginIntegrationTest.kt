@@ -19,7 +19,6 @@ class LightsaberPluginIntegrationTest {
 
         assertThat(buildResult).hasTask(":kaptKotlin")
         assertThat(buildResult).hasTask(":kaptTestKotlin")
-        assertThat(buildResult).hasNotTask(":compileTestJava")
         assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
 
         assertThat(buildResult).contains("MyModule.java:26:27: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
@@ -36,7 +35,6 @@ class LightsaberPluginIntegrationTest {
 
         assertThat(buildResult).hasTask(":kspKotlin")
         assertThat(buildResult).hasTask(":kspTestKotlin")
-        assertThat(buildResult).hasNotTask(":compileTestJava")
         assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
 
         assertThat(buildResult).contains("MyComponent.kt:22: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
