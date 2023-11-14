@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-gradle-plugin")
     id("com.vanniktech.maven.publish")
+    id("com.diffplug.spotless")
 }
 
 kotlin {
@@ -48,6 +49,12 @@ gradlePlugin {
         }
     }
     testSourceSets(sourceSets["functionalTest"])
+}
+
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+    kotlin {
+        ktlint("0.48.2")
+    }
 }
 
 val testKitRuntimeOnly: Configuration by configurations.creating
