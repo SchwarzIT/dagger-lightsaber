@@ -26,6 +26,8 @@ testing {
                 implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
                 runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
                 implementation("com.google.truth:truth:1.1.5")
+                implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.20-1.0.14")
+                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
             }
         }
         register("functionalTest", JvmTestSuite::class) {
