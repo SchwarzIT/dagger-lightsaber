@@ -7,7 +7,7 @@ import schwarz.it.lightsaber.gradle.truth.assertThat
 import java.io.File
 import java.nio.file.Files
 
-class LightsaberPluginTest {
+class LightsaberPluginIntegrationTest {
 
     @Test
     fun kapt() {
