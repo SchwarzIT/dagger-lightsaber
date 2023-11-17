@@ -8,6 +8,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 
@@ -39,6 +40,14 @@ private fun Project.apply() {
         afterEvaluate {
             if (configurations.getByName("kapt").dependencies.any { it.isDaggerCompiler() }) {
                 applyKapt(extension)
+            }
+        }
+    }
+
+    pluginManager.withPlugin("java") { _ ->
+        afterEvaluate {
+            if (configurations.getByName("annotationProcessor").dependencies.any { it.isDaggerCompiler() }) {
+                applyAnnotationProcessor(extension)
             }
         }
     }
@@ -96,6 +105,33 @@ fun Project.applyKapt(extension: LightsaberExtension) {
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
+fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
+    dependencies.add("annotationProcessor", "io.github.schwarzit:lightsaber:$lightsaberVersion")
+    tasks.withType(JavaCompile::class.java).configureEach {
+        it.annotationProcessor {
+            arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get())
+            arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get())
+            arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get())
+            arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get())
+            arg("Lightsaber.CheckUnusedMembersInjectionMethods", extension.unusedMembersInjectionMethods.toProcessor().get())
+            arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get())
+        }
+    }
+
+    val lightsaberCheck = registerTask(extension)
+    lightsaberCheck.configure { task ->
+        val taskProvider = provider { tasks.withType(JavaCompile::class.java) }
+        task.dependsOn(taskProvider)
+
+        task.source = taskProvider.get()
+            .map { fileTree(it.destinationDirectory.dir("schwarz/it/lightsaber")).asFileTree }
+            .reduce { acc, fileTree -> acc.plus(fileTree) }
+            .matching { it.include("*.lightsaber") }
+    }
+
+    tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+}
+
 private fun Project.registerTask(extension: LightsaberExtension): TaskProvider<LightsaberTask> {
     return tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
         task.severities.set(
@@ -144,4 +180,14 @@ private fun Property<Severity>.toProcessor(): Provider<Boolean> {
 
 private fun Dependency.isDaggerCompiler(): Boolean {
     return group == "com.google.dagger" && name == "dagger-compiler"
+}
+
+private fun JavaCompile.annotationProcessor(block: AnnotationProcessorScope.() -> Unit) {
+    AnnotationProcessorScope(this).block()
+}
+
+private class AnnotationProcessorScope(val task: JavaCompile)
+
+private fun AnnotationProcessorScope.arg(key: String, value: Any) {
+    task.options.compilerArgs.add("-A$key=$value")
 }

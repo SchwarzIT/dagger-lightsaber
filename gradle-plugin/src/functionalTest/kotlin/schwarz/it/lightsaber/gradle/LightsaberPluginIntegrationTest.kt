@@ -10,6 +10,22 @@ import java.nio.file.Files
 class LightsaberPluginIntegrationTest {
 
     @Test
+    fun annotationProcessor() {
+        val buildResult = GradleRunner.create()
+            .withProjectDirFromResources("annotationProcessor")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck")
+            .buildAndFail()
+
+        assertThat(buildResult).hasTask(":compileJava")
+        assertThat(buildResult).hasTask(":compileTestJava")
+        assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
+
+        assertThat(buildResult).contains("MyModule.java:15:17: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("> Analysis failed with 1 error")
+    }
+
+    @Test
     fun kapt() {
         val buildResult = GradleRunner.create()
             .withProjectDirFromResources("kapt")

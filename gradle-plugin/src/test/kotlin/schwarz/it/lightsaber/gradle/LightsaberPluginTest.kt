@@ -29,7 +29,9 @@ class LightsaberPluginTest {
             }
         }
 
-        assertThat(project).doesntHaveTask("lightsaberCheck")
+        assertThat(project).hasTask("check")
+            .dependsOn("lightsaberCheck")
+            .dependsExactlyOn("compileJava", "compileTestJava")
     }
 
     @Test
