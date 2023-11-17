@@ -27,7 +27,7 @@ class ProjectSubject(
         return assertThat(task)
     }
 
-    fun doesntHasTask(taskName: String) {
+    fun doesntHaveTask(taskName: String) {
         actual!!
 
         if (actual.tasks.findByName(taskName) != null) {
