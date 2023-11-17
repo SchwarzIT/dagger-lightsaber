@@ -23,7 +23,7 @@ Add the plugin to your project:
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("io.github.schwarzit.lightsaber") version "0.0.11"
+    id("io.github.schwarzit.lightsaber") version "0.0.12"
 }
 ```
 
@@ -41,6 +41,7 @@ lightsaber {
   unusedBindInstance = Severity.Error
   unusedBindsAndProvides = Severity.Error
   unusedDependencies = Severity.Error
+  unusedMembersInjection = Severity.Error
   unusedModules = Severity.Error
 }
 ```
