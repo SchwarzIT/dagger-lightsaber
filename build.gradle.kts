@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.20" apply false
-    id("com.vanniktech.maven.publish") version "0.25.3" apply false
-    id("com.diffplug.spotless") version "6.22.0" apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.maven.publish) apply false
+    alias(libs.plugins.spotless) apply false
 }
