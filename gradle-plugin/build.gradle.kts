@@ -4,14 +4,14 @@ import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.spotless)
     id("java-gradle-plugin")
-    id("com.vanniktech.maven.publish")
-    id("com.diffplug.spotless")
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(libs.versions.jdk.version.get().toInt())
 }
 
 group = "io.github.schwarzit"
@@ -20,24 +20,24 @@ version = properties["version"]!!
 testing {
     suites {
         getByName("test", JvmTestSuite::class) {
-            useJUnitJupiter("5.10.0")
+            useJUnitJupiter(libs.versions.junit.jupiter.get())
 
             dependencies {
-                implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-                implementation("com.google.truth:truth:1.1.5")
-                implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.20-1.0.14")
-                implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
+                implementation(libs.junit.jupiter.api)
+                runtimeOnly(libs.junit.jupiter.engine)
+                implementation(libs.truth)
+                implementation(libs.symbol.processing.gradle.plugin)
+                implementation(libs.kotlin.gradle.plugin)
                 implementation(gradleKotlinDsl())
             }
         }
         register("functionalTest", JvmTestSuite::class) {
-            useJUnitJupiter("5.10.0")
+            useJUnitJupiter(libs.versions.junit.jupiter.get())
 
             dependencies {
-                implementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-                implementation("com.google.truth:truth:1.1.5")
+                implementation(libs.junit.jupiter.api)
+                runtimeOnly(libs.junit.jupiter.engine)
+                implementation(libs.truth)
             }
         }
     }
@@ -56,18 +56,18 @@ gradlePlugin {
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
-        ktlint("0.48.2")
+        ktlint(libs.ktlint.get().version)
     }
 }
 
 val testKitRuntimeOnly: Configuration by configurations.creating
 
 dependencies {
-    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
-    compileOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.20-1.0.14")
+    compileOnly(libs.kotlin.gradle.plugin)
+    compileOnly(libs.symbol.processing.gradle.plugin)
 
-    testKitRuntimeOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
-    testKitRuntimeOnly("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.9.20-1.0.14")
+    testKitRuntimeOnly(libs.kotlin.gradle.plugin)
+    testKitRuntimeOnly(libs.symbol.processing.gradle.plugin)
 }
 
 // Manually inject dependency to gradle-testkit since the default injected plugin classpath is from `main.runtime`.

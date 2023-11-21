@@ -1,14 +1,14 @@
 import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
 
 plugins {
-    id("kotlin")
     id("kotlin-kapt")
-    id("com.vanniktech.maven.publish")
-    id("com.diffplug.spotless")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.maven.publish)
+    alias(libs.plugins.spotless)
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(libs.versions.jdk.version.get().toInt())
 }
 
 tasks.test {
@@ -24,22 +24,22 @@ group = "io.github.schwarzit"
 version = properties["version"]!!
 
 dependencies {
-    implementation("com.google.dagger:dagger-spi:2.48.1")
-    compileOnly("com.google.auto.service:auto-service:1.1.1")
-    kapt("com.google.auto.service:auto-service:1.1.1")
+    implementation(libs.dagger.spi)
+    compileOnly(libs.google.auto.service)
+    kapt(libs.google.auto.service)
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
-    testImplementation("com.google.dagger:dagger-compiler:2.48.1")
-    testImplementation("com.google.truth:truth:1.1.5")
-    testImplementation("dev.zacsweers.kctfork:core:0.4.0")
-    testImplementation("dev.zacsweers.kctfork:ksp:0.4.0")
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.dagger.compiler)
+    testImplementation(libs.truth)
+    testImplementation(libs.kctfork.core)
+    testImplementation(libs.kctfork.ksp)
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
-        ktlint("0.48.2")
+        ktlint(libs.ktlint.get().version)
     }
 }
 
