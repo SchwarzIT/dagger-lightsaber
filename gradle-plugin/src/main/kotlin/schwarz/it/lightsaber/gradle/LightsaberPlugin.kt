@@ -53,10 +53,7 @@ private fun Project.apply() {
 }
 
 fun Project.applyKsp(extension: LightsaberExtension) {
-    dependencies.add("ksp", "io.github.schwarzit:lightsaber:$lightsaberVersion")
-    extensions.configure(KspExtension::class.java) {
-        extension.getArguments().forEach { (key, value) -> it.arg(key, value.toString()) }
-    }
+    configureLightsaberKsp(extension)
 
     val lightsaberCheck = registerTask(extension)
     lightsaberCheck.configure { task ->
@@ -72,13 +69,15 @@ fun Project.applyKsp(extension: LightsaberExtension) {
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
-fun Project.applyKapt(extension: LightsaberExtension) {
-    dependencies.add("kapt", "io.github.schwarzit:lightsaber:$lightsaberVersion")
-    extensions.configure(KaptExtension::class.java) {
-        it.arguments {
-            extension.getArguments().forEach {(key, value) -> arg(key, value) }
-        }
+private fun Project.configureLightsaberKsp(extension: LightsaberExtension) {
+    dependencies.add("ksp", "io.github.schwarzit:lightsaber:$lightsaberVersion")
+    extensions.configure(KspExtension::class.java) {
+        extension.getArguments().forEach { (key, value) -> it.arg(key, value.toString()) }
     }
+}
+
+fun Project.applyKapt(extension: LightsaberExtension) {
+    configureLightsaberKapt(extension)
 
     val lightsaberCheck = registerTask(extension)
     lightsaberCheck.configure { task ->
@@ -94,13 +93,17 @@ fun Project.applyKapt(extension: LightsaberExtension) {
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
-fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
-    dependencies.add("annotationProcessor", "io.github.schwarzit:lightsaber:$lightsaberVersion")
-    tasks.withType(JavaCompile::class.java).configureEach {
-        it.annotationProcessor {
+private fun Project.configureLightsaberKapt(extension: LightsaberExtension) {
+    dependencies.add("kapt", "io.github.schwarzit:lightsaber:$lightsaberVersion")
+    extensions.configure(KaptExtension::class.java) {
+        it.arguments {
             extension.getArguments().forEach { (key, value) -> arg(key, value) }
         }
     }
+}
+
+fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
+    configureLightsaberAnnotationProcessor(extension)
 
     val lightsaberCheck = registerTask(extension)
     lightsaberCheck.configure { task ->
@@ -114,6 +117,15 @@ fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
     }
 
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+}
+
+private fun Project.configureLightsaberAnnotationProcessor(extension: LightsaberExtension) {
+    dependencies.add("annotationProcessor", "io.github.schwarzit:lightsaber:$lightsaberVersion")
+    tasks.withType(JavaCompile::class.java).configureEach {
+        it.annotationProcessor {
+            extension.getArguments().forEach { (key, value) -> arg(key, value) }
+        }
+    }
 }
 
 private fun Project.registerTask(extension: LightsaberExtension): TaskProvider<LightsaberTask> {
