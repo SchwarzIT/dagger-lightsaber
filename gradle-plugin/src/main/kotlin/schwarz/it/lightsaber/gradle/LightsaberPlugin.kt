@@ -6,7 +6,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
@@ -56,12 +55,7 @@ private fun Project.apply() {
 fun Project.applyKsp(extension: LightsaberExtension) {
     dependencies.add("ksp", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     extensions.configure(KspExtension::class.java) {
-        it.arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get().toString())
-        it.arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get().toString())
-        it.arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get().toString())
-        it.arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get().toString())
-        it.arg("Lightsaber.CheckUnusedMembersInjectionMethods", extension.unusedMembersInjectionMethods.toProcessor().get().toString())
-        it.arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get().toString())
+        extension.getArguments().forEach { (key, value) -> it.arg(key, value.toString()) }
     }
 
     val lightsaberCheck = registerTask(extension)
@@ -82,12 +76,7 @@ fun Project.applyKapt(extension: LightsaberExtension) {
     dependencies.add("kapt", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     extensions.configure(KaptExtension::class.java) {
         it.arguments {
-            arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get())
-            arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get())
-            arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get())
-            arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get())
-            arg("Lightsaber.CheckUnusedMembersInjectionMethods", extension.unusedMembersInjectionMethods.toProcessor().get())
-            arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get())
+            extension.getArguments().forEach {(key, value) -> arg(key, value) }
         }
     }
 
@@ -109,12 +98,7 @@ fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
     dependencies.add("annotationProcessor", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     tasks.withType(JavaCompile::class.java).configureEach {
         it.annotationProcessor {
-            arg("Lightsaber.CheckEmptyComponent", extension.emptyComponent.toProcessor().get())
-            arg("Lightsaber.CheckUnusedBindInstance", extension.unusedBindInstance.toProcessor().get())
-            arg("Lightsaber.CheckUnusedBindsAndProvides", extension.unusedBindsAndProvides.toProcessor().get())
-            arg("Lightsaber.CheckUnusedDependencies", extension.unusedDependencies.toProcessor().get())
-            arg("Lightsaber.CheckUnusedMembersInjectionMethods", extension.unusedMembersInjectionMethods.toProcessor().get())
-            arg("Lightsaber.CheckUnusedModules", extension.unusedModules.toProcessor().get())
+            extension.getArguments().forEach { (key, value) -> arg(key, value) }
         }
     }
 
@@ -168,14 +152,23 @@ enum class Severity {
     Ignore,
 }
 
-private fun Property<Severity>.toProcessor(): Provider<Boolean> {
+private fun LightsaberExtension.getArguments() = mapOf(
+    "Lightsaber.CheckEmptyComponent" to emptyComponent.toArgument(),
+    "Lightsaber.CheckUnusedBindInstance" to unusedBindInstance.toArgument(),
+    "Lightsaber.CheckUnusedBindsAndProvides" to unusedBindsAndProvides.toArgument(),
+    "Lightsaber.CheckUnusedDependencies" to unusedDependencies.toArgument(),
+    "Lightsaber.CheckUnusedMembersInjectionMethods" to unusedMembersInjectionMethods.toArgument(),
+    "Lightsaber.CheckUnusedModules" to unusedModules.toArgument(),
+)
+
+private fun Property<Severity>.toArgument(): Boolean {
     return map { severity: Severity ->
         when (severity) {
             Severity.Error -> true
             Severity.Warning -> true
             Severity.Ignore -> false
         }
-    }
+    }.get()
 }
 
 private fun Dependency.isDaggerCompiler(): Boolean {
