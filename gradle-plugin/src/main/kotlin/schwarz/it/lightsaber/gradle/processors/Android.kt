@@ -5,7 +5,6 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.dsl.BuildType
 import org.gradle.api.Project
 import schwarz.it.lightsaber.gradle.LightsaberExtension
-import schwarz.it.lightsaber.gradle.withDaggerCompiler
 
 fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
     extensions.configure<BaseExtension>("android") { androidExtension ->
@@ -17,23 +16,14 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
                 val lightsaberCheck = tasks.register("lightsaberCheck")
                 tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
             }
+
             androidComponents.onVariants { variant ->
-                withDaggerCompiler("annotationProcessor") {
-                    val lightsaberVariantCheck = registerAnnotationProcessorTask(extension, variant)
-
-                    if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
-                        tasks.named("lightsaberCheck").configure { it.dependsOn(lightsaberVariantCheck) }
+                withDaggerCompiler { processor ->
+                    val lightsaberVariantCheck = when (processor) {
+                        Processor.AnnotationProcessor -> registerAnnotationProcessorTask(extension, variant)
+                        Processor.Kapt -> registerKaptTask(extension, variant)
+                        Processor.Ksp -> registerKspTask(extension, variant)
                     }
-                }
-                withDaggerCompiler("kapt") {
-                    val lightsaberVariantCheck = registerKaptTask(extension, variant)
-
-                    if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
-                        tasks.named("lightsaberCheck").configure { it.dependsOn(lightsaberVariantCheck) }
-                    }
-                }
-                withDaggerCompiler("ksp") {
-                    val lightsaberVariantCheck = registerKspTask(extension, variant)
 
                     if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
                         tasks.named("lightsaberCheck").configure { it.dependsOn(lightsaberVariantCheck) }
