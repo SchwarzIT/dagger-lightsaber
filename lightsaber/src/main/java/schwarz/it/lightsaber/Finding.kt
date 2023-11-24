@@ -34,18 +34,18 @@ internal fun Elements.getCodePosition(
     annotationMirror: AnnotationMirror? = null,
     annotationValue: AnnotationValue? = null,
 ): CodePosition {
-    try {
+    return try {
         this as JavacElements
+        val pair = getTreeAndTopLevel(element, annotationMirror, annotationValue) ?: return CodePosition.Unknown
+        val sourceFile = pair.snd.sourcefile
+        val diagnosticSource = DiagnosticSource(sourceFile, null)
+        val line = diagnosticSource.getLineNumber(pair.fst.pos)
+        val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
+        CodePosition(sourceFile.name, line, column)
     } catch (_: IllegalAccessError) {
-        println("w: To get the correct issue position you should run the compilation with `--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED`. More information here: https://github.com/SchwarzIT/dagger-lightsaber/issues/102  [Lightsaber]")
-        return CodePosition.Unknown
+        println("w: To get the correct issue position you should run the compilation with `--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED`. More information here: https://github.com/SchwarzIT/dagger-lightsaber/issues/102  [Lightsaber]")
+        CodePosition.Unknown
     }
-    val pair = getTreeAndTopLevel(element, annotationMirror, annotationValue) ?: return CodePosition.Unknown
-    val sourceFile = pair.snd.sourcefile
-    val diagnosticSource = DiagnosticSource(sourceFile, null)
-    val line = diagnosticSource.getLineNumber(pair.fst.pos)
-    val column = diagnosticSource.getColumnNumber(pair.fst.pos, true)
-    return CodePosition(sourceFile.name, line, column)
 }
 
 internal fun Location.toCodePosition(): CodePosition {
