@@ -12,11 +12,6 @@ import schwarz.it.lightsaber.gradle.getArguments
 import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask
 
-fun Project.applyKsp(extension: LightsaberExtension) {
-    val lightsaberCheck = registerKspTask(extension)
-    tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
-}
-
 internal fun Project.registerKspTask(
     extension: LightsaberExtension,
     variant: Variant? = null,
