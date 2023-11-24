@@ -8,8 +8,6 @@ import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask
 
 fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
-    configureLightsaberAnnotationProcessor(extension)
-
     val lightsaberCheck = registerTask(extension)
     lightsaberCheck.configure { task ->
         val taskProvider = provider { tasks.withType(JavaCompile::class.java) }

@@ -9,8 +9,6 @@ import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask
 
 fun Project.applyKsp(extension: LightsaberExtension) {
-    configureLightsaberKsp(extension)
-
     val lightsaberCheck = registerTask(extension)
     lightsaberCheck.configure { task ->
         val taskProvider = provider { tasks.withType(KspTaskJvm::class.java) }

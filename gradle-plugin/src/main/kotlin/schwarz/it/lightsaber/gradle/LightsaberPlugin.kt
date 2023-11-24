@@ -9,6 +9,9 @@ import schwarz.it.lightsaber.gradle.processors.applyAndroidAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.applyAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.applyKapt
 import schwarz.it.lightsaber.gradle.processors.applyKsp
+import schwarz.it.lightsaber.gradle.processors.configureLightsaberAnnotationProcessor
+import schwarz.it.lightsaber.gradle.processors.configureLightsaberKapt
+import schwarz.it.lightsaber.gradle.processors.configureLightsaberKsp
 
 class LightsaberPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -24,6 +27,16 @@ private fun Project.apply() {
         unusedDependencies.convention(Severity.Error)
         unusedMembersInjectionMethods.convention(Severity.Error)
         unusedModules.convention(Severity.Error)
+    }
+
+    withDaggerCompiler("annotationProcessor") {
+        configureLightsaberAnnotationProcessor(extension)
+    }
+    withDaggerCompiler("kapt") {
+        configureLightsaberKapt(extension)
+    }
+    withDaggerCompiler("ksp") {
+        configureLightsaberKsp(extension)
     }
 
     pluginManager.withPlugin("com.google.devtools.ksp") { _ ->
