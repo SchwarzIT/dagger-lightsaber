@@ -24,7 +24,7 @@ testing {
             useJUnitJupiter(libs.versions.junit.jupiter.get())
 
             dependencies {
-                implementation("com.android.tools.build:gradle:8.0.0")
+                implementation(libs.android.gradle.plugin)
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 implementation(libs.truth)
@@ -67,11 +67,11 @@ val testKitRuntimeOnly: Configuration by configurations.creating
 dependencies {
     compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.symbol.processing.gradle.plugin)
-    compileOnly("com.android.tools.build:gradle:8.0.0")
+    compileOnly(libs.android.gradle.plugin)
 
     testKitRuntimeOnly(libs.kotlin.gradle.plugin)
     testKitRuntimeOnly(libs.symbol.processing.gradle.plugin)
-    testKitRuntimeOnly("com.android.tools.build:gradle:8.0.0")
+    testKitRuntimeOnly(libs.android.gradle.plugin)
 }
 
 // Manually inject dependency to gradle-testkit since the default injected plugin classpath is from `main.runtime`.
