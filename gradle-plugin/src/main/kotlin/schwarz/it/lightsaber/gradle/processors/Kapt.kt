@@ -25,7 +25,7 @@ fun Project.applyKapt(extension: LightsaberExtension) {
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
-private fun Project.configureLightsaberKapt(extension: LightsaberExtension) {
+internal fun Project.configureLightsaberKapt(extension: LightsaberExtension) {
     dependencies.add("kapt", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     extensions.configure(KaptExtension::class.java) {
         it.arguments {

@@ -24,7 +24,7 @@ fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
-private fun Project.configureLightsaberAnnotationProcessor(extension: LightsaberExtension) {
+internal fun Project.configureLightsaberAnnotationProcessor(extension: LightsaberExtension) {
     dependencies.add("annotationProcessor", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     tasks.withType(JavaCompile::class.java).configureEach {
         it.annotationProcessor {

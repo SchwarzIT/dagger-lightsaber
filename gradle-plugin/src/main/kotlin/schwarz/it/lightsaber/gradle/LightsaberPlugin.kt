@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
+import schwarz.it.lightsaber.gradle.processors.applyAndroidAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.applyAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.applyKapt
 import schwarz.it.lightsaber.gradle.processors.applyKsp
@@ -42,10 +43,17 @@ private fun Project.apply() {
             applyAnnotationProcessor(extension)
         }
     }
+
+    pluginManager.withPlugin("com.android.application") { _ ->
+        applyAndroidAnnotationProcessor(extension)
+    }
 }
 
-internal fun Project.registerTask(extension: LightsaberExtension): TaskProvider<LightsaberTask> {
-    return tasks.register("lightsaberCheck", LightsaberTask::class.java) { task ->
+internal fun Project.registerTask(
+    extension: LightsaberExtension,
+    variantName: String = "",
+): TaskProvider<LightsaberTask> {
+    return tasks.register("lightsaber${variantName}Check", LightsaberTask::class.java) { task ->
         task.severities.set(
             objects.mapProperty(Rule::class.java, Severity::class.java).apply {
                 Rule.entries.forEach { rule -> put(rule, rule.toPropertySeverity(extension)) }
@@ -65,7 +73,7 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
     }
 }
 
-private fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
+internal fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
     afterEvaluate {
         if (configurations.getByName(configurationName).dependencies.any { it.isDaggerCompiler() }) {
             block()

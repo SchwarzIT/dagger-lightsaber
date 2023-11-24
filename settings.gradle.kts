@@ -5,5 +5,6 @@ include("lightsaber")
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        google()
     }
 }
