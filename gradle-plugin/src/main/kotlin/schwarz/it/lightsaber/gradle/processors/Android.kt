@@ -4,6 +4,7 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.dsl.BuildType
 import org.gradle.api.Project
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 import schwarz.it.lightsaber.gradle.LightsaberExtension
 
 fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
@@ -13,7 +14,10 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
 
         extensions.configure<AndroidComponentsExtension<*, *, *>>("androidComponents") { androidComponents ->
             withDaggerCompiler {
-                val lightsaberCheck = tasks.register("lightsaberCheck")
+                val lightsaberCheck = tasks.register("lightsaberCheck") {
+                    it.group = LifecycleBasePlugin.VERIFICATION_GROUP
+                    it.description = "Check for unused dagger code on the default variant"
+                }
                 tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
             }
 
