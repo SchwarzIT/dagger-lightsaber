@@ -26,7 +26,7 @@ testing {
             dependencies {
                 implementation(libs.android.gradle.plugin)
                 implementation(libs.junit.jupiter.api)
-                runtimeOnly(libs.junit.jupiter.engine)
+                implementation(libs.junit.jupiter.params)
                 implementation(libs.truth)
                 implementation(libs.symbol.processing.gradle.plugin)
                 implementation(libs.kotlin.gradle.plugin)
@@ -38,7 +38,6 @@ testing {
 
             dependencies {
                 implementation(libs.junit.jupiter.api)
-                runtimeOnly(libs.junit.jupiter.engine)
                 implementation(libs.truth)
             }
         }
