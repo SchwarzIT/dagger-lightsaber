@@ -40,6 +40,16 @@ dependencies {
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
         ktlint(libs.ktlint.get().version)
+            .editorConfigOverride(
+                mapOf(
+                    "ktlint_standard_filename" to "disabled",
+                    "ktlint_standard_class-naming" to "disabled",
+                    "ktlint_standard_function-naming" to "disabled",
+                    "ktlint_standard_property-naming" to "disabled",
+                    "ktlint_standard_discouraged-comment-location" to "disabled",
+                    "ktlint_standard_no-empty-file" to "disabled",
+                )
+            )
     }
 }
 
