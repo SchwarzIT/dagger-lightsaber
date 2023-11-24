@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import schwarz.it.lightsaber.gradle.truth.assertThat
 
 class LightsaberPluginTest {
@@ -74,9 +76,10 @@ class LightsaberPluginTest {
             .contains(LIGHTSABER)
     }
 
-    @Test
-    fun lightsaberWithoutDaggerCompiler_android() {
-        val project = createAndroidProject {
+    @ParameterizedTest
+    @EnumSource(AndroidProject::class)
+    fun lightsaberWithoutDaggerCompiler_android(type: AndroidProject) {
+        val project = createAndroidProject(type) {
             // no-op
         }
 
@@ -90,9 +93,10 @@ class LightsaberPluginTest {
     @Nested
     inner class AndroidAnnotationProcessor {
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_tasks() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 dependencies {
                     "annotationProcessor"(DAGGER_COMPILER)
                 }
@@ -115,9 +119,10 @@ class LightsaberPluginTest {
                 .contains(LIGHTSABER)
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 dependencies {
                     "annotationProcessor"(DAGGER_COMPILER)
                 }
@@ -128,9 +133,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_default() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_default(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.buildTypes.getByName("release") { buildType ->
                         buildType.isDefault = true
@@ -146,9 +152,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberReleaseCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_tasks_1flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_tasks_1flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -190,9 +197,10 @@ class LightsaberPluginTest {
                 )
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_1flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_1flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -212,9 +220,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberProductionDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_1flavors_default() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_1flavors_default(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -235,9 +244,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberStagingDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_2flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_2flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment", "store")
                     it.productFlavors.register("staging") { flavor ->
@@ -267,9 +277,10 @@ class LightsaberPluginTest {
     @Nested
     inner class AndroidKapt {
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_tasks() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 dependencies {
                     "kapt"(DAGGER_COMPILER)
                 }
@@ -292,9 +303,10 @@ class LightsaberPluginTest {
                 .contains(LIGHTSABER)
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 dependencies {
                     "kapt"(DAGGER_COMPILER)
                 }
@@ -305,9 +317,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_default() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_default(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.buildTypes.getByName("release") { buildType ->
                         buildType.isDefault = true
@@ -323,9 +336,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberReleaseCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_tasks_1flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_tasks_1flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -367,9 +381,10 @@ class LightsaberPluginTest {
                 )
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_1flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_1flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -389,9 +404,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberProductionDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_1flavors_default() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_1flavors_default(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -412,9 +428,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberStagingDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_2flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_2flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment", "store")
                     it.productFlavors.register("staging") { flavor ->
@@ -444,9 +461,10 @@ class LightsaberPluginTest {
     @Nested
     inner class AndroidKsp {
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_tasks() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 dependencies {
                     "ksp"(DAGGER_COMPILER)
                 }
@@ -469,9 +487,10 @@ class LightsaberPluginTest {
                 .contains(LIGHTSABER)
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 dependencies {
                     "ksp"(DAGGER_COMPILER)
                 }
@@ -482,9 +501,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_default() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_default(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.buildTypes.getByName("release") { buildType ->
                         buildType.isDefault = true
@@ -500,9 +520,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberReleaseCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_tasks_1flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_tasks_1flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -544,9 +565,10 @@ class LightsaberPluginTest {
                 )
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_1flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_1flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -566,9 +588,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberProductionDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_1flavors_default() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_1flavors_default(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -589,9 +612,10 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberStagingDebugCheck")
         }
 
-        @Test
-        fun lightsaberWithDaggerCompiler_application_check_2flavors() {
-            val project = createAndroidProject {
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_2flavors(type: AndroidProject) {
+            val project = createAndroidProject(type) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment", "store")
                     it.productFlavors.register("staging") { flavor ->
@@ -636,12 +660,18 @@ private fun createProject(block: Project.() -> Unit): Project {
     return project
 }
 
-private fun createAndroidProject(block: Project.() -> Unit): Project {
+private fun createAndroidProject(
+    type: AndroidProject = AndroidProject.Application,
+    block: Project.() -> Unit,
+): Project {
     val project = ProjectBuilder.builder()
         .withName("test-project")
         .build()
 
-    project.pluginManager.apply("com.android.application")
+    when (type) {
+        AndroidProject.Application -> project.pluginManager.apply("com.android.application")
+        AndroidProject.Library -> project.pluginManager.apply("com.android.library")
+    }
     project.pluginManager.apply(LightsaberPlugin::class.java)
     project.pluginManager.apply(KotlinAndroidPluginWrapper::class.java)
     project.pluginManager.apply(Kapt3GradleSubplugin::class.java)
@@ -658,6 +688,8 @@ private fun createAndroidProject(block: Project.() -> Unit): Project {
 
     return project
 }
+
+enum class AndroidProject { Application, Library }
 
 private fun Project.evaluate() {
     (this as ProjectInternal).evaluate()

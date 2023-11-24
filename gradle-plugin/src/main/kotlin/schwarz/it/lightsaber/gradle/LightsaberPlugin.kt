@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber.gradle
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -37,7 +38,7 @@ private fun Project.apply() {
             Processor.Ksp -> configureLightsaberKsp(extension)
         }
 
-        if (!pluginManager.hasPlugin("com.android.application")) {
+        if (!androidPluginApplied()) {
             val lightsaberCheck = when (processor) {
                 Processor.AnnotationProcessor -> registerAnnotationProcessorTask(extension)
                 Processor.Kapt -> registerKaptTask(extension)
@@ -47,9 +48,13 @@ private fun Project.apply() {
         }
     }
 
-    pluginManager.withPlugin("com.android.application") { _ ->
+    if (androidPluginApplied()) {
         applyAndroidAnnotationProcessor(extension)
     }
+}
+
+private fun Project.androidPluginApplied(): Boolean {
+    return extensions.findByType(BaseExtension::class.java) != null
 }
 
 internal fun Project.registerTask(
