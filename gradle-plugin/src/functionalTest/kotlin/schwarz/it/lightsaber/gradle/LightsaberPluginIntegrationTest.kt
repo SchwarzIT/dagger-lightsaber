@@ -104,7 +104,7 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).hasTask(":kspDebugAndroidTestKotlin")
         assertThat(buildResult).hasTask(":lightsaberDebugCheck").hasOutcome(TaskOutcome.FAILED)
 
-        assertThat(buildResult).contains("MyModule.kt:22: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("MyComponent.kt:22: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
         assertThat(buildResult).contains("> Analysis failed with 1 error")
     }
 }
