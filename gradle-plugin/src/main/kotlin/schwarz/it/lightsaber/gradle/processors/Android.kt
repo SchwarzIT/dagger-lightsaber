@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.configurationcache.extensions.capitalized
+import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import schwarz.it.lightsaber.gradle.LightsaberExtension
 import schwarz.it.lightsaber.gradle.LightsaberTask
 import schwarz.it.lightsaber.gradle.registerTask
@@ -16,6 +17,9 @@ import schwarz.it.lightsaber.gradle.withDaggerCompiler
 fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
     withDaggerCompiler("annotationProcessor") {
         configureLightsaberAnnotationProcessor(extension)
+    }
+    withDaggerCompiler("kapt") {
+        configureLightsaberKapt(extension)
     }
     extensions.configure<BaseExtension>("android") { androidExtension ->
         val defaultBuildType by lazy(LazyThreadSafetyMode.NONE) { androidExtension.getDefaultBuildType() }
@@ -26,9 +30,20 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
                 val lightsaberCheck = tasks.register("lightsaberCheck")
                 tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
             }
+            withDaggerCompiler("kapt") {
+                val lightsaberCheck = tasks.register("lightsaberCheck")
+                tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+            }
             androidComponents.onVariants { variant ->
                 withDaggerCompiler("annotationProcessor") {
-                    val lightsaberVariantCheck = registerAndroidTask(extension, variant)
+                    val lightsaberVariantCheck = registerAndroidAnnotationProcessorTask(extension, variant)
+
+                    if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
+                        tasks.named("lightsaberCheck").configure { it.dependsOn(lightsaberVariantCheck) }
+                    }
+                }
+                withDaggerCompiler("kapt") {
+                    val lightsaberVariantCheck = registerAndroidKaptTask(extension, variant)
 
                     if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
                         tasks.named("lightsaberCheck").configure { it.dependsOn(lightsaberVariantCheck) }
@@ -39,7 +54,7 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
     }
 }
 
-private fun Project.registerAndroidTask(
+private fun Project.registerAndroidAnnotationProcessorTask(
     extension: LightsaberExtension,
     variant: Variant,
 ): TaskProvider<LightsaberTask> {
@@ -54,6 +69,27 @@ private fun Project.registerAndroidTask(
 
         task.source = taskProvider.get()
             .map { fileTree(it.destinationDirectory.dir("schwarz/it/lightsaber")).asFileTree }
+            .reduce { acc, fileTree -> acc.plus(fileTree) }
+            .matching { it.include("*.lightsaber") }
+    }
+    return lightsaberVariantCheck
+}
+
+private fun Project.registerAndroidKaptTask(
+    extension: LightsaberExtension,
+    variant: Variant,
+): TaskProvider<LightsaberTask> {
+    val variantName = variant.name.capitalized()
+    val lightsaberVariantCheck = registerTask(extension, variantName)
+    lightsaberVariantCheck.configure { task ->
+        val taskProvider = provider {
+            tasks.withType(BaseKapt::class.java)
+                .matching { it.name.startsWith("kapt$variantName") }
+        }
+        task.dependsOn(taskProvider)
+
+        task.source = taskProvider.get()
+            .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
             .reduce { acc, fileTree -> acc.plus(fileTree) }
             .matching { it.include("*.lightsaber") }
     }

@@ -28,13 +28,17 @@ private fun Project.apply() {
 
     pluginManager.withPlugin("com.google.devtools.ksp") { _ ->
         withDaggerCompiler("ksp") {
-            applyKsp(extension)
+            if (!pluginManager.hasPlugin("com.android.application")) {
+                applyKsp(extension)
+            }
         }
     }
 
     pluginManager.withPlugin("kotlin-kapt") { _ ->
         withDaggerCompiler("kapt") {
-            applyKapt(extension)
+            if (!pluginManager.hasPlugin("com.android.application")) {
+                applyKapt(extension)
+            }
         }
     }
 
@@ -75,7 +79,7 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
 
 internal fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
     afterEvaluate {
-        if (configurations.getByName(configurationName).dependencies.any { it.isDaggerCompiler() }) {
+        if (configurations.findByName(configurationName)?.dependencies.orEmpty().any { it.isDaggerCompiler() }) {
             block()
         }
     }
