@@ -1,13 +1,7 @@
-import schwarz.it.lightsaber.gradle.Severity
-
 plugins {
     kotlin("jvm") version "1.9.20"
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
     id("io.github.schwarzit.lightsaber")
-}
-
-lightsaber {
-    unusedBindsAndProvides = Severity.Error
 }
 
 dependencies {

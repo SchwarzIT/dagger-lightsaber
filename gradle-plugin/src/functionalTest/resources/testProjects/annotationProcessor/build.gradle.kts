@@ -1,12 +1,6 @@
-import schwarz.it.lightsaber.gradle.Severity
-
 plugins {
     `java`
     id("io.github.schwarzit.lightsaber")
-}
-
-lightsaber {
-    unusedBindsAndProvides = Severity.Error
 }
 
 dependencies {
