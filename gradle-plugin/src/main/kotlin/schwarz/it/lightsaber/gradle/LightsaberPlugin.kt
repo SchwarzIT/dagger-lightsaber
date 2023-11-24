@@ -98,6 +98,12 @@ internal fun Project.withDaggerCompiler(configurationName: String, block: Projec
     }
 }
 
+internal fun Project.withDaggerCompiler(block: Project.() -> Unit) {
+    withDaggerCompiler("annotationProcessor", block)
+    withDaggerCompiler("kapt", block)
+    withDaggerCompiler("ksp", block)
+}
+
 private fun Dependency.isDaggerCompiler(): Boolean {
     return group == "com.google.dagger" && name == "dagger-compiler"
 }

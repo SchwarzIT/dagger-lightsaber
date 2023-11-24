@@ -21,15 +21,7 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
         val defaultFlavour by lazy(LazyThreadSafetyMode.NONE) { androidExtension.getDefaultFlavours() }
 
         extensions.configure<AndroidComponentsExtension<*, *, *>>("androidComponents") { androidComponents ->
-            withDaggerCompiler("annotationProcessor") {
-                val lightsaberCheck = tasks.register("lightsaberCheck")
-                tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
-            }
-            withDaggerCompiler("kapt") {
-                val lightsaberCheck = tasks.register("lightsaberCheck")
-                tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
-            }
-            withDaggerCompiler("ksp") {
+            withDaggerCompiler {
                 val lightsaberCheck = tasks.register("lightsaberCheck")
                 tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
             }
