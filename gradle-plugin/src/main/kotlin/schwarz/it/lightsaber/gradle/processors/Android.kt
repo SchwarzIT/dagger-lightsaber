@@ -16,15 +16,6 @@ import schwarz.it.lightsaber.gradle.registerTask
 import schwarz.it.lightsaber.gradle.withDaggerCompiler
 
 fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
-    withDaggerCompiler("annotationProcessor") {
-        configureLightsaberAnnotationProcessor(extension)
-    }
-    withDaggerCompiler("kapt") {
-        configureLightsaberKapt(extension)
-    }
-    withDaggerCompiler("ksp") {
-        configureLightsaberKsp(extension)
-    }
     extensions.configure<BaseExtension>("android") { androidExtension ->
         val defaultBuildType by lazy(LazyThreadSafetyMode.NONE) { androidExtension.getDefaultBuildType() }
         val defaultFlavour by lazy(LazyThreadSafetyMode.NONE) { androidExtension.getDefaultFlavours() }
