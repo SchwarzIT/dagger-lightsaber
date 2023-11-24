@@ -10,6 +10,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import schwarz.it.lightsaber.gradle.truth.assertThat
 
@@ -86,177 +87,181 @@ class LightsaberPluginTest {
         assertThat(project).doesntHasDependency(LIGHTSABER)
     }
 
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_tasks() {
-        val project = createAndroidProject {
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
+    @Nested
+    inner class AndroidAnnotationProcessor {
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_tasks() {
+            val project = createAndroidProject {
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
+                }
             }
+
+            assertThat(project).hasTask("lightsaberDebugCheck")
+                .dependsExactlyOn(
+                    "compileDebugAndroidTestJavaWithJavac",
+                    "compileDebugJavaWithJavac",
+                    "compileDebugUnitTestJavaWithJavac",
+                )
+
+            assertThat(project).hasTask("lightsaberReleaseCheck")
+                .dependsExactlyOn(
+                    "compileReleaseJavaWithJavac",
+                    "compileReleaseUnitTestJavaWithJavac",
+                )
+
+            assertThat(project).hasConfiguration("annotationProcessor")
+                .contains(LIGHTSABER)
         }
 
-        assertThat(project).hasTask("lightsaberDebugCheck")
-            .dependsExactlyOn(
-                "compileDebugAndroidTestJavaWithJavac",
-                "compileDebugJavaWithJavac",
-                "compileDebugUnitTestJavaWithJavac",
-            )
-
-        assertThat(project).hasTask("lightsaberReleaseCheck")
-            .dependsExactlyOn(
-                "compileReleaseJavaWithJavac",
-                "compileReleaseUnitTestJavaWithJavac",
-            )
-
-        assertThat(project).hasConfiguration("annotationProcessor")
-            .contains(LIGHTSABER)
-    }
-
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_check() {
-        val project = createAndroidProject {
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check() {
+            val project = createAndroidProject {
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
+                }
             }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberDebugCheck")
         }
 
-        assertThat(project).hasTask("check")
-            .dependsOn("lightsaberCheck")
-            .dependsExactlyOn("lightsaberDebugCheck")
-    }
-
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_check_default() {
-        val project = createAndroidProject {
-            extensions.configure<BaseExtension>("android") {
-                it.buildTypes.getByName("release") { buildType ->
-                    buildType.isDefault = true
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_default() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.buildTypes.getByName("release") { buildType ->
+                        buildType.isDefault = true
+                    }
+                }
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
                 }
             }
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
-            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberReleaseCheck")
         }
 
-        assertThat(project).hasTask("check")
-            .dependsOn("lightsaberCheck")
-            .dependsExactlyOn("lightsaberReleaseCheck")
-    }
+        @Test
+        fun lightsaberWithDaggerCompiler_application_tasks_1flavors() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                }
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
+                }
+            }
 
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_tasks_1flavors() {
-        val project = createAndroidProject {
-            extensions.configure<BaseExtension>("android") {
-                it.flavorDimensions("environment")
-                it.productFlavors.register("staging") { flavor ->
-                    flavor.dimension = "environment"
-                }
-                it.productFlavors.register("production") { flavor ->
-                    flavor.dimension = "environment"
-                }
-            }
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
-            }
+            assertThat(project).hasTask("lightsaberStagingDebugCheck")
+                .dependsExactlyOn(
+                    "compileStagingDebugAndroidTestJavaWithJavac",
+                    "compileStagingDebugJavaWithJavac",
+                    "compileStagingDebugUnitTestJavaWithJavac",
+                )
+
+            assertThat(project).hasTask("lightsaberStagingReleaseCheck")
+                .dependsExactlyOn(
+                    "compileStagingReleaseJavaWithJavac",
+                    "compileStagingReleaseUnitTestJavaWithJavac",
+                )
+
+            assertThat(project).hasTask("lightsaberProductionDebugCheck")
+                .dependsExactlyOn(
+                    "compileProductionDebugAndroidTestJavaWithJavac",
+                    "compileProductionDebugJavaWithJavac",
+                    "compileProductionDebugUnitTestJavaWithJavac",
+                )
+
+            assertThat(project).hasTask("lightsaberProductionReleaseCheck")
+                .dependsExactlyOn(
+                    "compileProductionReleaseJavaWithJavac",
+                    "compileProductionReleaseUnitTestJavaWithJavac",
+                )
         }
 
-        assertThat(project).hasTask("lightsaberStagingDebugCheck")
-            .dependsExactlyOn(
-                "compileStagingDebugAndroidTestJavaWithJavac",
-                "compileStagingDebugJavaWithJavac",
-                "compileStagingDebugUnitTestJavaWithJavac",
-            )
-
-        assertThat(project).hasTask("lightsaberStagingReleaseCheck")
-            .dependsExactlyOn(
-                "compileStagingReleaseJavaWithJavac",
-                "compileStagingReleaseUnitTestJavaWithJavac",
-            )
-
-        assertThat(project).hasTask("lightsaberProductionDebugCheck")
-            .dependsExactlyOn(
-                "compileProductionDebugAndroidTestJavaWithJavac",
-                "compileProductionDebugJavaWithJavac",
-                "compileProductionDebugUnitTestJavaWithJavac",
-            )
-
-        assertThat(project).hasTask("lightsaberProductionReleaseCheck")
-            .dependsExactlyOn(
-                "compileProductionReleaseJavaWithJavac",
-                "compileProductionReleaseUnitTestJavaWithJavac",
-            )
-    }
-
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_check_1flavors() {
-        val project = createAndroidProject {
-            extensions.configure<BaseExtension>("android") {
-                it.flavorDimensions("environment")
-                it.productFlavors.register("staging") { flavor ->
-                    flavor.dimension = "environment"
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_1flavors() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
                 }
-                it.productFlavors.register("production") { flavor ->
-                    flavor.dimension = "environment"
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
                 }
             }
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
-            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberProductionDebugCheck")
         }
 
-        assertThat(project).hasTask("check")
-            .dependsOn("lightsaberCheck")
-            .dependsExactlyOn("lightsaberProductionDebugCheck")
-    }
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_1flavors_default() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                        flavor.isDefault = true
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                }
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
+                }
+            }
 
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_check_1flavors_default() {
-        val project = createAndroidProject {
-            extensions.configure<BaseExtension>("android") {
-                it.flavorDimensions("environment")
-                it.productFlavors.register("staging") { flavor ->
-                    flavor.dimension = "environment"
-                    flavor.isDefault = true
-                }
-                it.productFlavors.register("production") { flavor ->
-                    flavor.dimension = "environment"
-                }
-            }
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
-            }
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberStagingDebugCheck")
         }
 
-        assertThat(project).hasTask("check")
-            .dependsOn("lightsaberCheck")
-            .dependsExactlyOn("lightsaberStagingDebugCheck")
-    }
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_2flavors() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment", "store")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("google") { flavor ->
+                        flavor.dimension = "store"
+                    }
+                    it.productFlavors.register("huawei") { flavor ->
+                        flavor.dimension = "store"
+                    }
+                }
+                dependencies {
+                    "annotationProcessor"(DAGGER_COMPILER)
+                }
+            }
 
-    @Test
-    fun lightsaberWithDaggerCompiler_android_application_annotationProcessor_check_2flavors() {
-        val project = createAndroidProject {
-            extensions.configure<BaseExtension>("android") {
-                it.flavorDimensions("environment", "store")
-                it.productFlavors.register("staging") { flavor ->
-                    flavor.dimension = "environment"
-                }
-                it.productFlavors.register("production") { flavor ->
-                    flavor.dimension = "environment"
-                }
-                it.productFlavors.register("google") { flavor ->
-                    flavor.dimension = "store"
-                }
-                it.productFlavors.register("huawei") { flavor ->
-                    flavor.dimension = "store"
-                }
-            }
-            dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
-            }
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberProductionGoogleDebugCheck")
         }
-
-        assertThat(project).hasTask("check")
-            .dependsOn("lightsaberCheck")
-            .dependsExactlyOn("lightsaberProductionGoogleDebugCheck")
     }
 }
 
