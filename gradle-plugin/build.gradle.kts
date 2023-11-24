@@ -2,6 +2,7 @@
 
 import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -23,6 +24,7 @@ testing {
             useJUnitJupiter(libs.versions.junit.jupiter.get())
 
             dependencies {
+                implementation("com.android.tools.build:gradle:8.0.0")
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
                 implementation(libs.truth)
@@ -65,9 +67,11 @@ val testKitRuntimeOnly: Configuration by configurations.creating
 dependencies {
     compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.symbol.processing.gradle.plugin)
+    compileOnly("com.android.tools.build:gradle:8.0.0")
 
     testKitRuntimeOnly(libs.kotlin.gradle.plugin)
     testKitRuntimeOnly(libs.symbol.processing.gradle.plugin)
+    testKitRuntimeOnly("com.android.tools.build:gradle:8.0.0")
 }
 
 // Manually inject dependency to gradle-testkit since the default injected plugin classpath is from `main.runtime`.
