@@ -11,7 +11,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(libs.versions.jdk.version.get().toInt())
+    jvmToolchain(17)
 }
 
 group = "io.github.schwarzit"

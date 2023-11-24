@@ -3,7 +3,6 @@ kotlin = "1.9.21"
 dagger = "2.48.1"
 junit_jupiter = "5.10.1"
 kctfork = "0.4.0"
-jdk_version = "11"
 
 [libraries]
 dagger_spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }

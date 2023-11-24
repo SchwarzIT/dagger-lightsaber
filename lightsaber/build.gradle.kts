@@ -8,7 +8,7 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(libs.versions.jdk.version.get().toInt())
+    jvmToolchain(11)
 }
 
 tasks.test {
