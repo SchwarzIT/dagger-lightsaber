@@ -440,6 +440,183 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberProductionGoogleDebugCheck")
         }
     }
+
+    @Nested
+    inner class AndroidKsp {
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_tasks() {
+            val project = createAndroidProject {
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("lightsaberDebugCheck")
+                .dependsExactlyOn(
+                    "kspDebugAndroidTestKotlin",
+                    "kspDebugKotlin",
+                    "kspDebugUnitTestKotlin",
+                )
+
+            assertThat(project).hasTask("lightsaberReleaseCheck")
+                .dependsExactlyOn(
+                    "kspReleaseKotlin",
+                    "kspReleaseUnitTestKotlin",
+                )
+
+            assertThat(project).hasConfiguration("ksp")
+                .contains(LIGHTSABER)
+        }
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check() {
+            val project = createAndroidProject {
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberDebugCheck")
+        }
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_default() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.buildTypes.getByName("release") { buildType ->
+                        buildType.isDefault = true
+                    }
+                }
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberReleaseCheck")
+        }
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_tasks_1flavors() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                }
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("lightsaberStagingDebugCheck")
+                .dependsExactlyOn(
+                    "kspStagingDebugAndroidTestKotlin",
+                    "kspStagingDebugKotlin",
+                    "kspStagingDebugUnitTestKotlin",
+                )
+
+            assertThat(project).hasTask("lightsaberStagingReleaseCheck")
+                .dependsExactlyOn(
+                    "kspStagingReleaseKotlin",
+                    "kspStagingReleaseUnitTestKotlin",
+                )
+
+            assertThat(project).hasTask("lightsaberProductionDebugCheck")
+                .dependsExactlyOn(
+                    "kspProductionDebugAndroidTestKotlin",
+                    "kspProductionDebugKotlin",
+                    "kspProductionDebugUnitTestKotlin",
+                )
+
+            assertThat(project).hasTask("lightsaberProductionReleaseCheck")
+                .dependsExactlyOn(
+                    "kspProductionReleaseKotlin",
+                    "kspProductionReleaseUnitTestKotlin",
+                )
+        }
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_1flavors() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                }
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberProductionDebugCheck")
+        }
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_1flavors_default() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                        flavor.isDefault = true
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                }
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberStagingDebugCheck")
+        }
+
+        @Test
+        fun lightsaberWithDaggerCompiler_application_check_2flavors() {
+            val project = createAndroidProject {
+                extensions.configure<BaseExtension>("android") {
+                    it.flavorDimensions("environment", "store")
+                    it.productFlavors.register("staging") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("production") { flavor ->
+                        flavor.dimension = "environment"
+                    }
+                    it.productFlavors.register("google") { flavor ->
+                        flavor.dimension = "store"
+                    }
+                    it.productFlavors.register("huawei") { flavor ->
+                        flavor.dimension = "store"
+                    }
+                }
+                dependencies {
+                    "ksp"(DAGGER_COMPILER)
+                }
+            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberProductionGoogleDebugCheck")
+        }
+    }
 }
 
 private fun createProject(block: Project.() -> Unit): Project {

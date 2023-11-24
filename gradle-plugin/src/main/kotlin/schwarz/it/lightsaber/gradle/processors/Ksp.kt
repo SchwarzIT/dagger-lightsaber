@@ -25,7 +25,7 @@ fun Project.applyKsp(extension: LightsaberExtension) {
     tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
 }
 
-private fun Project.configureLightsaberKsp(extension: LightsaberExtension) {
+internal fun Project.configureLightsaberKsp(extension: LightsaberExtension) {
     dependencies.add("ksp", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     extensions.configure(KspExtension::class.java) {
         extension.getArguments().forEach { (key, value) -> it.arg(key, value.toString()) }
