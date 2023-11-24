@@ -20,7 +20,7 @@ class ProjectSubject(
         val task = actual.tasks.findByName(taskName)
 
         if (task == null) {
-            failWithActual(Fact.simpleFact("The task $taskName shouldn't exist"))
+            failWithActual(Fact.simpleFact("The task $taskName doesn't exist"))
             error("WTF?") // this shouldn't be called
         }
 
