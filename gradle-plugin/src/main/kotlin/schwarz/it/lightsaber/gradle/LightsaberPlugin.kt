@@ -26,26 +26,20 @@ private fun Project.apply() {
     }
 
     pluginManager.withPlugin("com.google.devtools.ksp") { _ ->
-        afterEvaluate {
-            if (configurations.getByName("ksp").dependencies.any { it.isDaggerCompiler() }) {
-                applyKsp(extension)
-            }
+        withDaggerCompiler("ksp") {
+            applyKsp(extension)
         }
     }
 
     pluginManager.withPlugin("kotlin-kapt") { _ ->
-        afterEvaluate {
-            if (configurations.getByName("kapt").dependencies.any { it.isDaggerCompiler() }) {
-                applyKapt(extension)
-            }
+        withDaggerCompiler("kapt") {
+            applyKapt(extension)
         }
     }
 
     pluginManager.withPlugin("java") { _ ->
-        afterEvaluate {
-            if (configurations.getByName("annotationProcessor").dependencies.any { it.isDaggerCompiler() }) {
-                applyAnnotationProcessor(extension)
-            }
+        withDaggerCompiler("annotationProcessor") {
+            applyAnnotationProcessor(extension)
         }
     }
 }
@@ -68,6 +62,14 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
         Rule.UnusedDependencies -> extension.unusedDependencies
         Rule.UnusedMembersInjectionMethods -> extension.unusedMembersInjectionMethods
         Rule.UnusedModules -> extension.unusedModules
+    }
+}
+
+private fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
+    afterEvaluate {
+        if (configurations.getByName(configurationName).dependencies.any { it.isDaggerCompiler() }) {
+            block()
+        }
     }
 }
 
