@@ -19,6 +19,8 @@ class LightsaberPluginTest {
         }
 
         assertThat(project).doesntHaveTask("lightsaberCheck")
+
+        assertThat(project).doesntHasDependency(LIGHTSABER)
     }
 
     @Test
@@ -32,6 +34,9 @@ class LightsaberPluginTest {
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
             .dependsExactlyOn("compileJava", "compileTestJava")
+
+        assertThat(project).hasConfiguration("annotationProcessor")
+            .contains(LIGHTSABER)
     }
 
     @Test
@@ -45,6 +50,9 @@ class LightsaberPluginTest {
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
             .dependsExactlyOn("kaptKotlin", "kaptTestKotlin")
+
+        assertThat(project).hasConfiguration("kapt")
+            .contains(LIGHTSABER)
     }
 
     @Test
@@ -58,6 +66,9 @@ class LightsaberPluginTest {
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
             .dependsExactlyOn("kspKotlin", "kspTestKotlin")
+
+        assertThat(project).hasConfiguration("ksp")
+            .contains(LIGHTSABER)
     }
 }
 
@@ -83,3 +94,4 @@ private fun Project.evaluate() {
 }
 
 private const val DAGGER_COMPILER = "com.google.dagger:dagger-compiler:2.48.1"
+private const val LIGHTSABER = "io.github.schwarzit:lightsaber"
