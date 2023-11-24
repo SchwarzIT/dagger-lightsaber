@@ -2,9 +2,9 @@ package schwarz.it.lightsaber.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
+import schwarz.it.lightsaber.gradle.processors.Processor
 import schwarz.it.lightsaber.gradle.processors.applyAndroidAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.applyAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.applyKapt
@@ -12,6 +12,7 @@ import schwarz.it.lightsaber.gradle.processors.applyKsp
 import schwarz.it.lightsaber.gradle.processors.configureLightsaberAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.configureLightsaberKapt
 import schwarz.it.lightsaber.gradle.processors.configureLightsaberKsp
+import schwarz.it.lightsaber.gradle.processors.withDaggerCompiler
 
 class LightsaberPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -29,14 +30,12 @@ private fun Project.apply() {
         unusedModules.convention(Severity.Error)
     }
 
-    withDaggerCompiler("annotationProcessor") {
-        configureLightsaberAnnotationProcessor(extension)
-    }
-    withDaggerCompiler("kapt") {
-        configureLightsaberKapt(extension)
-    }
-    withDaggerCompiler("ksp") {
-        configureLightsaberKsp(extension)
+    withDaggerCompiler { processor ->
+        when (processor) {
+            Processor.AnnotationProcessor -> configureLightsaberAnnotationProcessor(extension)
+            Processor.Kapt -> configureLightsaberKapt(extension)
+            Processor.Ksp -> configureLightsaberKsp(extension)
+        }
     }
 
     pluginManager.withPlugin("com.google.devtools.ksp") { _ ->
@@ -88,22 +87,4 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
         Rule.UnusedMembersInjectionMethods -> extension.unusedMembersInjectionMethods
         Rule.UnusedModules -> extension.unusedModules
     }
-}
-
-internal fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
-    afterEvaluate {
-        if (configurations.findByName(configurationName)?.dependencies.orEmpty().any { it.isDaggerCompiler() }) {
-            block()
-        }
-    }
-}
-
-internal fun Project.withDaggerCompiler(block: Project.() -> Unit) {
-    withDaggerCompiler("annotationProcessor", block)
-    withDaggerCompiler("kapt", block)
-    withDaggerCompiler("ksp", block)
-}
-
-private fun Dependency.isDaggerCompiler(): Boolean {
-    return group == "com.google.dagger" && name == "dagger-compiler"
 }
