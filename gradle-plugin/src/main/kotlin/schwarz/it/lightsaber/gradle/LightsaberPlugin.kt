@@ -6,12 +6,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import schwarz.it.lightsaber.gradle.processors.Processor
 import schwarz.it.lightsaber.gradle.processors.applyAndroidAnnotationProcessor
-import schwarz.it.lightsaber.gradle.processors.applyAnnotationProcessor
-import schwarz.it.lightsaber.gradle.processors.applyKapt
-import schwarz.it.lightsaber.gradle.processors.applyKsp
 import schwarz.it.lightsaber.gradle.processors.configureLightsaberAnnotationProcessor
 import schwarz.it.lightsaber.gradle.processors.configureLightsaberKapt
 import schwarz.it.lightsaber.gradle.processors.configureLightsaberKsp
+import schwarz.it.lightsaber.gradle.processors.registerAnnotationProcessorTask
+import schwarz.it.lightsaber.gradle.processors.registerKaptTask
+import schwarz.it.lightsaber.gradle.processors.registerKspTask
 import schwarz.it.lightsaber.gradle.processors.withDaggerCompiler
 
 class LightsaberPlugin : Plugin<Project> {
@@ -36,27 +36,14 @@ private fun Project.apply() {
             Processor.Kapt -> configureLightsaberKapt(extension)
             Processor.Ksp -> configureLightsaberKsp(extension)
         }
-    }
 
-    pluginManager.withPlugin("com.google.devtools.ksp") { _ ->
-        withDaggerCompiler("ksp") {
-            if (!pluginManager.hasPlugin("com.android.application")) {
-                applyKsp(extension)
+        if (!pluginManager.hasPlugin("com.android.application")) {
+            val lightsaberCheck = when (processor) {
+                Processor.AnnotationProcessor -> registerAnnotationProcessorTask(extension)
+                Processor.Kapt -> registerKaptTask(extension)
+                Processor.Ksp -> registerKspTask(extension)
             }
-        }
-    }
-
-    pluginManager.withPlugin("kotlin-kapt") { _ ->
-        withDaggerCompiler("kapt") {
-            if (!pluginManager.hasPlugin("com.android.application")) {
-                applyKapt(extension)
-            }
-        }
-    }
-
-    pluginManager.withPlugin("java") { _ ->
-        withDaggerCompiler("annotationProcessor") {
-            applyAnnotationProcessor(extension)
+            tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
         }
     }
 

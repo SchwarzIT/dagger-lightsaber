@@ -12,11 +12,6 @@ import schwarz.it.lightsaber.gradle.getArguments
 import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask
 
-fun Project.applyKapt(extension: LightsaberExtension) {
-    val lightsaberCheck = registerKaptTask(extension)
-    tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
-}
-
 internal fun Project.registerKaptTask(
     extension: LightsaberExtension,
     variant: Variant? = null,

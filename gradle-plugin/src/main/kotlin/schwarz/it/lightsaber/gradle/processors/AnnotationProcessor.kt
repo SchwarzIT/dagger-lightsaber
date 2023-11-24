@@ -11,11 +11,6 @@ import schwarz.it.lightsaber.gradle.getArguments
 import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask
 
-fun Project.applyAnnotationProcessor(extension: LightsaberExtension) {
-    val lightsaberCheck = registerAnnotationProcessorTask(extension)
-    tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
-}
-
 internal fun Project.registerAnnotationProcessorTask(
     extension: LightsaberExtension,
     variant: Variant? = null,
