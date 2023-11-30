@@ -25,4 +25,4 @@ kotlin_jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin_kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 java_gradle_plugin = { id = "java-gradle-plugin", version.ref = "kotlin" }
 maven_publish = { id = "com.vanniktech.maven.publish", version = "0.25.3" }
-spotless = { id = "com.diffplug.spotless", version = "6.23.1" }
+spotless = { id = "com.diffplug.spotless", version = "6.23.2" }
