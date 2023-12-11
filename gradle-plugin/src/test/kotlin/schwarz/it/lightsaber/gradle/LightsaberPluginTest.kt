@@ -1,7 +1,9 @@
 package schwarz.it.lightsaber.gradle
 
 import com.android.build.gradle.BaseExtension
+import com.google.common.truth.Truth.assertThat
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.JavaPlugin
@@ -12,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import schwarz.it.lightsaber.gradle.truth.assertThat
@@ -680,6 +683,47 @@ class LightsaberPluginTest {
                 .dependsExactlyOn("lightsaberProductionGoogleDebugCheck")
         }
     }
+
+    @Nested
+    inner class NoSupportDaggerVersion {
+
+        @ParameterizedTest
+        @EnumSource(Processor::class)
+        fun noAndroid(processor: Processor) {
+            try {
+                createProject {
+                    dependencies {
+                        processor.configuration(daggerCompiler("2.47"))
+                    }
+                }
+                fail("wtf?")
+            } catch (e: GradleException) {
+                assertThat(e)
+                    .hasCauseThat()
+                    .hasMessageThat()
+                    .isEqualTo("This version of lightsaber only supports dagger 2.48 or greater")
+            }
+        }
+
+        @ParameterizedTest
+        @EnumSource(Processor::class)
+        fun android(processor: Processor) {
+            try {
+                createAndroidProject {
+                    dependencies {
+                        processor.configuration(daggerCompiler("2.47"))
+                    }
+                }
+                fail("wtf?")
+            } catch (e: GradleException) {
+                assertThat(e)
+                    .hasCauseThat()
+                    .hasCauseThat()
+                    .hasMessageThat()
+                    .isEqualTo("This version of lightsaber only supports dagger 2.48 or greater")
+            }
+        }
+    }
 }
 
 private fun createProject(block: Project.() -> Unit): Project {
@@ -729,6 +773,12 @@ private fun createAndroidProject(
 }
 
 enum class AndroidProject { Application, Library }
+
+enum class Processor(val configuration: String) {
+    AnnotationProcessor("annotationProcessor"),
+    Kapt("kapt"),
+    Ksp("ksp"),
+}
 
 private fun Project.evaluate() {
     (this as ProjectInternal).evaluate()
