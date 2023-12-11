@@ -11,7 +11,7 @@ internal fun Project.withDaggerCompiler(block: Project.(Processor) -> Unit) {
     withDaggerCompiler("ksp") { block(Processor.Ksp) }
 }
 
-internal fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
+private fun Project.withDaggerCompiler(configurationName: String, block: Project.() -> Unit) {
     afterEvaluate {
         if (configurations.findByName(configurationName)?.dependencies.orEmpty().any { it.isDaggerCompiler() }) {
             block()
