@@ -16,7 +16,7 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
             withDaggerCompiler {
                 val lightsaberCheck = tasks.register("lightsaberCheck") {
                     it.group = LifecycleBasePlugin.VERIFICATION_GROUP
-                    it.description = "Check for unused dagger code on the default variant"
+                    it.description = "Check for unused dagger code on the default variant."
                 }
                 tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
             }
@@ -27,6 +27,10 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
                         Processor.AnnotationProcessor -> registerAnnotationProcessorTask(extension, variant)
                         Processor.Kapt -> registerKaptTask(extension, variant)
                         Processor.Ksp -> registerKspTask(extension, variant)
+                    }
+
+                    lightsaberVariantCheck.configure {
+                        it.description = "Check for unused dagger code on the ${variant.name} variant."
                     }
 
                     if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
