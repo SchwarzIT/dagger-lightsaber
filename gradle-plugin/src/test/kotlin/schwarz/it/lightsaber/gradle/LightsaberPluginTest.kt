@@ -32,7 +32,7 @@ class LightsaberPluginTest {
     fun lightsaberWithDaggerCompiler_annotationProcessor() {
         val project = createProject {
             dependencies {
-                "annotationProcessor"(DAGGER_COMPILER)
+                "annotationProcessor"(daggerCompiler())
             }
         }
 
@@ -49,7 +49,7 @@ class LightsaberPluginTest {
     fun lightsaberWithDaggerCompiler_kapt() {
         val project = createProject {
             dependencies {
-                "kapt"(DAGGER_COMPILER)
+                "kapt"(daggerCompiler())
             }
         }
 
@@ -66,7 +66,7 @@ class LightsaberPluginTest {
     fun lightsaberWithDaggerCompiler_ksp() {
         val project = createProject {
             dependencies {
-                "ksp"(DAGGER_COMPILER)
+                "ksp"(daggerCompiler())
             }
         }
 
@@ -101,7 +101,7 @@ class LightsaberPluginTest {
         fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
             val project = createAndroidProject(type) {
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -132,7 +132,7 @@ class LightsaberPluginTest {
         fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
             val project = createAndroidProject(type) {
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -151,7 +151,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -174,7 +174,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -226,7 +226,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -250,7 +250,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -279,7 +279,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "annotationProcessor"(DAGGER_COMPILER)
+                    "annotationProcessor"(daggerCompiler())
                 }
             }
 
@@ -297,7 +297,7 @@ class LightsaberPluginTest {
         fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
             val project = createAndroidProject(type) {
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -328,7 +328,7 @@ class LightsaberPluginTest {
         fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
             val project = createAndroidProject(type) {
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -347,7 +347,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -370,7 +370,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -422,7 +422,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -446,7 +446,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -475,7 +475,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "kapt"(DAGGER_COMPILER)
+                    "kapt"(daggerCompiler())
                 }
             }
 
@@ -493,7 +493,7 @@ class LightsaberPluginTest {
         fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
             val project = createAndroidProject(type) {
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -524,7 +524,7 @@ class LightsaberPluginTest {
         fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
             val project = createAndroidProject(type) {
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -543,7 +543,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -566,7 +566,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -618,7 +618,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -642,7 +642,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -671,7 +671,7 @@ class LightsaberPluginTest {
                     }
                 }
                 dependencies {
-                    "ksp"(DAGGER_COMPILER)
+                    "ksp"(daggerCompiler())
                 }
             }
 
@@ -734,5 +734,8 @@ private fun Project.evaluate() {
     (this as ProjectInternal).evaluate()
 }
 
-private const val DAGGER_COMPILER = "com.google.dagger:dagger-compiler:2.48.1"
+private fun daggerCompiler(version: String = "2.48"): String {
+    return "com.google.dagger:dagger-compiler:$version"
+}
+
 private const val LIGHTSABER = "io.github.schwarzit:lightsaber"
