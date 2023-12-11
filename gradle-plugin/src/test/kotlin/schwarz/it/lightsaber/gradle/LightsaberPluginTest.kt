@@ -38,6 +38,7 @@ class LightsaberPluginTest {
 
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
+            .hasDescription("Check for unused dagger code.")
             .dependsExactlyOn("compileJava", "compileTestJava")
 
         assertThat(project).hasConfiguration("annotationProcessor")
@@ -54,6 +55,7 @@ class LightsaberPluginTest {
 
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
+            .hasDescription("Check for unused dagger code.")
             .dependsExactlyOn("kaptKotlin", "kaptTestKotlin")
 
         assertThat(project).hasConfiguration("kapt")
@@ -70,6 +72,7 @@ class LightsaberPluginTest {
 
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
+            .hasDescription("Check for unused dagger code.")
             .dependsExactlyOn("kspKotlin", "kspTestKotlin")
 
         assertThat(project).hasConfiguration("ksp")
@@ -102,7 +105,11 @@ class LightsaberPluginTest {
                 }
             }
 
+            assertThat(project).hasTask("lightsaberCheck")
+                .hasDescription("Check for unused dagger code on the default variant.")
+
             assertThat(project).hasTask("lightsaberDebugCheck")
+                .hasDescription("Check for unused dagger code on the debug variant.")
                 .dependsExactlyOn(
                     "compileDebugAndroidTestJavaWithJavac",
                     "compileDebugJavaWithJavac",
@@ -110,6 +117,7 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberReleaseCheck")
+                .hasDescription("Check for unused dagger code on the release variant.")
                 .dependsExactlyOn(
                     "compileReleaseJavaWithJavac",
                     "compileReleaseUnitTestJavaWithJavac",
@@ -170,7 +178,11 @@ class LightsaberPluginTest {
                 }
             }
 
+            assertThat(project).hasTask("lightsaberCheck")
+                .hasDescription("Check for unused dagger code on the default variant.")
+
             assertThat(project).hasTask("lightsaberStagingDebugCheck")
+                .hasDescription("Check for unused dagger code on the stagingDebug variant.")
                 .dependsExactlyOn(
                     "compileStagingDebugAndroidTestJavaWithJavac",
                     "compileStagingDebugJavaWithJavac",
@@ -178,12 +190,14 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberStagingReleaseCheck")
+                .hasDescription("Check for unused dagger code on the stagingRelease variant.")
                 .dependsExactlyOn(
                     "compileStagingReleaseJavaWithJavac",
                     "compileStagingReleaseUnitTestJavaWithJavac",
                 )
 
             assertThat(project).hasTask("lightsaberProductionDebugCheck")
+                .hasDescription("Check for unused dagger code on the productionDebug variant.")
                 .dependsExactlyOn(
                     "compileProductionDebugAndroidTestJavaWithJavac",
                     "compileProductionDebugJavaWithJavac",
@@ -191,6 +205,7 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberProductionReleaseCheck")
+                .hasDescription("Check for unused dagger code on the productionRelease variant.")
                 .dependsExactlyOn(
                     "compileProductionReleaseJavaWithJavac",
                     "compileProductionReleaseUnitTestJavaWithJavac",
@@ -286,7 +301,11 @@ class LightsaberPluginTest {
                 }
             }
 
+            assertThat(project).hasTask("lightsaberCheck")
+                .hasDescription("Check for unused dagger code on the default variant.")
+
             assertThat(project).hasTask("lightsaberDebugCheck")
+                .hasDescription("Check for unused dagger code on the debug variant.")
                 .dependsExactlyOn(
                     "kaptDebugAndroidTestKotlin",
                     "kaptDebugKotlin",
@@ -294,6 +313,7 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberReleaseCheck")
+                .hasDescription("Check for unused dagger code on the release variant.")
                 .dependsExactlyOn(
                     "kaptReleaseKotlin",
                     "kaptReleaseUnitTestKotlin",
@@ -354,7 +374,11 @@ class LightsaberPluginTest {
                 }
             }
 
+            assertThat(project).hasTask("lightsaberCheck")
+                .hasDescription("Check for unused dagger code on the default variant.")
+
             assertThat(project).hasTask("lightsaberStagingDebugCheck")
+                .hasDescription("Check for unused dagger code on the stagingDebug variant.")
                 .dependsExactlyOn(
                     "kaptStagingDebugAndroidTestKotlin",
                     "kaptStagingDebugKotlin",
@@ -362,12 +386,14 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberStagingReleaseCheck")
+                .hasDescription("Check for unused dagger code on the stagingRelease variant.")
                 .dependsExactlyOn(
                     "kaptStagingReleaseKotlin",
                     "kaptStagingReleaseUnitTestKotlin",
                 )
 
             assertThat(project).hasTask("lightsaberProductionDebugCheck")
+                .hasDescription("Check for unused dagger code on the productionDebug variant.")
                 .dependsExactlyOn(
                     "kaptProductionDebugAndroidTestKotlin",
                     "kaptProductionDebugKotlin",
@@ -375,6 +401,7 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberProductionReleaseCheck")
+                .hasDescription("Check for unused dagger code on the productionRelease variant.")
                 .dependsExactlyOn(
                     "kaptProductionReleaseKotlin",
                     "kaptProductionReleaseUnitTestKotlin",
@@ -470,7 +497,11 @@ class LightsaberPluginTest {
                 }
             }
 
+            assertThat(project).hasTask("lightsaberCheck")
+                .hasDescription("Check for unused dagger code on the default variant.")
+
             assertThat(project).hasTask("lightsaberDebugCheck")
+                .hasDescription("Check for unused dagger code on the debug variant.")
                 .dependsExactlyOn(
                     "kspDebugAndroidTestKotlin",
                     "kspDebugKotlin",
@@ -478,6 +509,7 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberReleaseCheck")
+                .hasDescription("Check for unused dagger code on the release variant.")
                 .dependsExactlyOn(
                     "kspReleaseKotlin",
                     "kspReleaseUnitTestKotlin",
@@ -538,7 +570,11 @@ class LightsaberPluginTest {
                 }
             }
 
+            assertThat(project).hasTask("lightsaberCheck")
+                .hasDescription("Check for unused dagger code on the default variant.")
+
             assertThat(project).hasTask("lightsaberStagingDebugCheck")
+                .hasDescription("Check for unused dagger code on the stagingDebug variant.")
                 .dependsExactlyOn(
                     "kspStagingDebugAndroidTestKotlin",
                     "kspStagingDebugKotlin",
@@ -546,12 +582,14 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberStagingReleaseCheck")
+                .hasDescription("Check for unused dagger code on the stagingRelease variant.")
                 .dependsExactlyOn(
                     "kspStagingReleaseKotlin",
                     "kspStagingReleaseUnitTestKotlin",
                 )
 
             assertThat(project).hasTask("lightsaberProductionDebugCheck")
+                .hasDescription("Check for unused dagger code on the productionDebug variant.")
                 .dependsExactlyOn(
                     "kspProductionDebugAndroidTestKotlin",
                     "kspProductionDebugKotlin",
@@ -559,6 +597,7 @@ class LightsaberPluginTest {
                 )
 
             assertThat(project).hasTask("lightsaberProductionReleaseCheck")
+                .hasDescription("Check for unused dagger code on the productionRelease variant.")
                 .dependsExactlyOn(
                     "kspProductionReleaseKotlin",
                     "kspProductionReleaseUnitTestKotlin",
