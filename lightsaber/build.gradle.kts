@@ -24,7 +24,7 @@ group = "io.github.schwarzit"
 version = properties["version"]!!
 
 dependencies {
-    implementation(libs.dagger.spi)
+    compileOnly(libs.dagger.spi)
     compileOnly(libs.google.auto.service)
     kapt(libs.google.auto.service)
 
