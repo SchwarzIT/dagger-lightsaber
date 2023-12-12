@@ -11,6 +11,7 @@ import schwarz.it.lightsaber.utils.getElements
 import schwarz.it.lightsaber.utils.getFullQualifiedName
 import schwarz.it.lightsaber.utils.getMethods
 import schwarz.it.lightsaber.utils.getTypes
+import schwarz.it.lightsaber.utils.isSuppressedBy
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
@@ -46,6 +47,7 @@ internal fun checkEmptyComponents(
             Finding(
                 "The $annotation `${it.getFullQualifiedName()}` is empty and could be removed.",
                 it.getCodePosition(daggerProcessingEnv),
+                it.componentPath().currentComponent().isSuppressedBy("EmptyComponent")
             )
         }
 }
