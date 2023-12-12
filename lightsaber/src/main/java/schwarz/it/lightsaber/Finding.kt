@@ -15,6 +15,7 @@ import javax.lang.model.util.Elements
 data class Finding(
     val message: String,
     val codePosition: CodePosition,
+    val suppressed: Boolean = false,
 )
 
 data class CodePosition(

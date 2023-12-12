@@ -52,6 +52,30 @@ internal class EmptyComponentsKtTest {
 
         @ParameterizedTest
         @CsvSource("kapt", "ksp")
+        fun emptyComponent_suppress_doesNotReportsError(
+            @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        ) {
+            val component = createSource(
+                """
+                    package test
+
+                    import dagger.Component
+                
+                    @Suppress("EmptyComponents")
+                    @Component
+                    interface MyComponent : MyComponentInterface
+
+                    interface MyComponentInterface
+                """.trimIndent(),
+            )
+
+            val compilation = compiler.compile(component)
+
+            compilation.assertNoFindings()
+        }
+
+        @ParameterizedTest
+        @CsvSource("kapt", "ksp")
         fun noEmptyComponentDoesNotReportError(
             @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         ) {
