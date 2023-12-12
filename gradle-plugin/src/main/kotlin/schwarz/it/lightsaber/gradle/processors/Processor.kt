@@ -17,10 +17,11 @@ private fun Project.withDaggerCompiler(configurationName: String, block: Project
             .find { it.isDaggerCompiler() }
 
         if (daggerDependency != null) {
-            if (daggerDependency.isAtLeastVersion(major = MAJOR, minor = MINOR) == false) {
+            if (daggerDependency.isAtLeastVersion(major = MAJOR, minor = MINOR)) {
+                block()
+            } else {
                 error("This version of lightsaber only supports dagger $MAJOR.$MINOR or greater")
             }
-            block()
         }
     }
 }
@@ -29,21 +30,12 @@ private fun Dependency.isDaggerCompiler(): Boolean {
     return group == "com.google.dagger" && name == "dagger-compiler"
 }
 
-private fun Dependency.isAtLeastVersion(major: Int, minor: Int): Boolean? {
-    val matchResult = version?.let { versionRegex.find(it) } ?: return null
-    val currentMajor = matchResult.groups[1]?.value?.toIntOrNull() ?: return null
-    val currentMinor = matchResult.groups[2]?.value?.toIntOrNull() ?: return null
+private fun Dependency.isAtLeastVersion(major: Int, minor: Int): Boolean {
+    val versionName = version ?: return true
+    val (currentMajor, currentMinor) = versionName.split(".").mapNotNull { it.toIntOrNull() }
 
-    return if (currentMajor > major) {
-        true
-    } else if (currentMajor == major && currentMinor >= minor) {
-        true
-    } else {
-        false
-    }
+    return currentMajor > major || (currentMajor == major && currentMinor >= minor)
 }
-
-val versionRegex = """^([0-9]+)\.([0-9]+)""".toRegex()
 
 private const val MAJOR = 2
 private const val MINOR = 48
