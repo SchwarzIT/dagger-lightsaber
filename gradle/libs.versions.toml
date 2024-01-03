@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.9.22"
-dagger = "2.48.1"
+dagger = "2.50"
 junit_jupiter = "5.10.1"
 kctfork = "0.4.0"
 
