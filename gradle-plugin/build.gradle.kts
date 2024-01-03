@@ -94,8 +94,9 @@ tasks.named("functionalTest") {
 
 private val createVersionsKtFile by tasks.registering(Task::class) {
     inputs.property("version", properties["version"]!!)
-    outputs.dir(layout.buildDirectory.dir("generated"))
-    val versionKt = layout.buildDirectory.file("generated/Version.kt")
+    val path = "generated/source/version/main"
+    outputs.dir(layout.buildDirectory.dir(path))
+    val versionKt = layout.buildDirectory.file("$path/Version.kt")
     doLast {
         versionKt.get().asFile.apply {
             ensureParentDirsCreated()
