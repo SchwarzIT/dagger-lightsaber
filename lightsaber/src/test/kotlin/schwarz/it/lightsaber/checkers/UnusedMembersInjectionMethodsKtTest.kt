@@ -49,6 +49,30 @@ internal class UnusedMembersInjectionMethodsKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
+    fun UnusedMembersInjectionMethodsReportsError(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val component = createSource(
+            """
+            package test
+
+            import dagger.Component
+
+            @Component
+            interface MyComponent {
+                @Suppress("UnusedMembersInjectionMethods")
+                fun inject(str: String)
+            }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
     fun UnusedMembersInjectionMethodsDoesNotReportError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {

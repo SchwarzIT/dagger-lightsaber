@@ -3,6 +3,7 @@ package schwarz.it.lightsaber.domain
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSAnnotated
+import dagger.spi.model.DaggerElement
 import dagger.spi.model.DaggerTypeElement
 import schwarz.it.lightsaber.utils.fold
 import javax.lang.model.element.Element
@@ -13,6 +14,13 @@ fun interface Suppression {
 }
 
 internal fun DaggerTypeElement.hasSuppress(key: String): Boolean {
+    return fold(
+        { element -> element.hasSuppress(key) },
+        { classDeclaration -> classDeclaration.hasSuppress(key) },
+    )
+}
+
+internal fun DaggerElement.hasSuppress(key: String): Boolean {
     return fold(
         { element -> element.hasSuppress(key) },
         { classDeclaration -> classDeclaration.hasSuppress(key) },
