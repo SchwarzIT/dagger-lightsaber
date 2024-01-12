@@ -13,6 +13,7 @@ import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
+import schwarz.it.lightsaber.utils.isSuppressedBy
 import java.io.PrintWriter
 
 @AutoService(BindingGraphPlugin::class)
@@ -88,7 +89,9 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (!check) return emptyList()
 
-    return rule().filterNot { it.suppressed }.map { Issue(it.codePosition, it.message, ruleName) }
+    return rule()
+        .filterNot { it.componentNode?.componentPath()?.currentComponent()?.isSuppressedBy(ruleName) == true }
+        .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
 private data class Issue(
