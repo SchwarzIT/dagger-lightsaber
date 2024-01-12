@@ -90,7 +90,7 @@ private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>)
     if (!check) return emptyList()
 
     return rule()
-        .filterNot { it.componentNode?.componentPath()?.currentComponent()?.isSuppressedBy(ruleName) == true }
+        .filterNot { it.componentNode?.isSuppressedBy(ruleName) == true }
         .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
