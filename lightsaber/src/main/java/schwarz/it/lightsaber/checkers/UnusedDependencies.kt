@@ -8,6 +8,7 @@ import dagger.spi.model.BindingKind
 import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.Dependency
+import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.utils.fold
 import schwarz.it.lightsaber.utils.getDeclaredArguments
 import schwarz.it.lightsaber.utils.getDependenciesCodePosition
@@ -28,6 +29,7 @@ internal fun checkUnusedDependencies(
                 Finding(
                     "The dependency `$it` declared in `$component` is not used.",
                     component.getDependenciesCodePosition(daggerProcessingEnv),
+                    component.componentPath().currentComponent()::hasSuppress,
                 )
             }
         }
