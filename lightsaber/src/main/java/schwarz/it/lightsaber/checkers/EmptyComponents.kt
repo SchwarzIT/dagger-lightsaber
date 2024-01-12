@@ -46,7 +46,7 @@ internal fun checkEmptyComponents(
             Finding(
                 "The $annotation `${it.getFullQualifiedName()}` is empty and could be removed.",
                 it.getCodePosition(daggerProcessingEnv),
-                it,
+                it.componentPath().currentComponent(),
             )
         }
 }

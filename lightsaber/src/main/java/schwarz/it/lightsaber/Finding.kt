@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.Location
 import com.google.devtools.ksp.symbol.NonExistLocation
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.util.DiagnosticSource
-import dagger.spi.model.BindingGraph
+import dagger.spi.model.DaggerTypeElement
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.Element
@@ -16,7 +16,7 @@ import javax.lang.model.util.Elements
 data class Finding(
     val message: String,
     val codePosition: CodePosition,
-    val componentNode: BindingGraph.ComponentNode? = null,
+    val componentNode: DaggerTypeElement? = null,
 )
 
 data class CodePosition(
