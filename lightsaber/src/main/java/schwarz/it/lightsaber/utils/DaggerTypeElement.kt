@@ -2,9 +2,9 @@ package schwarz.it.lightsaber.utils
 
 import dagger.spi.model.DaggerTypeElement
 
-internal fun DaggerTypeElement.isSuppressedBy(rule: String): Boolean {
+internal fun DaggerTypeElement.hasSuppress(key: String): Boolean {
     return fold(
-        { element -> element.isSuppressedBy(rule) },
-        { classDeclaration -> classDeclaration.isSuppressedBy(rule) },
+        { element -> element.hasSuppress(key) },
+        { classDeclaration -> classDeclaration.hasSuppress(key) },
     )
 }

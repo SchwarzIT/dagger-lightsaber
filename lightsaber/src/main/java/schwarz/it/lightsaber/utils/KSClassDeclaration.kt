@@ -4,7 +4,6 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-import dagger.spi.model.hasAnnotation
 import kotlin.reflect.KClass
 
 internal fun KSClassDeclaration.getDeclaredArguments(kClass: KClass<*>, argument: String): List<KSType> {
@@ -36,7 +35,7 @@ fun KSClassDeclaration.getCompanion(): KSClassDeclaration? {
 }
 
 @OptIn(KspExperimental::class)
-internal fun KSClassDeclaration.isSuppressedBy(rule: String): Boolean {
+internal fun KSClassDeclaration.hasSuppress(key: String): Boolean {
     if (!this.isAnnotationPresent(Suppress::class)) return false
-    return getDeclaredStringArguments(Suppress::class, "names").any { rule in it }
+    return getDeclaredStringArguments(Suppress::class, "names").any { key in it }
 }
