@@ -37,7 +37,7 @@ You can change that default for each rule from error to warnings or even ignore 
 import schwarz.it.lightsaber.gradle.Severity
 
 lightsaber {
-  emptyComponent = Severity.Error
+  emptyComponents = Severity.Error
   unusedBindsInstances = Severity.Error
   unusedBindsAndProvides = Severity.Error
   unusedDependencies = Severity.Error

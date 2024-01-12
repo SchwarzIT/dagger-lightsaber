@@ -16,7 +16,7 @@ import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
-internal class EmptyComponentKtTest {
+internal class EmptyComponentsKtTest {
 
     @Nested
     inner class ComponentInheritance {
@@ -43,7 +43,7 @@ internal class EmptyComponentKtTest {
 
             val compilation = compiler.compile(component)
 
-            compilation.assertEmptyComponent(
+            compilation.assertEmptyComponents(
                 message = "The @Component `test.MyComponent` is empty and could be removed.",
                 line = line,
                 column = column,
@@ -138,7 +138,7 @@ internal class EmptyComponentKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertEmptyComponent(
+        compilation.assertEmptyComponents(
             message = "The @Component `test.MyComponent` is empty and could be removed.",
             line = line,
             column = column,
@@ -179,7 +179,7 @@ internal class EmptyComponentKtTest {
 
         val compilation = compiler.compile(subcomponent, component)
 
-        compilation.assertEmptyComponent(
+        compilation.assertEmptyComponents(
             message = "The @Subcomponent `test.MySubcomponent` is empty and could be removed.",
             line = line,
             column = column,
@@ -277,7 +277,7 @@ internal class EmptyComponentKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertEmptyComponent(
+        compilation.assertEmptyComponents(
             message = "The @Component `test.MyComponent` is empty and could be removed.",
             line = line,
             column = column,
@@ -333,15 +333,15 @@ internal class EmptyComponentKtTest {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
             return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.EmptyComponent)
-                "ksp" -> KspKotlinCompiler(Rule.EmptyComponent)
+                "kapt" -> KaptKotlinCompiler(Rule.EmptyComponents)
+                "ksp" -> KspKotlinCompiler(Rule.EmptyComponents)
                 else -> error("Unknown compiler of type $source")
             }
         }
     }
 }
 
-private fun CompilationResult.assertEmptyComponent(
+private fun CompilationResult.assertEmptyComponents(
     message: String,
     line: Int,
     column: Int?,
@@ -352,6 +352,6 @@ private fun CompilationResult.assertEmptyComponent(
         line = line,
         column = column,
         fileName = sourcesDir.resolve("$fileName.${type.extension}").toString(),
-        ruleName = "EmptyComponent",
+        ruleName = "EmptyComponents",
     )
 }

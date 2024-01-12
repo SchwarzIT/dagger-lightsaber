@@ -15,7 +15,7 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Types
 
-internal fun checkEmptyComponent(
+internal fun checkEmptyComponents(
     bindingGraph: BindingGraph,
     daggerProcessingEnv: DaggerProcessingEnv,
 ): List<Finding> {
