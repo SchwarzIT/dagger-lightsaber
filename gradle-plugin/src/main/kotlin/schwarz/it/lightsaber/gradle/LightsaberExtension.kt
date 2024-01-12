@@ -4,7 +4,7 @@ import org.gradle.api.provider.Property
 
 interface LightsaberExtension {
     val emptyComponent: Property<Severity>
-    val unusedBindInstance: Property<Severity>
+    val unusedBindsInstance: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>
     val unusedMembersInjectionMethods: Property<Severity>
@@ -19,7 +19,7 @@ enum class Severity {
 
 internal fun LightsaberExtension.getArguments() = mapOf(
     "Lightsaber.CheckEmptyComponent" to emptyComponent.toArgument(),
-    "Lightsaber.CheckUnusedBindInstance" to unusedBindInstance.toArgument(),
+    "Lightsaber.CheckUnusedBindsInstance" to unusedBindsInstance.toArgument(),
     "Lightsaber.CheckUnusedBindsAndProvides" to unusedBindsAndProvides.toArgument(),
     "Lightsaber.CheckUnusedDependencies" to unusedDependencies.toArgument(),
     "Lightsaber.CheckUnusedMembersInjectionMethods" to unusedMembersInjectionMethods.toArgument(),

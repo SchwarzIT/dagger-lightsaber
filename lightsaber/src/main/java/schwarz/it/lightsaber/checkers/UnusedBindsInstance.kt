@@ -8,18 +8,18 @@ import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.utils.getComponentFactoriesAndBuilders
 import schwarz.it.lightsaber.utils.getFullQualifiedName
 
-internal fun checkUnusedBindInstance(
+internal fun checkUnusedBindsInstance(
     bindingGraph: BindingGraph,
     daggerProcessingEnv: DaggerProcessingEnv,
 ): List<Finding> {
-    val usedInstances = bindingGraph.getUsedBindInstances()
+    val usedInstances = bindingGraph.getUsedBindsInstances()
 
     return bindingGraph
         .componentNodes()
         .flatMap { componentNode ->
-            val bindInstances = componentNode.getBindInstances()
+            val bindsInstances = componentNode.getBindsInstances()
 
-            (bindInstances - usedInstances).map {
+            (bindsInstances - usedInstances).map {
                 Finding(
                     "The @BindsInstance `$it` declared in `${componentNode.getFullQualifiedName()}` is not used.",
                     it.getCodePosition(daggerProcessingEnv),
@@ -28,11 +28,11 @@ internal fun checkUnusedBindInstance(
         }
 }
 
-private fun BindingGraph.ComponentNode.getBindInstances(): Set<FactoryOrBuilder.BindsInstance> {
-    return getComponentFactoriesAndBuilders().flatMap { it.getBindInstance() }.toSet()
+private fun BindingGraph.ComponentNode.getBindsInstances(): Set<FactoryOrBuilder.BindsInstance> {
+    return getComponentFactoriesAndBuilders().flatMap { it.getBindsInstance() }.toSet()
 }
 
-private fun BindingGraph.getUsedBindInstances(): Set<FactoryOrBuilder.BindsInstance> {
+private fun BindingGraph.getUsedBindsInstances(): Set<FactoryOrBuilder.BindsInstance> {
     return bindings()
         .filter { it.kind() == BindingKind.BOUND_INSTANCE }
         .map { FactoryOrBuilder.BindsInstance(it.bindingElement().get()) }

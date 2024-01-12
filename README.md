@@ -5,12 +5,12 @@ Lightsaber is a [Dagger 2][dagger] plugin that detects unused code in your `Modu
 ## What to expect
 
 ```
-/path/module/com/example/MyComponent.java:6:8: e: The @BindsInstance `myInt` declared in `test.MyComponent` is not used. [UnusedBindInstance]
+/path/module/com/example/MyComponent.java:6:8: e: The @BindsInstance `myInt` declared in `test.MyComponent` is not used. [UnusedBindsInstance]
 ```
 
 This plugin contains several rules:
 - Empty `@Component` and `@Subcomponent`
-- Unused `@BindInstance`
+- Unused `@BindsInstance`
 - Unused `@Provides` or `@Binds` inside `@Module`s
 - Unused `@Component(dependencies)`
 - Unused member injection methods (`Component.inject(Foo)`)
@@ -38,7 +38,7 @@ import schwarz.it.lightsaber.gradle.Severity
 
 lightsaber {
   emptyComponent = Severity.Error
-  unusedBindInstance = Severity.Error
+  unusedBindsInstance = Severity.Error
   unusedBindsAndProvides = Severity.Error
   unusedDependencies = Severity.Error
   unusedMembersInjection = Severity.Error

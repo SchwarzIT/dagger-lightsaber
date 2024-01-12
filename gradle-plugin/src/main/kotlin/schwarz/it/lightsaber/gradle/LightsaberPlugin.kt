@@ -24,7 +24,7 @@ class LightsaberPlugin : Plugin<Project> {
 private fun Project.apply() {
     val extension = extensions.create("lightsaber", LightsaberExtension::class.java).apply {
         emptyComponent.convention(Severity.Error)
-        unusedBindInstance.convention(Severity.Error)
+        unusedBindsInstance.convention(Severity.Error)
         unusedBindsAndProvides.convention(Severity.Error)
         unusedDependencies.convention(Severity.Error)
         unusedMembersInjectionMethods.convention(Severity.Error)
@@ -73,7 +73,7 @@ internal fun Project.registerTask(
 private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Severity> {
     return when (this) {
         Rule.EmptyComponent -> extension.emptyComponent
-        Rule.UnusedBindInstance -> extension.unusedBindInstance
+        Rule.UnusedBindsInstance -> extension.unusedBindsInstance
         Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
         Rule.UnusedDependencies -> extension.unusedDependencies
         Rule.UnusedMembersInjectionMethods -> extension.unusedMembersInjectionMethods

@@ -16,7 +16,7 @@ import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.lang.model.element.Element
 
 interface FactoryOrBuilder {
-    fun getBindInstance(): List<BindsInstance>
+    fun getBindsInstance(): List<BindsInstance>
     override fun toString(): String
 
     companion object {
@@ -46,7 +46,7 @@ interface FactoryOrBuilder {
 
 @JvmInline
 private value class FactoryOrBuilderJavac(private val value: Element) : FactoryOrBuilder {
-    override fun getBindInstance(): List<BindsInstance> {
+    override fun getBindsInstance(): List<BindsInstance> {
         return value.getMethods()
             .flatMap { it.parameters }
             .filter { it.isAnnotatedWith(dagger.BindsInstance::class) }
@@ -72,7 +72,7 @@ private value class FactoryOrBuilderJavac(private val value: Element) : FactoryO
 @JvmInline
 private value class FactoryOrBuilderKsp(private val value: KSClassDeclaration) : FactoryOrBuilder {
     @OptIn(KspExperimental::class)
-    override fun getBindInstance(): List<BindsInstance> {
+    override fun getBindsInstance(): List<BindsInstance> {
         return value.getAllFunctions()
             .flatMap { it.parameters }
             .filter { it.isAnnotationPresent(dagger.BindsInstance::class) }
