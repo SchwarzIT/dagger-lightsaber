@@ -46,7 +46,7 @@ interface Module {
         }
     }
 
-    interface Binding {
+    interface Binding : Suppression {
         override fun toString(): String
         fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition
 
@@ -97,6 +97,10 @@ private value class ModuleJavac(private val value: TypeElement) : Module {
         override fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
             return daggerProcessingEnv.getElements().getCodePosition(value)
         }
+
+        override fun hasSuppress(key: String): Boolean {
+            return value.hasSuppress(key)
+        }
     }
 }
 
@@ -136,6 +140,10 @@ private value class ModuleKsp(private val value: KSClassDeclaration) : Module {
 
         override fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
             return value.location.toCodePosition()
+        }
+
+        override fun hasSuppress(key: String): Boolean {
+            return value.hasSuppress(key)
         }
     }
 }
