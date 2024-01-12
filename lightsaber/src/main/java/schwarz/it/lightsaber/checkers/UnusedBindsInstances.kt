@@ -8,7 +8,7 @@ import schwarz.it.lightsaber.domain.FactoryOrBuilder
 import schwarz.it.lightsaber.utils.getComponentFactoriesAndBuilders
 import schwarz.it.lightsaber.utils.getFullQualifiedName
 
-internal fun checkUnusedBindsInstance(
+internal fun checkUnusedBindsInstances(
     bindingGraph: BindingGraph,
     daggerProcessingEnv: DaggerProcessingEnv,
 ): List<Finding> {

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertThrows
 class IssueTest {
 
     private val severities = mapOf(
-        Rule.UnusedBindsInstance to Severity.Error,
+        Rule.UnusedBindsInstances to Severity.Error,
         Rule.UnusedBindsAndProvides to Severity.Error,
         Rule.UnusedDependencies to Severity.Warning,
         Rule.UnusedModules to Severity.Ignore,
@@ -15,10 +15,10 @@ class IssueTest {
 
     @Test
     fun testError() {
-        val issue = "position:1:1: message [UnusedBindsInstance]".toIssue(severities)
+        val issue = "position:1:1: message [UnusedBindsInstances]".toIssue(severities)
 
         assertThat(issue).isInstanceOf(Error::class.java)
-        assertThat(issue.toString()).isEqualTo("e: position:1:1: message [UnusedBindsInstance]")
+        assertThat(issue.toString()).isEqualTo("e: position:1:1: message [UnusedBindsInstances]")
     }
 
     @Test
@@ -56,9 +56,9 @@ class IssueTest {
 
     @Test
     fun testIssueWithoutColumn() {
-        val issue = "position:1: message [UnusedBindsInstance]".toIssue(severities)
+        val issue = "position:1: message [UnusedBindsInstances]".toIssue(severities)
 
         assertThat(issue).isInstanceOf(Error::class.java)
-        assertThat(issue.toString()).isEqualTo("e: position:1: message [UnusedBindsInstance]")
+        assertThat(issue.toString()).isEqualTo("e: position:1: message [UnusedBindsInstances]")
     }
 }
