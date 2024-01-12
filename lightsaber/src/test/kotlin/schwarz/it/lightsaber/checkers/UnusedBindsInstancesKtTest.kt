@@ -15,7 +15,7 @@ import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
-internal class UnusedBindsInstanceKtTest {
+internal class UnusedBindsInstancesKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,13,13", "ksp,12,")
@@ -46,7 +46,7 @@ internal class UnusedBindsInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertUnusedBindsInstance(
+        compilation.assertUnusedBindsInstances(
             message = "The @BindsInstance `myInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
@@ -81,7 +81,7 @@ internal class UnusedBindsInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertUnusedBindsInstance(
+        compilation.assertUnusedBindsInstances(
             message = "The @BindsInstance `myInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
@@ -153,7 +153,7 @@ internal class UnusedBindsInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertUnusedBindsInstance(
+        compilation.assertUnusedBindsInstances(
             message = "The @BindsInstance `secondInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
@@ -295,7 +295,7 @@ internal class UnusedBindsInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        compilation.assertUnusedBindsInstance(
+        compilation.assertUnusedBindsInstances(
             message = "The @BindsInstance `myInt` declared in `test.MySubcomponent` is not used.",
             line = line,
             column = column,
@@ -307,15 +307,15 @@ internal class UnusedBindsInstanceKtTest {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
             return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.UnusedBindsInstance)
-                "ksp" -> KspKotlinCompiler(Rule.UnusedBindsInstance)
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedBindsInstances)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedBindsInstances)
                 else -> error("Unknown compiler of type $source")
             }
         }
     }
 }
 
-private fun CompilationResult.assertUnusedBindsInstance(
+private fun CompilationResult.assertUnusedBindsInstances(
     message: String,
     line: Int,
     column: Int?,
@@ -326,6 +326,6 @@ private fun CompilationResult.assertUnusedBindsInstance(
         line = line,
         column = column,
         fileName = sourcesDir.resolve("$fileName.${type.extension}").toString(),
-        ruleName = "UnusedBindsInstance",
+        ruleName = "UnusedBindsInstances",
     )
 }

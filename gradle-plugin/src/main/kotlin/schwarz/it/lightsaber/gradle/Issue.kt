@@ -26,7 +26,7 @@ internal class Warning(
 
 enum class Rule {
     EmptyComponent,
-    UnusedBindsInstance,
+    UnusedBindsInstances,
     UnusedBindsAndProvides,
     UnusedDependencies,
     UnusedMembersInjectionMethods,

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.assertThrows
 
 class LightsaberTaskTest {
     private val severities = mapOf(
-        Rule.UnusedBindsInstance to Severity.Error,
+        Rule.UnusedBindsInstances to Severity.Error,
         Rule.UnusedBindsAndProvides to Severity.Error,
         Rule.UnusedDependencies to Severity.Warning,
         Rule.UnusedModules to Severity.Ignore,
@@ -21,7 +21,7 @@ class LightsaberTaskTest {
 
     @Test
     fun failWithOneError() {
-        val issues = listOf("position:1:1: message [UnusedBindsInstance]")
+        val issues = listOf("position:1:1: message [UnusedBindsInstances]")
         val e = assertThrows<GradleException> { checkIssues(issues, severities, false) }
         assertThat(e).hasMessageThat().isEqualTo("Analysis failed with 1 error")
     }
@@ -29,7 +29,7 @@ class LightsaberTaskTest {
     @Test
     fun failWithOneErrorAndOneWarning() {
         val issues = listOf(
-            "position:1:1: message [UnusedBindsInstance]",
+            "position:1:1: message [UnusedBindsInstances]",
             "position:1:1: message [UnusedDependencies]",
         )
         val e = assertThrows<GradleException> { checkIssues(issues, severities, false) }
@@ -39,7 +39,7 @@ class LightsaberTaskTest {
     @Test
     fun failWithOneErrorAndTwoWarning() {
         val issues = listOf(
-            "position:1:1: message [UnusedBindsInstance]",
+            "position:1:1: message [UnusedBindsInstances]",
             "position:1:1: message [UnusedDependencies]",
             "position:1:2: message [UnusedDependencies]",
         )
@@ -50,8 +50,8 @@ class LightsaberTaskTest {
     @Test
     fun failWithTwoError() {
         val issues = listOf(
-            "position:1:1: message [UnusedBindsInstance]",
-            "position:1:2: message [UnusedBindsInstance]",
+            "position:1:1: message [UnusedBindsInstances]",
+            "position:1:2: message [UnusedBindsInstances]",
         )
         val e = assertThrows<GradleException> { checkIssues(issues, severities, false) }
         assertThat(e).hasMessageThat().isEqualTo("Analysis failed with 2 errors")
@@ -60,8 +60,8 @@ class LightsaberTaskTest {
     @Test
     fun failWithTwoErrorAndOneWarning() {
         val issues = listOf(
-            "position:1:1: message [UnusedBindsInstance]",
-            "position:1:2: message [UnusedBindsInstance]",
+            "position:1:1: message [UnusedBindsInstances]",
+            "position:1:2: message [UnusedBindsInstances]",
             "position:1:1: message [UnusedDependencies]",
         )
         val e = assertThrows<GradleException> { checkIssues(issues, severities, false) }
@@ -71,8 +71,8 @@ class LightsaberTaskTest {
     @Test
     fun failWithTwoErrorAndTwoWarnings() {
         val issues = listOf(
-            "position:1:1: message [UnusedBindsInstance]",
-            "position:1:2: message [UnusedBindsInstance]",
+            "position:1:1: message [UnusedBindsInstances]",
+            "position:1:2: message [UnusedBindsInstances]",
             "position:1:1: message [UnusedDependencies]",
             "position:1:2: message [UnusedDependencies]",
         )
