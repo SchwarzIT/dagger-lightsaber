@@ -5,7 +5,7 @@ import dagger.spi.model.BindingGraph
 import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DaggerProcessingEnv
 import dagger.spi.model.DiagnosticReporter
-import schwarz.it.lightsaber.checkers.checkEmptyComponent
+import schwarz.it.lightsaber.checkers.checkEmptyComponents
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
 import schwarz.it.lightsaber.checkers.checkUnusedBindsInstances
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
@@ -27,8 +27,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
-            runRule(config.checkEmptyComponent, "EmptyComponent") {
-                checkEmptyComponent(bindingGraph, daggerProcessingEnv)
+            runRule(config.checkEmptyComponents, "EmptyComponents") {
+                checkEmptyComponents(bindingGraph, daggerProcessingEnv)
             },
             runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
                 checkUnusedBindsAndProvides(bindingGraph, daggerProcessingEnv)
@@ -58,7 +58,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
         this.config = LightsaberConfig(
-            checkEmptyComponent = options["Lightsaber.CheckEmptyComponent"] != "false",
+            checkEmptyComponents = options["Lightsaber.CheckEmptyComponents"] != "false",
             checkUnusedBindsInstances = options["Lightsaber.CheckUnusedBindsInstances"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
@@ -71,7 +71,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 
     override fun supportedOptions(): Set<String> {
         return setOf(
-            "Lightsaber.CheckEmptyComponent",
+            "Lightsaber.CheckEmptyComponents",
             "Lightsaber.CheckUnusedBindsInstances",
             "Lightsaber.CheckUnusedBindsAndProvides",
             "Lightsaber.CheckUnusedDependencies",
@@ -98,7 +98,7 @@ private data class Issue(
 )
 
 internal data class LightsaberConfig(
-    val checkEmptyComponent: Boolean,
+    val checkEmptyComponents: Boolean,
     val checkUnusedBindsInstances: Boolean,
     val checkUnusedBindsAndProvides: Boolean,
     val checkUnusedDependencies: Boolean,
