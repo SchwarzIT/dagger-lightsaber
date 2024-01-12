@@ -26,7 +26,3 @@ internal fun Element.getMethods(): List<ExecutableElement> {
     return enclosedElements.filter { it.kind == ElementKind.METHOD }
         .mapNotNull { it as? ExecutableElement }
 }
-
-internal fun Element.hasSuppress(key: String): Boolean {
-    return getAnnotation(Suppress::class.java)?.names?.any { key in it } ?: false
-}

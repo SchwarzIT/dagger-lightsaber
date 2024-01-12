@@ -29,7 +29,7 @@ interface FactoryOrBuilder {
         }
     }
 
-    interface BindsInstance {
+    interface BindsInstance : Suppression {
         fun getCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition
         override fun toString(): String
 
@@ -66,6 +66,10 @@ private value class FactoryOrBuilderJavac(private val value: Element) : FactoryO
         override fun toString(): String {
             return value.toString()
         }
+
+        override fun hasSuppress(key: String): Boolean {
+            return value.hasSuppress(key)
+        }
     }
 }
 
@@ -92,6 +96,10 @@ private value class FactoryOrBuilderKsp(private val value: KSClassDeclaration) :
 
         override fun toString(): String {
             return value.toString()
+        }
+
+        override fun hasSuppress(key: String): Boolean {
+            return value.hasSuppress(key)
         }
     }
 }

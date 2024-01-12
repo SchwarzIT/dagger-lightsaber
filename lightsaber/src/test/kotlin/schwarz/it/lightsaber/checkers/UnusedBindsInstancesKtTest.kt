@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber.checkers
 
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.converter.ArgumentConverter
@@ -51,6 +52,36 @@ internal class UnusedBindsInstancesKtTest {
             line = line,
             column = column,
         )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun bindsInstanceNotUsed_Factory2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val component = createSource(
+            """
+                package test
+
+                import dagger.BindsInstance
+                import dagger.Component
+
+                @Component
+                interface MyComponent {
+
+                    @Component.Factory
+                    interface Factory {
+                        fun create(
+                            @Suppress("UnusedBindsInstances") @BindsInstance myInt: Int
+                        ): MyComponent
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component)
+
+        compilation.assertNoFindings()
     }
 
     @ParameterizedTest

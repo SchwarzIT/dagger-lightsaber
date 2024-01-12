@@ -4,6 +4,7 @@ import dagger.spi.model.BindingGraph
 import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.fold
@@ -46,7 +47,7 @@ internal fun checkEmptyComponents(
             Finding(
                 "The $annotation `${it.getFullQualifiedName()}` is empty and could be removed.",
                 it.getCodePosition(daggerProcessingEnv),
-                it.componentPath().currentComponent(),
+                it.componentPath().currentComponent()::hasSuppress,
             )
         }
 }

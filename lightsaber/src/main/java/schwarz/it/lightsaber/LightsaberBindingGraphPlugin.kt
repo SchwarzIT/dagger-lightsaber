@@ -13,7 +13,6 @@ import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
-import schwarz.it.lightsaber.utils.hasSuppress
 import java.io.PrintWriter
 
 @AutoService(BindingGraphPlugin::class)
@@ -90,7 +89,7 @@ private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>)
     if (!check) return emptyList()
 
     return rule()
-        .filterNot { it.componentNode?.hasSuppress(ruleName) == true }
+        .filterNot { it.suppression.hasSuppress(ruleName) }
         .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
