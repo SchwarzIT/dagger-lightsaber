@@ -23,6 +23,7 @@ internal fun checkUnusedBindsInstances(
                 Finding(
                     "The @BindsInstance `$it` declared in `${componentNode.getFullQualifiedName()}` is not used.",
                     it.getCodePosition(daggerProcessingEnv),
+                    it,
                 )
             }
         }

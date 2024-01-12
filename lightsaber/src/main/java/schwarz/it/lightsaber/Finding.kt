@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.Location
 import com.google.devtools.ksp.symbol.NonExistLocation
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.util.DiagnosticSource
-import dagger.spi.model.DaggerTypeElement
+import schwarz.it.lightsaber.domain.Suppression
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.Element
@@ -16,7 +16,9 @@ import javax.lang.model.util.Elements
 data class Finding(
     val message: String,
     val codePosition: CodePosition,
-    val componentNode: DaggerTypeElement? = null,
+    val suppression: Suppression = object : Suppression {
+        override fun hasSuppress(key: String) = false
+    },
 )
 
 data class CodePosition(
