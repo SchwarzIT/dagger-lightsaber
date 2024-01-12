@@ -15,11 +15,11 @@ import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
-internal class UnusedBindInstanceKtTest {
+internal class UnusedBindsInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,13,13", "ksp,12,")
-    fun bindInstanceNotUsed_Factory(
+    fun bindsInstanceNotUsed_Factory(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
         column: Int?,
@@ -46,7 +46,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertUnusedBindInstance(
+        compilation.assertUnusedBindsInstance(
             message = "The @BindsInstance `myInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
@@ -55,7 +55,7 @@ internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,16,13", "ksp,12,")
-    fun bindInstanceNotUsed_Builder(
+    fun bindsInstanceNotUsed_Builder(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
         column: Int?,
@@ -81,7 +81,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertUnusedBindInstance(
+        compilation.assertUnusedBindsInstance(
             message = "The @BindsInstance `myInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
@@ -90,7 +90,7 @@ internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
-    fun bindInstanceIsUsed(
+    fun bindsInstanceIsUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
         val component = createSource(
@@ -122,7 +122,7 @@ internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,17,13", "ksp,16,")
-    fun bindInstanceNamedIsNotUsed(
+    fun bindsInstanceNamedIsNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
         column: Int?,
@@ -153,7 +153,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component)
 
-        compilation.assertUnusedBindInstance(
+        compilation.assertUnusedBindsInstance(
             message = "The @BindsInstance `secondInt` declared in `test.MyComponent` is not used.",
             line = line,
             column = column,
@@ -162,7 +162,7 @@ internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
-    fun componentWithBindInstanceAndSubcomponentIsUsed(
+    fun componentWithBindsInstanceAndSubcomponentIsUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
         val component = createSource(
@@ -207,7 +207,7 @@ internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
-    fun bindInstanceInSubcomponentIsUsed(
+    fun bindsInstanceInSubcomponentIsUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
         val component = createSource(
@@ -253,7 +253,7 @@ internal class UnusedBindInstanceKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,13,13", "ksp,12,")
-    fun bindInstanceInSubcomponentIsNoUsed(
+    fun bindsInstanceInSubcomponentIsNoUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
         column: Int?,
@@ -295,7 +295,7 @@ internal class UnusedBindInstanceKtTest {
 
         val compilation = compiler.compile(component, subcomponent)
 
-        compilation.assertUnusedBindInstance(
+        compilation.assertUnusedBindsInstance(
             message = "The @BindsInstance `myInt` declared in `test.MySubcomponent` is not used.",
             line = line,
             column = column,
@@ -307,15 +307,15 @@ internal class UnusedBindInstanceKtTest {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
             return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.UnusedBindInstance)
-                "ksp" -> KspKotlinCompiler(Rule.UnusedBindInstance)
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedBindsInstance)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedBindsInstance)
                 else -> error("Unknown compiler of type $source")
             }
         }
     }
 }
 
-private fun CompilationResult.assertUnusedBindInstance(
+private fun CompilationResult.assertUnusedBindsInstance(
     message: String,
     line: Int,
     column: Int?,
@@ -326,6 +326,6 @@ private fun CompilationResult.assertUnusedBindInstance(
         line = line,
         column = column,
         fileName = sourcesDir.resolve("$fileName.${type.extension}").toString(),
-        ruleName = "UnusedBindInstance",
+        ruleName = "UnusedBindsInstance",
     )
 }

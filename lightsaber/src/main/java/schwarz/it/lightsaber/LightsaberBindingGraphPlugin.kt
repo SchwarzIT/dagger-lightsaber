@@ -6,8 +6,8 @@ import dagger.spi.model.BindingGraphPlugin
 import dagger.spi.model.DaggerProcessingEnv
 import dagger.spi.model.DiagnosticReporter
 import schwarz.it.lightsaber.checkers.checkEmptyComponent
-import schwarz.it.lightsaber.checkers.checkUnusedBindInstance
 import schwarz.it.lightsaber.checkers.checkUnusedBindsAndProvides
+import schwarz.it.lightsaber.checkers.checkUnusedBindsInstance
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
@@ -33,8 +33,8 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             runRule(config.checkUnusedBindsAndProvides, "UnusedBindsAndProvides") {
                 checkUnusedBindsAndProvides(bindingGraph, daggerProcessingEnv)
             },
-            runRule(config.checkUnusedBindInstance, "UnusedBindInstance") {
-                checkUnusedBindInstance(bindingGraph, daggerProcessingEnv)
+            runRule(config.checkUnusedBindsInstance, "UnusedBindsInstance") {
+                checkUnusedBindsInstance(bindingGraph, daggerProcessingEnv)
             },
             runRule(config.checkUnusedDependencies, "UnusedDependencies") {
                 checkUnusedDependencies(bindingGraph, daggerProcessingEnv)
@@ -59,7 +59,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
         this.config = LightsaberConfig(
             checkEmptyComponent = options["Lightsaber.CheckEmptyComponent"] != "false",
-            checkUnusedBindInstance = options["Lightsaber.CheckUnusedBindInstance"] != "false",
+            checkUnusedBindsInstance = options["Lightsaber.CheckUnusedBindsInstance"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
             checkUnusedMembersInjectionMethods = options["Lightsaber.CheckUnusedMembersInjectionMethods"] != "false",
@@ -72,7 +72,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
     override fun supportedOptions(): Set<String> {
         return setOf(
             "Lightsaber.CheckEmptyComponent",
-            "Lightsaber.CheckUnusedBindInstance",
+            "Lightsaber.CheckUnusedBindsInstance",
             "Lightsaber.CheckUnusedBindsAndProvides",
             "Lightsaber.CheckUnusedDependencies",
             "Lightsaber.CheckUnusedMembersInjectionMethods",
@@ -99,7 +99,7 @@ private data class Issue(
 
 internal data class LightsaberConfig(
     val checkEmptyComponent: Boolean,
-    val checkUnusedBindInstance: Boolean,
+    val checkUnusedBindsInstance: Boolean,
     val checkUnusedBindsAndProvides: Boolean,
     val checkUnusedDependencies: Boolean,
     val checkUnusedMembersInjectionMethods: Boolean,
