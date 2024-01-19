@@ -15,7 +15,7 @@ junit_jupiter_params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 truth = { module = "com.google.truth:truth", version = "1.2.0" }
 kctfork_core = { module = "dev.zacsweers.kctfork:core", version.ref = "kctfork" }
 kctfork_ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kctfork" }
-symbol_processing_gradle_plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version = "1.9.22-1.0.16" }
+symbol_processing_gradle_plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version = "1.9.22-1.0.17" }
 kotlin_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version = "1.1.1" }
 
