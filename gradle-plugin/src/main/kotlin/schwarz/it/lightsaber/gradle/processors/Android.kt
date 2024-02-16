@@ -1,11 +1,14 @@
 package schwarz.it.lightsaber.gradle.processors
 
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.dsl.BuildType
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import schwarz.it.lightsaber.gradle.LightsaberExtension
+import schwarz.it.lightsaber.gradle.LightsaberTask
 
 fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
     extensions.configure<BaseExtension>("android") { androidExtension ->
@@ -13,13 +16,7 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
         val defaultFlavour by lazy(LazyThreadSafetyMode.NONE) { androidExtension.getDefaultFlavours() }
 
         extensions.configure<AndroidComponentsExtension<*, *, *>>("androidComponents") { androidComponents ->
-            withDaggerCompiler {
-                val lightsaberCheck = tasks.register("lightsaberCheck") {
-                    it.group = LifecycleBasePlugin.VERIFICATION_GROUP
-                    it.description = "Check for unused dagger code on the default variant."
-                }
-                tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
-            }
+            val variants: MutableList<Pair<Variant, TaskProvider<LightsaberTask>>> = mutableListOf()
 
             androidComponents.onVariants { variant ->
                 withDaggerCompiler { processor ->
@@ -34,9 +31,23 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
                         it.description = "Check for unused dagger code on the ${variant.name} variant."
                     }
 
-                    if (variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour) {
-                        tasks.named("lightsaberCheck").configure { it.dependsOn(lightsaberVariantCheck) }
-                    }
+                    variants.add(variant to lightsaberVariantCheck)
+                }
+            }
+
+            withDaggerCompiler {
+                val lightsaberCheck = tasks.register("lightsaberCheck") {
+                    it.group = LifecycleBasePlugin.VERIFICATION_GROUP
+                    it.description = "Check for unused dagger code on the default variant."
+                }
+                tasks.named("check").configure { it.dependsOn(lightsaberCheck) }
+
+                afterEvaluate { project ->
+                    val (_, defaultTask) = variants.find { (variant, _) ->
+                        variant.buildType == defaultBuildType.name && variant.productFlavors.toSet() == defaultFlavour
+                    } ?: variants.firstOrNull() ?: error("The project ${project.name} must have at least one variant")
+
+                    lightsaberCheck.configure { it.dependsOn(defaultTask) }
                 }
             }
         }
