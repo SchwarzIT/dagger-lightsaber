@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber.gradle
 
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
 import com.google.common.truth.Truth.assertThat
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
@@ -142,6 +143,28 @@ class LightsaberPluginTest {
             assertThat(project).hasTask("check")
                 .dependsOn("lightsaberCheck")
                 .dependsExactlyOn("lightsaberDebugCheck")
+        }
+
+        @ParameterizedTest
+        @EnumSource(AndroidProject::class)
+        fun lightsaberWithDaggerCompiler_check_defaultDisabled(type: AndroidProject) {
+            val project = createAndroidProject(type) {
+                dependencies {
+                    "annotationProcessor"(daggerCompiler())
+                }
+
+                androidComponents {
+                    it.beforeVariants { variantBuilder ->
+                        if (variantBuilder.buildType == "debug") {
+                            variantBuilder.enable = false
+                        }
+                    }
+                }
+            }
+
+            assertThat(project).hasTask("check")
+                .dependsOn("lightsaberCheck")
+                .dependsExactlyOn("lightsaberReleaseCheck")
         }
 
         @ParameterizedTest
@@ -723,6 +746,12 @@ class LightsaberPluginTest {
                     .isEqualTo("This version of lightsaber only supports dagger 2.48 or greater")
             }
         }
+    }
+}
+
+private fun Project.androidComponents(block: (AndroidComponentsExtension<*, *, *>) -> Unit) {
+    project.extensions.configure<AndroidComponentsExtension<*, *, *>>("androidComponents") {
+        block(it)
     }
 }
 
