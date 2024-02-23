@@ -5,6 +5,7 @@ import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.CodePosition
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.domain.Module
+import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.utils.TreeNode
 import schwarz.it.lightsaber.utils.getDeclaredModules
 import schwarz.it.lightsaber.utils.getModulesCodePosition
@@ -26,7 +27,13 @@ internal fun checkUnusedModules(
                         codePosition = { component.getModulesCodePosition(daggerProcessingEnv) },
                     )
                 }
-                .map { (errorMessage, codePosition) -> Finding(errorMessage, codePosition) }
+                .map { (errorMessage, codePosition) ->
+                    Finding(
+                        errorMessage,
+                        codePosition,
+                        component.componentPath().currentComponent()::hasSuppress,
+                    )
+                }
         }
 }
 

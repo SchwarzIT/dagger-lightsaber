@@ -49,7 +49,7 @@ internal class UnusedMembersInjectionMethodsKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
-    fun UnusedMembersInjectionMethodsReportsError(
+    fun SuppressedUnusedMembersInjectionMethodsNotReportsError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
         val component = createSource(

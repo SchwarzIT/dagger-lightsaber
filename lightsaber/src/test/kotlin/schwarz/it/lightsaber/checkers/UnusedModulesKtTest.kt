@@ -710,6 +710,29 @@ internal class UnusedModulesKtTest {
         )
     }
 
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun SuppressedUnusedModulesDoesNotReportError(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+
+        val component = createSource(
+            """
+                package test
+
+                import dagger.Component
+
+                @Suppress("UnusedModules")
+                @Component(modules = [MyModule::class])
+                interface MyComponent
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component, module)
+
+        compilation.assertNoFindings()
+    }
+
     private class CompilerArgumentConverter : ArgumentConverter {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
