@@ -46,6 +46,19 @@ lightsaber {
 }
 ```
 
+## Suppress
+
+Lightsaber supports the `@Suppress` annotation. If you want to suppress an issue, you only have to add the `@Suppress` annotation above the reported element with the rule name.
+Example: 
+```kotlin
+@Module
+class MyModule {
+    @Suppress("UnusedBindsAndProvides")
+    @Provides
+    fun providesPotatoes() = "potatoes"
+}
+```
+
 ## How to build it
 
 Clone the repo and execute:
