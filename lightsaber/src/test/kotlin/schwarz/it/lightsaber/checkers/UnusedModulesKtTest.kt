@@ -715,7 +715,6 @@ internal class UnusedModulesKtTest {
     fun SuppressedUnusedModulesDoesNotReportError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
-
         val component = createSource(
             """
                 package test

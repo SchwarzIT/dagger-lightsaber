@@ -1,6 +1,5 @@
 package schwarz.it.lightsaber.checkers
 
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.converter.ArgumentConverter
