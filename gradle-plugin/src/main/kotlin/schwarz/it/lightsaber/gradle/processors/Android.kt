@@ -30,6 +30,7 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
                     }
 
                     lightsaberVariantCheck.configure {
+                        it.group = LifecycleBasePlugin.VERIFICATION_GROUP
                         it.description = "Check for unused dagger code on the ${variant.name} variant."
                     }
 
