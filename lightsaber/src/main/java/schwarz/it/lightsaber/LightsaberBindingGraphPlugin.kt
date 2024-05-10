@@ -21,12 +21,13 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
         return "Lightsaber"
     }
 
+    private val issues: MutableList<Issue> = mutableListOf()
     private lateinit var daggerProcessingEnv: DaggerProcessingEnv
     private lateinit var fileGenerator: FileGenerator
     private lateinit var config: LightsaberConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
-        val issues = listOf(
+        listOf(
             runRule(config.checkEmptyComponents, "EmptyComponents") {
                 checkEmptyComponents(bindingGraph, daggerProcessingEnv)
             },
@@ -46,10 +47,12 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
                 checkUnusedModules(bindingGraph, daggerProcessingEnv)
             },
         )
-            .flatten()
-            .ifEmpty { return }
+            .forEach { issues.addAll(it) }
+    }
 
-        fileGenerator.createFile("schwarz.it.lightsaber", bindingGraph.getQualifiedName(), "lightsaber")
+    override fun onPluginEnd() {
+        if(issues.isEmpty()) return
+        fileGenerator.createFile("schwarz.it.lightsaber", "report", "lightsaber")
             .let(::PrintWriter)
             .use { writer ->
                 issues.forEach { writer.println(it.getMessage()) }
