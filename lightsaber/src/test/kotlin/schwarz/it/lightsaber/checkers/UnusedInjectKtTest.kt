@@ -27,13 +27,13 @@ internal class UnusedInjectKtTest {
         val module = createSource(
             """
                 package test
-                
+
                 import dagger.Module
                 import dagger.Provides
-                
+
                 @Module
                 class MyModule {
-                    
+
                     @Provides
                     fun provideFoo() = Foo()
                 }
@@ -46,7 +46,7 @@ internal class UnusedInjectKtTest {
 
                 import javax.inject.Inject
 
-                class Foo @javax.inject.Inject constructor()
+                class Foo @Inject constructor()
             """.trimIndent(),
         )
 
@@ -68,13 +68,13 @@ internal class UnusedInjectKtTest {
         val module = createSource(
             """
                 package test
-                
+
                 import dagger.Module
                 import dagger.Provides
-                
+
                 @Module
                 class MyModule {
-                    
+
                     @Provides
                     fun provideFoo() = Foo()
                 }
@@ -103,6 +103,8 @@ internal class UnusedInjectKtTest {
         val foo = createSource(
             """
                 package test
+
+                import javax.inject.Inject
 
                 class Foo @Inject constructor()
             """.trimIndent(),
