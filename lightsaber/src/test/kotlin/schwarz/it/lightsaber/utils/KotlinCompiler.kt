@@ -15,6 +15,7 @@ import dagger.internal.codegen.ComponentProcessor
 import dagger.internal.codegen.KspComponentProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import schwarz.it.lightsaber.LightsaberBindingGraphPlugin
+import schwarz.it.lightsaber.LightsaberSymbolProcessorProvider
 import schwarz.it.lightsaber.truth.assertThat
 import java.io.File
 
@@ -54,6 +55,7 @@ internal class KspKotlinCompiler(
         inheritClassPath = true
         symbolProcessorProviders = mutableListOf(
             KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()).toSymbolProcessorProvider(),
+            LightsaberSymbolProcessorProvider(),
         )
         kspProcessorOptions = getLightsaberArguments(*rules)
         kspWithCompilation = true
