@@ -18,7 +18,7 @@ import schwarz.it.lightsaber.utils.extension
 internal class UnusedInjectKtTest {
 
     @ParameterizedTest
-    @CsvSource("kapt,3,34", "ksp,5,")
+    @CsvSource("kapt,4,14", "ksp,5,")
     fun injectNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
