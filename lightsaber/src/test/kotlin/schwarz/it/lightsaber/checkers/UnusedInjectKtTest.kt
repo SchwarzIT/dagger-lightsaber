@@ -46,7 +46,7 @@ internal class UnusedInjectKtTest {
 
                 import javax.inject.Inject
 
-                class Foo @Inject constructor()
+                class Foo @javax.inject.Inject constructor()
             """.trimIndent(),
         )
 
@@ -85,12 +85,31 @@ internal class UnusedInjectKtTest {
             """
                 package test
 
-                class Foo 
+                class Foo
             """.trimIndent(),
         )
 
         val compilation = compiler
             .compile(module, foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun injectUsed(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                class Foo @Inject constructor()
+            """.trimIndent(),
+        )
+
+        val compilation = compiler
+            .compile(foo)
 
         compilation.assertNoFindings()
     }
