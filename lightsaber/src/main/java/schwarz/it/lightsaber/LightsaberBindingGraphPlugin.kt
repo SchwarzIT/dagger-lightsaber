@@ -79,13 +79,13 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             "Lightsaber.CheckUnusedModules",
         )
     }
-
-    private fun Issue.getMessage(): String {
-        return "$codePosition: $message [$rule]"
-    }
 }
 
-private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
+fun Issue.getMessage(): String {
+    return "$codePosition: $message [$rule]"
+}
+
+fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (!check) return emptyList()
 
     return rule()
@@ -93,7 +93,7 @@ private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>)
         .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
-private data class Issue(
+data class Issue(
     val codePosition: CodePosition,
     val message: String,
     val rule: String,

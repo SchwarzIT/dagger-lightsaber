@@ -27,6 +27,7 @@ dependencies {
     compileOnly(libs.dagger.spi)
     compileOnly(libs.google.auto.service)
     kapt(libs.google.auto.service)
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.9.24-1.0.20")
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
