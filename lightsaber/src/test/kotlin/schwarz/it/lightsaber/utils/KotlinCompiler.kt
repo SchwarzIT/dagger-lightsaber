@@ -13,6 +13,7 @@ import com.tschuchort.compiletesting.symbolProcessorProviders
 import dagger.internal.codegen.ComponentProcessor
 import dagger.internal.codegen.KspComponentProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import schwarz.it.lightsaber.LightsaberProcessor
 import schwarz.it.lightsaber.LightsaberBindingGraphPlugin
 import schwarz.it.lightsaber.LightsaberSymbolProcessorProvider
 import schwarz.it.lightsaber.truth.assertThat
@@ -30,6 +31,7 @@ internal class KaptKotlinCompiler(
         inheritClassPath = true
         annotationProcessors = listOf(
             ComponentProcessor.withTestPlugins(LightsaberBindingGraphPlugin()),
+            LightsaberProcessor(),
         )
         kaptArgs = getLightsaberArguments(*rules)
         kspWithCompilation = true
