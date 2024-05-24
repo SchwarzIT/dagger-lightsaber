@@ -1,26 +1,31 @@
-# Erase una vez
-La aplicación de Lidl Plus está compuesta por unos 250 modulos los cuales usan dagger para la inyección interna y también para conectarse entre ellos. Por como es dagger, es muy fácil olvidarte de eliminar un `@Provides` en un `@Module` cuando deja de ser usado, y dagger nunca se queja de ello.
+# Give me some light...
+The Lidl Plus application is composed of over 250 modules which use Dagger for their internal dependency injection and connection between them. By Daggers nature, it is easy to forget to delete an unused `@Provides` inside a `@Module`, and Dagger will never complain about it.
 
-Esto hace que tengamos codigo muerto en nuestro proyecto. Ninguna de las herramientas que usamos nos detecta este problema (ktlint, detekt, gradle dependency analysis y los checks del propio IntelliJ). Además como el `@Provides` apunta a un Caso de Uso este tampoco es detectado como código muerto lo cual nos genera tener "arboles" de código muerto. Y, por otro lado, como utilizamos dagger para conectar modulos entre si muchas veces estos `@Provides` hacen que parezca que nos hace falta depender entre dos modulos que realmente no son necesarios.
+This is a cause of dead code in our project. We did not have any tool (`ktlint`, `detekt`, gradle dependency analysis and checks from IntelliJ) which could help us with that. Also when we are providing an Use Case with `@Provides`, the Use Case and its dependencies are not flagged as dead code, which ends up generating "sub-trees" of dead code on our dependencies graph. Also, as we use Dagger to connect our different modules between them, a lot of times those `@Provides` make us think that two modules depend between them, while in reality it is not necessary.
 
-Queremos buscarle solución a estos problemas. Nos pusismos a buscar diferentes opciones pero no encontramos ninguna herramienta que nos ayudara a detectarlos. Por esto, decidimos implementarla nosotros mismos. En SCRM tenemos los viernes para poder hacer investigación y mejoras tech así que nos pusimos manos a la obra. Investigar las tripas de Dagger, crear un Plugin de Gradle, conectarse a las diferentes plugins de compilación (ksp, kapt and javac annotation processor). Era un reto muy interesante.
+We want to find a solution for these problems. We started searching for different options, but could not find any tool which was helpful on spotting those problems. So we decided to implement it ourselves! At SCRM we have our Fridays to work on tech innovations and improvements, so we decided to get into work. We researched about Dagger internals, created a Gradle plugin, connected it to different compilation plugins (`ksp`, `kapt`, `javac` annotator processor)... It was an interesting challenge!
 
-Y así nació lightsaber
+And so, Lightsaber was born!  🎉
 
 ## Lightsaber
-Si conoces Dagger2 sabras que diferentes herramientas alrededor de ella usan nombres "relacionados" con "dagger": `Anvil`, `scabbard`, etc. Por lo que una herramienta que encuentra código muerto ¿Cómo se podría llamar? Una herramienta que arroja luz al código muerto... luz... lighsaber! DONE! ya tenemos un nombre, una de las cosas más dificiles de hacer en informatica 🎉.
+If you know Dagger2 you would also know that many tools around it uses names related with "dagger": `Anvil`, `Scabbard`, etc. So, a tool that finds dead code.. How can we name it? A tool that throw light to dead code.. light... lightsaber! Done! We got the name, one of the most difficult things to do in software development.
 
 Lightsaber is a Dagger 2 plugin that detects unused code in your Modules, Components and Subcomponents.
 
-Actualmente tiene 6 reglas que detectan los siguientes problemas
-- ...
-- ...
+Currently it has 7 rules that detects the following problems:
+- EmptyComponent
+- UnusedBindInstance
+- UnusedBindsAndProvides
+- UnusedDependencies
+- UnusedInject
+- UnusedMembersInjectionMethods
+- UnusedModules
 
-La mayor parte del tiempo de desarrollo lo hemos dedicado a conseguir que los mensajes de error sean muy claros (aunque comparado con dagger es un reto muy facil de conseguir).
+We spent the major part of the development time creating clear and helpful reporting messages (but compared with Dagger it was an easy achievement)
 
-## Como usuarlo en tu proyecto
+## How can you use it in your project?
 
-Es MUY fácil. Lightsaber viene con un plugin de gradle que se encarga de configurar todo. Simplemente tienes que añadir este plugin a cada modulo donde quieras usar lightsaber:
+It's very easy! Lightsaber comes with a Gradle plugin which configures everything. You just need to add this plugin into each module where you want to use it.
 
 ```kotlin
 // build.gradle.kts
@@ -29,19 +34,19 @@ plugins {
 }
 ```
 
-Y ejecutar la tarea `./gradlew lightsaberCheck`.
+And run the task  `./gradlew lightsaberCheck`.
 
-Cuando lo ejecutes, si lighsaber detecta algún tipo de código muerto en tu configuración de dagger la tarea te fallará mostrandote un error como el siguiente:
+When you execute it, if Lightsaber detects any kind of dead code in your Dagger configuration, the task will fail showing you an error like:
 
 ```
 /path/module/com/example/MyComponent.java:6:8: e: The @BindsInstance `myInt` declared in `test.MyComponent` is not used. [UnusedBindInstance]
 ```
 
-En este ejemplo nos indica que ha detectado un `@BindsInstance` en la linea 6, columna 8 del archivo `MyComponent.kt` que no se usa y por lo tanto se podría eliminar.
+On this example we can see that Lightsaber has detected an unused `@BindsInstance` on line 6, colum 8 in `MyComponent.kt` file which can be removed.
 
-A día de hoy, lightsaber no tiene la opción de arreglar automaticamente los errores, simplemente genera reportes con los errores detectados.
+Nowadays, Lightsaber doesn't have the option of automatically fixing the errors, it only generates reports with the errors detected.
 
-Además, si alguna de las reglas no te gusta o prefieres que se trate como un warning en lugar de un error, puedes hacerlo:
+Also, if any rule is not detected or you prefer to treat the issues as a warnings instead of errors, you can do it like this:
 
 ```
 // build.gradle.kts
@@ -50,17 +55,18 @@ lightsaber {
   unusedBindInstance = Severity.Error
   unusedBindsAndProvides = Severity.Error
   unusedDependencies = Severity.Error
+  unusedInject = Severity.Error
   unusedMembersInjection = Severity.Error
   unusedModules = Severity.Error
 }
 ```
-Por defecto todas las reglas están activadas y en modo error.
+By default all rules are active in error mode.
 
-## Resultados
-Tras aplicar lightsaber en nuestro proyecto conseguimos los siguientes resultados:
+## Results
+By applying Lightsaber in our project, we have obtained these results:
 
-- ~2.000 lineas código eliminadas directamente
-- ~5.000 lineas de código detectadas después de eliminar todo el código muerto detectado por lightsaber
-- ~70 dependencias entre modulos eliminadas (Esto nos ha ayudado mucho a mejorar la paralelización del proyecto y reducir las recompilaciones innecesarias)
-- Herramienta añadida a nuestro `CI` para evitar que nuevos casos vuelvan a aparecer.
-- Esta es una herramienta que ayuda a borrar código. A todos nos encanta borrar código :)
+- ~2.000 code lines removed.
+- ~5.000 code lines detected after removing all the dead code spotted by Lightsaber. 
+- ~70 dependencies between modules (This has helped us to improve our project parallelization and reduce unnecessary recompilations)
+- Tool added to our `CI` to avoid new cases.
+- Lightsaber is a tool which help us to remove code. We all love to remove code :)
