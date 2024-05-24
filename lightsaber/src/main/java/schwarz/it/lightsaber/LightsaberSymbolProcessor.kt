@@ -10,10 +10,13 @@ import java.io.PrintWriter
 
 class LightsaberSymbolProcessor(
     private val codeGenerator: CodeGenerator,
+    private val config: LightsaberConfig2,
 ) : SymbolProcessor {
-    private val rules: Set<Pair<String, LightsaberSymbolProcessorRule>> = setOf(
-        "UnusedInject" to UnusedInject(),
-    )
+    private val rules: Set<Pair<String, LightsaberSymbolProcessorRule>> = buildSet {
+        if (config.checkUnusedInject) {
+            add("UnusedInject" to UnusedInject())
+        }
+    }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         return rules
