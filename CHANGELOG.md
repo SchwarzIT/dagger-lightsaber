@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 0.0.14 (2024-05-24)
+- CHANGE: Rename EmptyComponent to EmptyComponents and UnusedBindInstance to UnusedBindsInstances
+- ADD: Allow to suppress issues with the annotation `@Suppress`
+- FIX: Don't crash when lightsaber can't find the location of an issue
+
+
 ## Version 0.0.13 (2023-12-01)
 - ADD: Support android build types and variants on the Gradle Plugin
 - FIX: Don't crash on Java 17.
