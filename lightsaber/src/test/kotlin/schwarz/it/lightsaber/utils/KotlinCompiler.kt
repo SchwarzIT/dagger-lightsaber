@@ -79,6 +79,7 @@ enum class Rule {
     UnusedBindsInstances,
     UnusedBindAndProvides,
     UnusedDependencies,
+    UnusedInject,
     UnusedMembersInjectionMethods,
     UnusedModules,
 }
