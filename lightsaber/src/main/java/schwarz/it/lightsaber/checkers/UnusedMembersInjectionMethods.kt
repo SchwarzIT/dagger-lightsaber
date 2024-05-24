@@ -9,6 +9,7 @@ import dagger.spi.model.DaggerProcessingEnv
 import dagger.spi.model.DependencyRequest
 import dagger.spi.model.RequestKind
 import schwarz.it.lightsaber.Finding
+import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
 import schwarz.it.lightsaber.utils.fold
@@ -42,6 +43,7 @@ internal fun checkUnusedMembersInjectionMethods(
                         { daggerProcessingEnv.getElements().getCodePosition(it) },
                         { it.location.toCodePosition() },
                     ),
+                    entryPoint.requestElement().get()::hasSuppress,
                 )
             }
     }

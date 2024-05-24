@@ -88,7 +88,9 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
 private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (!check) return emptyList()
 
-    return rule().map { Issue(it.codePosition, it.message, ruleName) }
+    return rule()
+        .filterNot { it.suppression.hasSuppress(ruleName) }
+        .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
 private data class Issue(

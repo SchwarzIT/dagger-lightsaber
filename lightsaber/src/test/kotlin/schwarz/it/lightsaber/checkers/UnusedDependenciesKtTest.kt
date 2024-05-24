@@ -58,6 +58,30 @@ internal class UnusedDependenciesKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
+    fun dependencyNotUsed(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val component = createSource(
+            """
+                package test
+
+                import dagger.Component
+
+                @Suppress("UnusedDependencies")
+                @Component(dependencies = [Dependency::class])
+                interface MyComponent {
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler
+            .compile(component, dependency)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
     fun dependencyUsedOnComponent(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {

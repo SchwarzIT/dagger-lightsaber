@@ -23,6 +23,7 @@ internal fun checkUnusedBindsAndProvides(
                 Finding(
                     "The $binding declared in `$module` is not used.",
                     binding.getCodePosition(daggerProcessingEnv),
+                    binding,
                 )
             }
         }

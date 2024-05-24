@@ -54,6 +54,36 @@ internal class UnusedBindsInstancesKtTest {
     }
 
     @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun bindsInstanceNotUsed_Factory2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val component = createSource(
+            """
+                package test
+
+                import dagger.BindsInstance
+                import dagger.Component
+
+                @Component
+                interface MyComponent {
+
+                    @Component.Factory
+                    interface Factory {
+                        fun create(
+                            @Suppress("UnusedBindsInstances") @BindsInstance myInt: Int
+                        ): MyComponent
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(component)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
     @CsvSource("kapt,16,13", "ksp,12,")
     fun bindsInstanceNotUsed_Builder(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
