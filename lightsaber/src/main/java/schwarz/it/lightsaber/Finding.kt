@@ -51,6 +51,6 @@ internal fun Elements.getCodePosition(
 internal fun Location.toCodePosition(): CodePosition {
     return when (this) {
         is FileLocation -> CodePosition(filePath, lineNumber)
-        NonExistLocation -> error("Unknown location")
+        NonExistLocation -> CodePosition.Unknown
     }
 }
