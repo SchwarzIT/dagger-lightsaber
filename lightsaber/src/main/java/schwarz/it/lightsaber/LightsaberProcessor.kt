@@ -1,9 +1,9 @@
 package schwarz.it.lightsaber
 
 import schwarz.it.lightsaber.checkers.UnusedInjectJavac
+import schwarz.it.lightsaber.utils.FileGenerator
 import java.io.PrintWriter
 import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Filer
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.annotation.processing.SupportedAnnotationTypes
@@ -11,14 +11,13 @@ import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
-import javax.tools.StandardLocation
 
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 class LightsaberProcessor : AbstractProcessor() {
     private lateinit var config: LightsaberConfig2
     private lateinit var elements: Elements
-    private lateinit var filer: Filer
+    private lateinit var fileGenerator: FileGenerator
 
     private val rules: Set<Pair<String, LightsaberJavacRule>> by lazy {
         buildSet {
@@ -34,7 +33,7 @@ class LightsaberProcessor : AbstractProcessor() {
         )
         println(processingEnv.options["Lightsaber.CheckUnusedInject"])
         elements = processingEnv.elementUtils
-        filer = processingEnv.filer
+        fileGenerator = FileGenerator(processingEnv.filer)
     }
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
@@ -45,8 +44,7 @@ class LightsaberProcessor : AbstractProcessor() {
                 .flatMap { (name, rule) -> rule.computeFindings().map { Issue(it.codePosition, it.message, name) } }
 
             if (issues.isNotEmpty()) {
-                filer.createResource(StandardLocation.CLASS_OUTPUT, "", "processor.lightsaber")
-                    .openOutputStream()
+                fileGenerator.createFile("schwarz.it.lightsaber", "javac", "lightsaber")
                     .let(::PrintWriter)
                     .use { writer -> issues.forEach { writer.println(it.getMessage()) } }
             }
