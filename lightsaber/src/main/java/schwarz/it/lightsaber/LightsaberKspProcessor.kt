@@ -6,6 +6,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import schwarz.it.lightsaber.checkers.UnusedInjectKsp
+import schwarz.it.lightsaber.checkers.UnusedScopeKsp
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
 
@@ -17,6 +18,7 @@ internal class LightsaberKspProcessor(
         if (config.checkUnusedInject) {
             add("UnusedInject" to UnusedInjectKsp())
         }
+        add("UnusedScope" to UnusedScopeKsp())
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
