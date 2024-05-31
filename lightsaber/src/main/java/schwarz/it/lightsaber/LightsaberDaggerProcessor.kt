@@ -23,7 +23,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
 
     private lateinit var daggerProcessingEnv: DaggerProcessingEnv
     private lateinit var fileGenerator: FileGenerator
-    private lateinit var config: LightsaberConfig
+    private lateinit var config: DaggerConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
@@ -53,7 +53,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
-        this.config = LightsaberConfig(
+        this.config = DaggerConfig(
             checkEmptyComponents = options["Lightsaber.CheckEmptyComponents"] != "false",
             checkUnusedBindsInstances = options["Lightsaber.CheckUnusedBindsInstances"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
@@ -77,10 +77,6 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
     }
 }
 
-fun Issue.getMessage(): String {
-    return "$codePosition: $message [$rule]"
-}
-
 fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (!check) return emptyList()
 
@@ -89,13 +85,7 @@ fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<I
         .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
-data class Issue(
-    val codePosition: CodePosition,
-    val message: String,
-    val rule: String,
-)
-
-private data class LightsaberConfig(
+private data class DaggerConfig(
     val checkEmptyComponents: Boolean,
     val checkUnusedBindsInstances: Boolean,
     val checkUnusedBindsAndProvides: Boolean,
