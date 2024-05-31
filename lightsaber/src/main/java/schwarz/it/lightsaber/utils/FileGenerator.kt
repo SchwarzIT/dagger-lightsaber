@@ -12,7 +12,15 @@ internal interface FileGenerator {
 
     companion object {
         operator fun invoke(processingEnv: DaggerProcessingEnv): FileGenerator {
-            return processingEnv.fold({ FileGeneratorJavac(it.filer) }, { FileGeneratorKsp(it.codeGenerator) })
+            return processingEnv.fold({ FileGenerator(it.filer) }, { FileGenerator(it.codeGenerator) })
+        }
+
+        operator fun invoke(codeGenerator: CodeGenerator): FileGenerator {
+            return FileGeneratorKsp(codeGenerator)
+        }
+
+        operator fun invoke(filer: Filer): FileGenerator {
+            return FileGeneratorJavac(filer)
         }
     }
 }
