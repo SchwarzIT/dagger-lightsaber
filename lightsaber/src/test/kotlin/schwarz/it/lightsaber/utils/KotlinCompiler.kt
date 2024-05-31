@@ -14,8 +14,8 @@ import com.tschuchort.compiletesting.symbolProcessorProviders
 import dagger.internal.codegen.ComponentProcessor
 import dagger.internal.codegen.KspComponentProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import schwarz.it.lightsaber.LightsaberJavacProcessor
 import schwarz.it.lightsaber.LightsaberDaggerProcessor
+import schwarz.it.lightsaber.LightsaberJavacProcessor
 import schwarz.it.lightsaber.LightsaberKspProcessorProvider
 import schwarz.it.lightsaber.truth.assertThat
 import java.io.File
