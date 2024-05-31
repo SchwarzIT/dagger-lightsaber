@@ -16,16 +16,23 @@ import javax.tools.StandardLocation
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 class LightsaberProcessor : AbstractProcessor() {
+    private lateinit var config: LightsaberConfig2
     private lateinit var elements: Elements
     private lateinit var filer: Filer
 
     private val rules: Set<Pair<String, LightsaberJavacRule>> by lazy {
         buildSet {
-            add("UnusedInject" to UnusedInjectJavac(elements))
+            if (config.checkUnusedInject) {
+                add("UnusedInject" to UnusedInjectJavac(elements))
+            }
         }
     }
 
     override fun init(processingEnv: ProcessingEnvironment) {
+        config = LightsaberConfig2(
+            checkUnusedInject = processingEnv.options["Lightsaber.CheckUnusedInject"] != "false",
+        )
+        println(processingEnv.options["Lightsaber.CheckUnusedInject"])
         elements = processingEnv.elementUtils
         filer = processingEnv.filer
     }
