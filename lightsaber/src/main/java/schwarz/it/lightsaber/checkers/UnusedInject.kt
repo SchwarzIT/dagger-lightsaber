@@ -1,11 +1,8 @@
 package schwarz.it.lightsaber.checkers
 
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.processing.SymbolProcessor
-import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import dagger.Provides
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.LightsaberJavacRule
@@ -16,7 +13,6 @@ import schwarz.it.lightsaber.toCodePosition
 import javax.annotation.processing.RoundEnvironment
 import javax.inject.Inject
 import javax.lang.model.element.ExecutableElement
-import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.Elements
 
 internal class UnusedInjectKsp : LightsaberKspRule {

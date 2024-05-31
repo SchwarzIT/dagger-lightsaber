@@ -49,7 +49,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
-        fileGenerator.writeFile( bindingGraph.getQualifiedName(), issues)
+        fileGenerator.writeFile(bindingGraph.getQualifiedName(), issues)
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
