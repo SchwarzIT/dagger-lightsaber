@@ -120,7 +120,7 @@ internal class UnusedInjectKtTest {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
             return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.UnusedModules)
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedInject)
                 "ksp" -> KspKotlinCompiler(Rule.UnusedInject)
                 else -> error("Unknown compiler of type $source")
             }

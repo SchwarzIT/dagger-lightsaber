@@ -6,7 +6,9 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
 class LightsaberSymbolProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        val config = LightsaberConfig2(environment.options["Lightsaber.CheckUnusedInject"] != "false")
+        val config = LightsaberConfig2(
+            checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
+        )
         return LightsaberSymbolProcessor(environment.codeGenerator, config)
     }
 }
