@@ -5,16 +5,16 @@ import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import schwarz.it.lightsaber.checkers.UnusedInject
+import schwarz.it.lightsaber.checkers.UnusedInjectKsp
 import java.io.PrintWriter
 
 class LightsaberSymbolProcessor(
     private val codeGenerator: CodeGenerator,
     private val config: LightsaberConfig2,
 ) : SymbolProcessor {
-    private val rules: Set<Pair<String, LightsaberSymbolProcessorRule>> = buildSet {
+    private val rules: Set<Pair<String, LightsaberKspRule>> = buildSet {
         if (config.checkUnusedInject) {
-            add("UnusedInject" to UnusedInject())
+            add("UnusedInject" to UnusedInjectKsp())
         }
     }
 
@@ -36,7 +36,7 @@ class LightsaberSymbolProcessor(
     }
 }
 
-interface LightsaberSymbolProcessorRule {
+interface LightsaberKspRule {
     fun process(resolver: Resolver): List<KSAnnotated>
 
     fun computeFindings(): List<Finding>
