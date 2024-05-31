@@ -13,9 +13,9 @@ import com.tschuchort.compiletesting.symbolProcessorProviders
 import dagger.internal.codegen.ComponentProcessor
 import dagger.internal.codegen.KspComponentProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import schwarz.it.lightsaber.LightsaberProcessor
-import schwarz.it.lightsaber.LightsaberBindingGraphPlugin
-import schwarz.it.lightsaber.LightsaberSymbolProcessorProvider
+import schwarz.it.lightsaber.LightsaberJavacProcessor
+import schwarz.it.lightsaber.LightsaberDaggerProcessor
+import schwarz.it.lightsaber.LightsaberKspProcessorProvider
 import schwarz.it.lightsaber.truth.assertThat
 import java.io.File
 
@@ -30,8 +30,8 @@ internal class KaptKotlinCompiler(
     private val compiler = KotlinCompilation().apply {
         inheritClassPath = true
         annotationProcessors = listOf(
-            ComponentProcessor.withTestPlugins(LightsaberBindingGraphPlugin()),
-            LightsaberProcessor(),
+            ComponentProcessor.withTestPlugins(LightsaberDaggerProcessor()),
+            LightsaberJavacProcessor(),
         )
         kaptArgs = getLightsaberArguments(*rules)
         kspWithCompilation = true
@@ -55,8 +55,8 @@ internal class KspKotlinCompiler(
     private val compiler = KotlinCompilation().apply {
         inheritClassPath = true
         symbolProcessorProviders = listOf(
-            KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()),
-            LightsaberSymbolProcessorProvider(),
+            KspComponentProcessor.Provider.withTestPlugins(LightsaberDaggerProcessor()),
+            LightsaberKspProcessorProvider(),
         )
         kspArgs = getLightsaberArguments(*rules)
         kspWithCompilation = true

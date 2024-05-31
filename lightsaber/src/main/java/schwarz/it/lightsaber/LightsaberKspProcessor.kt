@@ -1,15 +1,15 @@
 package schwarz.it.lightsaber
 
-import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import schwarz.it.lightsaber.checkers.UnusedInjectKsp
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
-import java.io.PrintWriter
 
-internal class LightsaberSymbolProcessor(
+internal class LightsaberKspProcessor(
     private val fileGenerator: FileGenerator,
     private val config: LightsaberConfig2,
 ) : SymbolProcessor {
@@ -40,3 +40,16 @@ interface LightsaberKspRule {
 
     fun computeFindings(): List<Finding>
 }
+
+class LightsaberKspProcessorProvider : SymbolProcessorProvider {
+    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+        val config = LightsaberConfig2(
+            checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
+        )
+        return LightsaberKspProcessor(FileGenerator(environment.codeGenerator), config)
+    }
+}
+
+data class LightsaberConfig2(
+    val checkUnusedInject: Boolean,
+)
