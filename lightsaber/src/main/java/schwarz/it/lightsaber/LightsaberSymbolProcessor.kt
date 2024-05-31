@@ -6,6 +6,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import schwarz.it.lightsaber.checkers.UnusedInjectKsp
 import schwarz.it.lightsaber.utils.FileGenerator
+import schwarz.it.lightsaber.utils.writeFile
 import java.io.PrintWriter
 
 internal class LightsaberSymbolProcessor(
@@ -29,9 +30,7 @@ internal class LightsaberSymbolProcessor(
             .flatMap { (name, rule) -> rule.computeFindings().map { Issue(it.codePosition, it.message, name) } }
 
         if (issues.isNotEmpty()) {
-            fileGenerator.createFile("schwarz.it.lightsaber", "ksp", "lightsaber")
-                .let(::PrintWriter)
-                .use { writer -> issues.forEach { writer.println(it.getMessage()) } }
+            fileGenerator.writeFile( "ksp", issues)
         }
     }
 }

@@ -2,6 +2,7 @@ package schwarz.it.lightsaber
 
 import schwarz.it.lightsaber.checkers.UnusedInjectJavac
 import schwarz.it.lightsaber.utils.FileGenerator
+import schwarz.it.lightsaber.utils.writeFile
 import java.io.PrintWriter
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.ProcessingEnvironment
@@ -44,9 +45,7 @@ class LightsaberProcessor : AbstractProcessor() {
                 .flatMap { (name, rule) -> rule.computeFindings().map { Issue(it.codePosition, it.message, name) } }
 
             if (issues.isNotEmpty()) {
-                fileGenerator.createFile("schwarz.it.lightsaber", "javac", "lightsaber")
-                    .let(::PrintWriter)
-                    .use { writer -> issues.forEach { writer.println(it.getMessage()) } }
+                fileGenerator.writeFile( "javac", issues)
             }
         }
 
