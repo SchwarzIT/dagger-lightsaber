@@ -13,6 +13,7 @@ import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
+import schwarz.it.lightsaber.utils.writeFile
 import java.io.PrintWriter
 
 @AutoService(BindingGraphPlugin::class)
@@ -49,11 +50,7 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
-        fileGenerator.createFile("schwarz.it.lightsaber", bindingGraph.getQualifiedName(), "lightsaber")
-            .let(::PrintWriter)
-            .use { writer ->
-                issues.forEach { writer.println(it.getMessage()) }
-            }
+        fileGenerator.writeFile( bindingGraph.getQualifiedName(), issues)
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
