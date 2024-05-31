@@ -31,7 +31,6 @@ class LightsaberJavacProcessor : AbstractProcessor() {
         config = AnnotationProcessorConfig(
             checkUnusedInject = processingEnv.options["Lightsaber.CheckUnusedInject"] != "false",
         )
-        println(processingEnv.options["Lightsaber.CheckUnusedInject"])
         elements = processingEnv.elementUtils
         fileGenerator = FileGenerator(processingEnv.filer)
     }

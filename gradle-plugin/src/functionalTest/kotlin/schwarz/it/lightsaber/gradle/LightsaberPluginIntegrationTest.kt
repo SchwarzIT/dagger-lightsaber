@@ -22,7 +22,7 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
 
         assertThat(buildResult).contains("MyModule.java:15:17: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
-        assertThat(buildResult).contains("Foo.java:5:8: The @Inject in `Foo` constructor is unused because there is a @Provides defined in `MyModule.foo` [UnusedInject]")
+        assertThat(buildResult).contains("Foo.java:5:8: The @Inject in `com.example.Foo` constructor is unused because there is a @Provides defined in `com.example.MyModule.foo`. [UnusedInject]")
         assertThat(buildResult).contains("> Analysis failed with 2 errors")
     }
 
@@ -39,7 +39,7 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
 
         assertThat(buildResult).contains("MyModule.java:26:27: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
-        assertThat(buildResult).contains("Foo.java:4:14: The @Inject in `Foo` constructor is unused because there is a @Provides defined in `Companion.provideFoo` [UnusedInject]")
+        assertThat(buildResult).contains("Foo.java:4:14: The @Inject in `com.example.Foo` constructor is unused because there is a @Provides defined in `com.example.MyModule.Companion.provideFoo`. [UnusedInject]")
         assertThat(buildResult).contains("> Analysis failed with 2 errors")
     }
 
@@ -56,7 +56,7 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
 
         assertThat(buildResult).contains("MyComponent.kt:24: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
-        assertThat(buildResult).contains("MyComponent.kt:33: The @Inject in `Foo` constructor is unused because there is a @Provides defined in `Companion.provideFoo` [UnusedInject]")
+        assertThat(buildResult).contains("MyComponent.kt:33: The @Inject in `com.example.Foo` constructor is unused because there is a @Provides defined in `com.example.MyModule.Companion.provideFoo`. [UnusedInject]")
         assertThat(buildResult).contains("> Analysis failed with 2 errors")
     }
 
