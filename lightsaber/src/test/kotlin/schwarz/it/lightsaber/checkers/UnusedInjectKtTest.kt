@@ -54,7 +54,7 @@ internal class UnusedInjectKtTest {
             .compile(module, foo)
 
         compilation.assertUnusedInject(
-            message = "This Inject is unused",
+            message = "The @Inject in `Foo` constructor is unused because there is a @Provides defined in `MyModule.provideFoo`",
             line = line,
             column = column,
         )
@@ -112,6 +112,43 @@ internal class UnusedInjectKtTest {
 
         val compilation = compiler
             .compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun suppressInject(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val module = createSource(
+            """
+                package test
+
+                import dagger.Module
+                import dagger.Provides
+
+                @Module
+                class MyModule {
+                                    
+                    @Provides
+                    fun provideFoo() = Foo()
+                }
+            """.trimIndent(),
+        )
+
+        val foo = createSource(
+            """
+                package test
+
+                import javax.inject.Inject
+                 
+                class Foo @Suppress("UnusedInject") @Inject constructor()
+            """.trimIndent(),
+        )
+
+        val compilation = compiler
+            .compile(module, foo)
 
         compilation.assertNoFindings()
     }
