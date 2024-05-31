@@ -3,7 +3,6 @@ package schwarz.it.lightsaber
 import schwarz.it.lightsaber.checkers.UnusedInjectJavac
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
-import java.io.PrintWriter
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -15,7 +14,7 @@ import javax.lang.model.util.Elements
 
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
-class LightsaberProcessor : AbstractProcessor() {
+class LightsaberJavacProcessor : AbstractProcessor() {
     private lateinit var config: LightsaberConfig2
     private lateinit var elements: Elements
     private lateinit var fileGenerator: FileGenerator

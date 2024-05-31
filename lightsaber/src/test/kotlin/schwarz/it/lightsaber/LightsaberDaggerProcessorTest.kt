@@ -11,7 +11,7 @@ import schwarz.it.lightsaber.utils.AbstractCompilerArgumentConverter
 import schwarz.it.lightsaber.utils.KotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 
-internal class LightsaberBindingGraphPluginTest {
+internal class LightsaberDaggerProcessorTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")

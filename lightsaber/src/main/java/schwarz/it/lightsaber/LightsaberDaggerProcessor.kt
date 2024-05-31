@@ -14,10 +14,9 @@ import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
 import schwarz.it.lightsaber.utils.writeFile
-import java.io.PrintWriter
 
 @AutoService(BindingGraphPlugin::class)
-public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
+public class LightsaberDaggerProcessor : BindingGraphPlugin {
     override fun pluginName(): String {
         return "Lightsaber"
     }
