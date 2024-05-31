@@ -106,13 +106,11 @@ private fun findGeneratedFiles(file: File): List<File> {
 
 private fun getLightsaberArguments(
     vararg rules: Rule,
-) = mutableMapOf(
-    "Lightsaber.CheckEmptyComponents" to (Rule.EmptyComponents in rules).toString(),
-    "Lightsaber.CheckUnusedBindsInstances" to (Rule.UnusedBindsInstances in rules).toString(),
-    "Lightsaber.CheckUnusedBindsAndProvides" to (Rule.UnusedBindAndProvides in rules).toString(),
-    "Lightsaber.CheckUnusedDependencies" to (Rule.UnusedDependencies in rules).toString(),
-    "Lightsaber.CheckUnusedModules" to (Rule.UnusedModules in rules).toString(),
-)
+): MutableMap<String, String> {
+    return Rule.entries
+        .associate { "Lightsaber.Check${it.name}" to (it in rules).toString() }
+        .toMutableMap()
+}
 
 internal fun CompilationResult.assertHasFinding(
     message: String,
