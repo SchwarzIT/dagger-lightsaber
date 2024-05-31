@@ -15,7 +15,7 @@ import javax.lang.model.util.Elements
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 class LightsaberJavacProcessor : AbstractProcessor() {
-    private lateinit var config: LightsaberConfig2
+    private lateinit var config: AnnotationProcessorConfig
     private lateinit var elements: Elements
     private lateinit var fileGenerator: FileGenerator
 
@@ -28,7 +28,7 @@ class LightsaberJavacProcessor : AbstractProcessor() {
     }
 
     override fun init(processingEnv: ProcessingEnvironment) {
-        config = LightsaberConfig2(
+        config = AnnotationProcessorConfig(
             checkUnusedInject = processingEnv.options["Lightsaber.CheckUnusedInject"] != "false",
         )
         println(processingEnv.options["Lightsaber.CheckUnusedInject"])

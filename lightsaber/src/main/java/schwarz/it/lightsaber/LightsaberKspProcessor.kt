@@ -11,7 +11,7 @@ import schwarz.it.lightsaber.utils.writeFile
 
 internal class LightsaberKspProcessor(
     private val fileGenerator: FileGenerator,
-    private val config: LightsaberConfig2,
+    private val config: AnnotationProcessorConfig,
 ) : SymbolProcessor {
     private val rules: Set<Pair<String, LightsaberKspRule>> = buildSet {
         if (config.checkUnusedInject) {
@@ -43,13 +43,13 @@ interface LightsaberKspRule {
 
 class LightsaberKspProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        val config = LightsaberConfig2(
+        val config = AnnotationProcessorConfig(
             checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
         )
         return LightsaberKspProcessor(FileGenerator(environment.codeGenerator), config)
     }
 }
 
-data class LightsaberConfig2(
+internal data class AnnotationProcessorConfig(
     val checkUnusedInject: Boolean,
 )

@@ -4,7 +4,6 @@ import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.Issue
-import schwarz.it.lightsaber.getMessage
 import java.io.OutputStream
 import java.io.PrintWriter
 import javax.annotation.processing.Filer
@@ -45,5 +44,5 @@ private class FileGeneratorKsp(private val codeGenerator: CodeGenerator) : FileG
 internal fun FileGenerator.writeFile(fileName: String, issues: List<Issue>) {
     this.createFile("schwarz.it.lightsaber", fileName, "lightsaber")
         .let(::PrintWriter)
-        .use { writer -> issues.forEach { writer.println(it.getMessage()) } }
+        .use { writer -> issues.forEach { writer.println("${it.codePosition}: ${it.message} [${it.rule}]") } }
 }

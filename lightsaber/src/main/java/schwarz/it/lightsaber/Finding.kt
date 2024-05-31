@@ -33,6 +33,12 @@ data class CodePosition(
     }
 }
 
+data class Issue(
+    val codePosition: CodePosition,
+    val message: String,
+    val rule: String,
+)
+
 internal fun Elements.getCodePosition(
     element: Element,
     annotationMirror: AnnotationMirror? = null,
