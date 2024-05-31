@@ -99,7 +99,7 @@ data class Issue(
     val rule: String,
 )
 
-internal data class LightsaberConfig(
+private data class LightsaberConfig(
     val checkEmptyComponents: Boolean,
     val checkUnusedBindsInstances: Boolean,
     val checkUnusedBindsAndProvides: Boolean,

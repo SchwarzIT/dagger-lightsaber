@@ -121,7 +121,7 @@ internal class UnusedInjectKtTest {
             source as String
             return when (source) {
                 "kapt" -> KaptKotlinCompiler(Rule.UnusedModules)
-                "ksp" -> KspKotlinCompiler(Rule.UnusedDependencies)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedInject)
                 else -> error("Unknown compiler of type $source")
             }
         }
