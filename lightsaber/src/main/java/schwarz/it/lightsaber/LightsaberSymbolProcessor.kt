@@ -26,17 +26,13 @@ class LightsaberSymbolProcessor(
 
     override fun finish() {
         val issues = rules
-            .map { (name, rule) ->
-                rule.computeFindings().map { Issue(it.codePosition, it.message, name) }
-            }
-            .flatten()
-            .ifEmpty { return }
+            .flatMap { (name, rule) -> rule.computeFindings().map { Issue(it.codePosition, it.message, name) } }
 
-        codeGenerator.createNewFile(Dependencies.ALL_FILES, "", "ksp", ".lightsaber")
-            .let(::PrintWriter)
-            .use { writer ->
-                issues.forEach { writer.println(it.getMessage()) }
-            }
+        if (issues.isNotEmpty()) {
+            codeGenerator.createNewFile(Dependencies.ALL_FILES, "", "ksp", ".lightsaber")
+                .let(::PrintWriter)
+                .use { writer -> issues.forEach { writer.println(it.getMessage()) } }
+        }
     }
 }
 
