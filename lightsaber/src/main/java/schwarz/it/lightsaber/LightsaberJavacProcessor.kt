@@ -41,10 +41,14 @@ class LightsaberJavacProcessor : AbstractProcessor() {
 
         if (roundEnv.processingOver()) {
             val issues = rules
-                .flatMap { (name, rule) -> rule.computeFindings().map { Issue(it.codePosition, it.message, name) } }
+                .flatMap { (name, rule) ->
+                    rule.computeFindings()
+                        .filterNot { it.suppression.hasSuppress(name) }
+                        .map { Issue(it.codePosition, it.message, name) }
+                }
 
             if (issues.isNotEmpty()) {
-                fileGenerator.writeFile( "javac", issues)
+                fileGenerator.writeFile("javac", issues)
             }
         }
 

@@ -27,10 +27,14 @@ internal class LightsaberKspProcessor(
 
     override fun finish() {
         val issues = rules
-            .flatMap { (name, rule) -> rule.computeFindings().map { Issue(it.codePosition, it.message, name) } }
+            .flatMap { (name, rule) ->
+                rule.computeFindings()
+                    .filterNot { it.suppression.hasSuppress(name) }
+                    .map { Issue(it.codePosition, it.message, name) }
+            }
 
         if (issues.isNotEmpty()) {
-            fileGenerator.writeFile( "ksp", issues)
+            fileGenerator.writeFile("ksp", issues)
         }
     }
 }
