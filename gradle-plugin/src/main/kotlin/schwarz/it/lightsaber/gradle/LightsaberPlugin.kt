@@ -27,6 +27,7 @@ private fun Project.apply() {
         unusedBindsInstances.convention(Severity.Error)
         unusedBindsAndProvides.convention(Severity.Error)
         unusedDependencies.convention(Severity.Error)
+        unusedInject.convention(Severity.Error)
         unusedMembersInjectionMethods.convention(Severity.Error)
         unusedModules.convention(Severity.Error)
     }
@@ -76,6 +77,7 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
         Rule.UnusedBindsInstances -> extension.unusedBindsInstances
         Rule.UnusedBindsAndProvides -> extension.unusedBindsAndProvides
         Rule.UnusedDependencies -> extension.unusedDependencies
+        Rule.UnusedInject -> extension.unusedInject
         Rule.UnusedMembersInjectionMethods -> extension.unusedMembersInjectionMethods
         Rule.UnusedModules -> extension.unusedModules
     }

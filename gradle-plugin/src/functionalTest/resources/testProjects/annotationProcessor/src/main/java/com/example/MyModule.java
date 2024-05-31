@@ -15,4 +15,9 @@ abstract class MyModule {
     static long myLong() {
         return 42L;
     }
+
+    @Provides
+    static Foo foo() {
+        return new Foo();
+    }
 }
