@@ -1,6 +1,6 @@
 package schwarz.it.lightsaber
 
-import schwarz.it.lightsaber.checkers.UnusedInject2
+import schwarz.it.lightsaber.checkers.UnusedInjectJavac
 import java.io.PrintWriter
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
@@ -19,9 +19,9 @@ class LightsaberProcessor : AbstractProcessor() {
     private lateinit var elements: Elements
     private lateinit var filer: Filer
 
-    private val rules: Set<Pair<String, LightsaberProcessorRule>> by lazy {
+    private val rules: Set<Pair<String, LightsaberJavacRule>> by lazy {
         buildSet {
-            add("UnusedInject" to UnusedInject2(elements))
+            add("UnusedInject" to UnusedInjectJavac(elements))
         }
     }
 
@@ -49,7 +49,7 @@ class LightsaberProcessor : AbstractProcessor() {
     }
 }
 
-interface LightsaberProcessorRule {
+interface LightsaberJavacRule {
     fun process(roundEnv: RoundEnvironment)
 
     fun computeFindings(): List<Finding>
