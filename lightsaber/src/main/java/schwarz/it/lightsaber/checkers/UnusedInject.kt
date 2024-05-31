@@ -1,7 +1,9 @@
 package schwarz.it.lightsaber.checkers
 
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import dagger.Provides
@@ -38,8 +40,10 @@ internal class UnusedInjectKsp : LightsaberKspRule {
             .filter { it.returnType!!.resolve() in providesKsTypes }
             .map { inject ->
                 val provide = provides.first { it.returnType!!.resolve() == inject.returnType!!.resolve() }
+                val parent = provide.parent as KSClassDeclaration
+                val injectName = inject.parent as KSClassDeclaration
                 Finding(
-                    "The @Inject in `${inject.parent}` constructor is unused because there is a @Provides defined in `${provide.parent}.${provide.simpleName.getShortName()}`",
+                    "The @Inject in `${injectName.qualifiedName!!.asString()}` constructor is unused because there is a @Provides defined in `${parent.qualifiedName!!.asString()}.${provide.simpleName.getShortName()}`.",
                     inject.location.toCodePosition(),
                     inject::hasSuppress,
                 )
@@ -72,7 +76,7 @@ internal class UnusedInjectJavac(
             .map { inject ->
                 val provide = provides.first { it.returnType == inject.enclosingElement.asType() }
                 Finding(
-                    "The @Inject in `${inject.enclosingElement.simpleName}` constructor is unused because there is a @Provides defined in `${provide.enclosingElement.simpleName}.${provide.simpleName}`",
+                    "The @Inject in `${inject.enclosingElement.asType()}` constructor is unused because there is a @Provides defined in `${provide.enclosingElement.asType()}.${provide.simpleName}`.",
                     elements.getCodePosition(inject.enclosingElement),
                     inject::hasSuppress,
                 )

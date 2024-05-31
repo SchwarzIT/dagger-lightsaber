@@ -54,7 +54,7 @@ internal class UnusedInjectKtTest {
             .compile(module, foo)
 
         compilation.assertUnusedInject(
-            message = "The @Inject in `Foo` constructor is unused because there is a @Provides defined in `MyModule.provideFoo`",
+            message = "The @Inject in `test.Foo` constructor is unused because there is a @Provides defined in `test.MyModule.provideFoo`.",
             line = line,
             column = column,
         )
