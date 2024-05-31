@@ -28,7 +28,7 @@ testing {
                 implementation(libs.junit.jupiter.api)
                 implementation(libs.junit.jupiter.params)
                 implementation(libs.truth)
-                implementation(libs.symbol.processing.gradle.plugin)
+                implementation(libs.ksp.gradle.plugin)
                 implementation(libs.kotlin.gradle.plugin)
                 implementation(gradleKotlinDsl())
             }
@@ -76,11 +76,11 @@ val testKitRuntimeOnly: Configuration by configurations.creating
 
 dependencies {
     compileOnly(libs.kotlin.gradle.plugin)
-    compileOnly(libs.symbol.processing.gradle.plugin)
+    compileOnly(libs.ksp.gradle.plugin)
     compileOnly(libs.android.gradle.plugin)
 
     testKitRuntimeOnly(libs.kotlin.gradle.plugin)
-    testKitRuntimeOnly(libs.symbol.processing.gradle.plugin)
+    testKitRuntimeOnly(libs.ksp.gradle.plugin)
     testKitRuntimeOnly(libs.android.gradle.plugin)
 }
 
