@@ -20,9 +20,9 @@ internal class LightsaberKspProcessor(
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        return rules
-            .map { (_, rule) -> rule.process(resolver) }
-            .flatten()
+        rules.forEach { (_, rule) -> rule.process(resolver) }
+
+        return emptyList()
     }
 
     override fun finish() {
@@ -36,7 +36,7 @@ internal class LightsaberKspProcessor(
 }
 
 interface LightsaberKspRule {
-    fun process(resolver: Resolver): List<KSAnnotated>
+    fun process(resolver: Resolver)
 
     fun computeFindings(): List<Finding>
 }

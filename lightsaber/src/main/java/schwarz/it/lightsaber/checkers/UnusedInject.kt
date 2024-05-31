@@ -20,7 +20,7 @@ internal class UnusedInjectKsp : LightsaberKspRule {
     private val injects: MutableList<KSFunctionDeclaration> = mutableListOf()
     private val provides: MutableSet<KSType> = mutableSetOf()
 
-    override fun process(resolver: Resolver): List<KSAnnotated> {
+    override fun process(resolver: Resolver) {
         injects.addAll(
             resolver.getSymbolsWithAnnotation(Inject::class.qualifiedName!!)
                 .filterIsInstance<KSFunctionDeclaration>(),
@@ -30,8 +30,6 @@ internal class UnusedInjectKsp : LightsaberKspRule {
                 .filterIsInstance<KSFunctionDeclaration>()
                 .map { it.returnType!!.resolve() },
         )
-
-        return emptyList()
     }
 
     override fun computeFindings(): List<Finding> {
