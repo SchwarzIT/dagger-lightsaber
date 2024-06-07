@@ -14,6 +14,28 @@ import schwarz.it.lightsaber.utils.KspKotlinCompiler
 internal class UnusedScopeKtTest {
 
     @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun scopeUsed(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+
+        val foo = createSource(
+            """
+                package test
+
+                import javax.inject.Singleton
+
+                @Singleton
+                class Foo
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
     @CsvSource("kapt,4,14", "ksp,6,")
     fun scopeNotUsed(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
@@ -32,7 +54,124 @@ internal class UnusedScopeKtTest {
             """.trimIndent(),
         )
 
-        val compilation = compiler.compile(foo)
+        val module = createSource(
+            """
+                package test
+
+                import dagger.Module
+                import dagger.Provides
+
+                @Module
+                class Module {
+                    @Provides
+                    fun dependency(): Foo {
+                        return Foo()
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo, module)
+
+        compilation.assertUnusedScope(
+            message = "The @Singleton scope is Unused.",
+            line = line,
+            column = column,
+        )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,4,14", "ksp,6,")
+    fun scopeNotUsed2(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+
+        val foo = createSource(
+            """
+                package test
+
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @MyAnnotation
+                class Foo
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val module = createSource(
+            """
+                package test
+
+                import dagger.Module
+                import dagger.Provides
+
+                @Module
+                class Module {
+                    @Provides
+                    fun dependency(): Foo {
+                        return Foo()
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo, module)
+
+        compilation.assertUnusedScope(
+            message = "The @Singleton scope is Unused.",
+            line = line,
+            column = column,
+        )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,4,14", "ksp,6,")
+    fun scopeNotUsed3(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+
+        val foo = createSource(
+            """
+                package test
+
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @MyAnnotation
+                class FooImpl : Foo
+
+                interface Foo
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val module = createSource(
+            """
+                package test
+
+                import dagger.Module
+                import dagger.Provides
+
+                @Module
+                class Module {
+                    @Provides
+                    fun dependency(): Foo {
+                        return FooImpl()
+                    }
+                }
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo, module)
 
         compilation.assertUnusedScope(
             message = "The @Singleton scope is Unused.",
