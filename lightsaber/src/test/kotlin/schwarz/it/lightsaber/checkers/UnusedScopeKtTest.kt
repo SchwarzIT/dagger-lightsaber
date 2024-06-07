@@ -74,14 +74,14 @@ internal class UnusedScopeKtTest {
         val compilation = compiler.compile(foo, module)
 
         compilation.assertUnusedScope(
-            message = "The @Singleton scope is Unused.",
+            message = "The @Singleton scope is unused.",
             line = line,
             column = column,
         )
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,4,14", "ksp,6,")
+    @CsvSource("kapt,4,14", "ksp,4,")
     fun scopeNotUsed2(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -92,11 +92,17 @@ internal class UnusedScopeKtTest {
             """
                 package test
 
-                import javax.inject.Scope
-                import javax.inject.Singleton
-
                 @MyAnnotation
                 class Foo
+            """.trimIndent(),
+        )
+
+        val annotation = createSource(
+            """
+                package test
+
+                import javax.inject.Scope
+                import javax.inject.Singleton
 
                 @Scope
                 annotation class MyAnnotation
@@ -120,10 +126,10 @@ internal class UnusedScopeKtTest {
             """.trimIndent(),
         )
 
-        val compilation = compiler.compile(foo, module)
+        val compilation = compiler.compile(foo, annotation, module)
 
         compilation.assertUnusedScope(
-            message = "The @Singleton scope is Unused.",
+            message = "The @MyAnnotation scope is unused.",
             line = line,
             column = column,
         )
@@ -136,21 +142,32 @@ internal class UnusedScopeKtTest {
         line: Int,
         column: Int?,
     ) {
+        val annotation = createSource(
+            """
+                package test
+                
+                import javax.inject.Scope
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val fooImpl = createSource(
+            """
+                package test
+
+                @MyAnnotation
+                class FooImpl : Foo
+            """.trimIndent(),
+        )
+
 
         val foo = createSource(
             """
                 package test
 
-                import javax.inject.Scope
-                import javax.inject.Singleton
-
-                @MyAnnotation
-                class FooImpl : Foo
-
                 interface Foo
-
-                @Scope
-                annotation class MyAnnotation
             """.trimIndent(),
         )
 
@@ -171,10 +188,10 @@ internal class UnusedScopeKtTest {
             """.trimIndent(),
         )
 
-        val compilation = compiler.compile(foo, module)
+        val compilation = compiler.compile(annotation, fooImpl, foo, module)
 
         compilation.assertUnusedScope(
-            message = "The @Singleton scope is Unused.",
+            message = "The @MyAnnotation scope is unused.",
             line = line,
             column = column,
         )
