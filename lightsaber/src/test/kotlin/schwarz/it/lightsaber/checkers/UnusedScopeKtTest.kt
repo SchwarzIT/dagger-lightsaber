@@ -1,16 +1,19 @@
 package schwarz.it.lightsaber.checkers
 
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.converter.ArgumentConverter
 import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.createSource
-import schwarz.it.lightsaber.utils.*
+import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.KaptKotlinCompiler
 import schwarz.it.lightsaber.utils.KotlinCompiler
 import schwarz.it.lightsaber.utils.KspKotlinCompiler
+import schwarz.it.lightsaber.utils.Rule
+import schwarz.it.lightsaber.utils.assertHasFinding
+import schwarz.it.lightsaber.utils.assertNoFindings
+import schwarz.it.lightsaber.utils.extension
 
 internal class UnusedScopeKtTest {
 
@@ -37,7 +40,7 @@ internal class UnusedScopeKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,4,14", "ksp,6,")
+    @CsvSource("kapt,5,14", "ksp,6,")
     fun singletonNoInject_Errors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -64,11 +67,9 @@ internal class UnusedScopeKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,4,14", "ksp,4,")
+    @CsvSource("kapt", "ksp")
     fun customScopeWithInject_NoErrors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
-        line: Int,
-        column: Int?,
     ) {
 
         val foo = createSource(
@@ -100,7 +101,7 @@ internal class UnusedScopeKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,4,14", "ksp,6,")
+    @CsvSource("kapt,5,14", "ksp,6,")
     fun customScopeNoInject_Error(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
