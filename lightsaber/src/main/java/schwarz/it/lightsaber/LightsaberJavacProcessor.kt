@@ -1,6 +1,7 @@
 package schwarz.it.lightsaber
 
 import schwarz.it.lightsaber.checkers.UnusedInjectJavac
+import schwarz.it.lightsaber.checkers.UnusedScopeJavac
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
 import javax.annotation.processing.AbstractProcessor
@@ -24,12 +25,16 @@ class LightsaberJavacProcessor : AbstractProcessor() {
             if (config.checkUnusedInject) {
                 add("UnusedInject" to UnusedInjectJavac(elements))
             }
+            if (config.checkUnusedScope) {
+                add("UnusedScope" to UnusedScopeJavac(elements))
+            }
         }
     }
 
     override fun init(processingEnv: ProcessingEnvironment) {
         config = AnnotationProcessorConfig(
             checkUnusedInject = processingEnv.options["Lightsaber.CheckUnusedInject"] != "false",
+            checkUnusedScope = processingEnv.options["Lightsaber.CheckUnusedScope"] != "false",
         )
         elements = processingEnv.elementUtils
         fileGenerator = FileGenerator(processingEnv.filer)
