@@ -16,10 +16,33 @@ internal class UnusedScopeKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
-    fun scopeUsed(
+    fun singletonWithInject_NoErrors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
+        val foo = createSource(
+            """
+                package test
 
+                import javax.inject.Inject
+                import javax.inject.Singleton
+
+                @Singleton
+                class Foo @Inject constructor()
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,4,14", "ksp,6,")
+    fun singletonNoInject_Errors(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
         val foo = createSource(
             """
                 package test
@@ -33,49 +56,8 @@ internal class UnusedScopeKtTest {
 
         val compilation = compiler.compile(foo)
 
-        compilation.assertNoFindings()
-    }
-
-    @ParameterizedTest
-    @CsvSource("kapt,4,14", "ksp,6,")
-    fun scopeNotUsed(
-        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
-        line: Int,
-        column: Int?,
-    ) {
-
-        val foo = createSource(
-            """
-                package test
-
-                import javax.inject.Singleton
-
-                @Singleton
-                class Foo
-            """.trimIndent(),
-        )
-
-        val module = createSource(
-            """
-                package test
-
-                import dagger.Module
-                import dagger.Provides
-
-                @Module
-                class Module {
-                    @Provides
-                    fun dependency(): Foo {
-                        return Foo()
-                    }
-                }
-            """.trimIndent(),
-        )
-
-        val compilation = compiler.compile(foo, module)
-
         compilation.assertUnusedScope(
-            message = "The `@javax.inject.Singleton` scope is unused.",
+            message = "The `@javax.inject.Singleton` scope is unused because `test.Foo` doesn't contain any constructor annotated with `@Inject`.",
             line = line,
             column = column,
         )
@@ -83,7 +65,7 @@ internal class UnusedScopeKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt,4,14", "ksp,4,")
-    fun scopeNotUsed2(
+    fun customScopeWithInject_NoErrors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
         column: Int?,
@@ -92,6 +74,44 @@ internal class UnusedScopeKtTest {
         val foo = createSource(
             """
                 package test
+
+                import javax.inject.Inject
+
+                @MyAnnotation
+                class Foo @Inject constructor()
+            """.trimIndent(),
+        )
+
+        val annotation = createSource(
+            """
+                package test
+
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo, annotation)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,4,14", "ksp,6,")
+    fun customScopeNoInject_Error(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+
+        val foo = createSource(
+            """
+                package test
+
+                import javax.inject.Inject
 
                 @MyAnnotation
                 class Foo
@@ -110,93 +130,51 @@ internal class UnusedScopeKtTest {
             """.trimIndent(),
         )
 
-        val module = createSource(
-            """
-                package test
-
-                import dagger.Module
-                import dagger.Provides
-
-                @Module
-                class Module {
-                    @Provides
-                    fun dependency(): Foo {
-                        return Foo()
-                    }
-                }
-            """.trimIndent(),
-        )
-
-        val compilation = compiler.compile(foo, annotation, module)
+        val compilation = compiler.compile(foo, annotation)
 
         compilation.assertUnusedScope(
-            message = "The `@test.MyAnnotation` scope is unused.",
+            message = "The `@test.MyAnnotation` scope is unused because `test.Foo` doesn't contain any constructor annotated with `@Inject`.",
             line = line,
             column = column,
         )
     }
 
     @ParameterizedTest
-    @Disabled("Not yet supported")
-    @CsvSource("kapt,4,14", "ksp,6,")
-    fun scopeNotUsed3(
+    @CsvSource("kapt", "ksp")
+    fun noScopeWithInject_NoError(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
-        line: Int,
-        column: Int?,
     ) {
-        val annotation = createSource(
-            """
-                package test
-                
-                import javax.inject.Scope
-
-                @Scope
-                annotation class MyAnnotation
-            """.trimIndent(),
-        )
-
-        val fooImpl = createSource(
-            """
-                package test
-
-                @MyAnnotation
-                class FooImpl : Foo
-            """.trimIndent(),
-        )
-
-
         val foo = createSource(
             """
                 package test
 
-                interface Foo
+                import javax.inject.Inject
+
+                class Foo @Inject constructor()
             """.trimIndent(),
         )
 
-        val module = createSource(
+        val compilation = compiler.compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun noScopeNoInject_NoError(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val foo = createSource(
             """
                 package test
 
-                import dagger.Module
-                import dagger.Provides
-
-                @Module
-                class Module {
-                    @Provides
-                    fun dependency(): Foo {
-                        return FooImpl()
-                    }
-                }
+                class Foo
             """.trimIndent(),
         )
 
-        val compilation = compiler.compile(annotation, fooImpl, foo, module)
+        val compilation = compiler.compile(foo)
 
-        compilation.assertUnusedScope(
-            message = "The `@test.MyAnnotation` scope is unused.",
-            line = line,
-            column = column,
-        )
+        compilation.assertNoFindings()
     }
 
     private class CompilerArgumentConverter : ArgumentConverter {
