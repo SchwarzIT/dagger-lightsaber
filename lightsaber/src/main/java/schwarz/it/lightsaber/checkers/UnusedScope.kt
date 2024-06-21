@@ -26,7 +26,7 @@ internal class UnusedScopeKsp : LightsaberKspRule {
 
     private val declarations = mutableListOf<KSClassDeclaration>()
     private val provides = mutableListOf<KSAnnotated>()
-    private val annotations = mutableListOf<KSClassDeclaration>()
+    private val annotations = mutableSetOf(Singleton::class.qualifiedName!!)
 
     @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver) {
@@ -52,8 +52,7 @@ internal class UnusedScopeKsp : LightsaberKspRule {
         annotations.addAll(
             resolver.getSymbolsWithAnnotation(Scope::class.qualifiedName!!)
                 .filterIsInstance<KSClassDeclaration>()
-                .plus(Singleton::class.qualifiedName!!)
-                .filterIsInstance<KSClassDeclaration>(),
+                .map { it.qualifiedName!!.asString() }
         )
     }
 
@@ -66,9 +65,9 @@ internal class UnusedScopeKsp : LightsaberKspRule {
             .filter { provide.contains(it.qualifiedName!!.asString()) }
             .map { classDeclaration ->
                 val annotationName =
-                    annotations.find { classDeclaration.hasAnnotation(it.qualifiedName!!.asString()) }
+                    annotations.find { classDeclaration.hasAnnotation(it) }
                 Finding(
-                    "The @$annotationName scope is unused.",
+                    "The `@$annotationName` scope is unused.",
                     classDeclaration.location.toCodePosition(),
                 )
             }

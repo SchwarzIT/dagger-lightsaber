@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber.checkers
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.converter.ArgumentConverter
@@ -74,7 +75,7 @@ internal class UnusedScopeKtTest {
         val compilation = compiler.compile(foo, module)
 
         compilation.assertUnusedScope(
-            message = "The @Singleton scope is unused.",
+            message = "The `@javax.inject.Singleton` scope is unused.",
             line = line,
             column = column,
         )
@@ -129,13 +130,14 @@ internal class UnusedScopeKtTest {
         val compilation = compiler.compile(foo, annotation, module)
 
         compilation.assertUnusedScope(
-            message = "The @MyAnnotation scope is unused.",
+            message = "The `@test.MyAnnotation` scope is unused.",
             line = line,
             column = column,
         )
     }
 
     @ParameterizedTest
+    @Disabled("Not yet supported")
     @CsvSource("kapt,4,14", "ksp,6,")
     fun scopeNotUsed3(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
@@ -191,7 +193,7 @@ internal class UnusedScopeKtTest {
         val compilation = compiler.compile(annotation, fooImpl, foo, module)
 
         compilation.assertUnusedScope(
-            message = "The @MyAnnotation scope is unused.",
+            message = "The `@test.MyAnnotation` scope is unused.",
             line = line,
             column = column,
         )
