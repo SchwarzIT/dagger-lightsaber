@@ -17,7 +17,9 @@ import dagger.Provides
 import dagger.spi.model.hasAnnotation
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.LightsaberKspRule
+import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.toCodePosition
+import javax.inject.Inject
 import javax.inject.Scope
 import javax.inject.Singleton
 import kotlin.reflect.KClass
@@ -25,10 +27,9 @@ import kotlin.reflect.KClass
 internal class UnusedScopeKsp : LightsaberKspRule {
 
     private val declarations = mutableListOf<KSClassDeclaration>()
-    private val provides = mutableListOf<KSAnnotated>()
     private val annotations = mutableSetOf(Singleton::class.qualifiedName!!)
+    private val injects = mutableListOf<KSType>()
 
-    @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver) {
         declarations.addAll(
             resolver
@@ -40,34 +41,27 @@ internal class UnusedScopeKsp : LightsaberKspRule {
                 .filterIsInstance<KSClassDeclaration>(),
         )
 
-        provides.addAll(
-            resolver.getSymbolsWithAnnotation(Provides::class.qualifiedName!!),
+        injects.addAll(
+            resolver.getSymbolsWithAnnotation(Inject::class.qualifiedName!!)
+                .filterIsInstance<KSFunctionDeclaration>()
+                .map { it.returnType!!.resolve() },
         )
 
-        /*  annotations.addAll(
-              resolver
-                  .getSymbolsWithAnnotation(Scope::class.qualifiedName!!)
-                  .plus(resolver.getSymbolsWithAnnotation(Singleton::class.qualifiedName!!))
-          )*/
         annotations.addAll(
             resolver.getSymbolsWithAnnotation(Scope::class.qualifiedName!!)
                 .filterIsInstance<KSClassDeclaration>()
-                .map { it.qualifiedName!!.asString() }
+                .map { it.qualifiedName!!.asString() },
         )
     }
 
     override fun computeFindings(): List<Finding> {
-        val provide = provides.map {
-            (it as KSFunctionDeclaration).returnType!!.resolve()
-                .declaration.closestClassDeclaration()!!.qualifiedName!!.asString()
-        }
         return declarations
-            .filter { provide.contains(it.qualifiedName!!.asString()) }
+            .filter { !injects.contains(it.asStarProjectedType()) }
             .map { classDeclaration ->
                 val annotationName =
                     annotations.find { classDeclaration.hasAnnotation(it) }
                 Finding(
-                    "The `@$annotationName` scope is unused.",
+                    "The `@$annotationName` scope is unused because `${classDeclaration.qualifiedName!!.asString()}` doesn't contain any constructor annotated with `@Inject`.",
                     classDeclaration.location.toCodePosition(),
                 )
             }
