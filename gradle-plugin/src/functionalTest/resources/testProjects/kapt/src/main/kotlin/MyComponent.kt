@@ -3,10 +3,12 @@ package com.example
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import javax.inject.Inject
 
 @Component(modules = [MyModule::class])
 interface MyComponent {
     fun myInt(): Int
+    fun foo(): Foo
 }
 
 @Module
@@ -22,5 +24,10 @@ abstract class MyModule {
         fun myLong(): Long {
             return 42L
         }
+
+        @Provides
+        fun provideFoo(): Foo = Foo()
     }
 }
+
+class Foo @Inject constructor()

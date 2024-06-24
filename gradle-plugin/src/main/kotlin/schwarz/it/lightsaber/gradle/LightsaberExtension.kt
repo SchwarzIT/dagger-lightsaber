@@ -7,6 +7,7 @@ interface LightsaberExtension {
     val unusedBindsInstances: Property<Severity>
     val unusedBindsAndProvides: Property<Severity>
     val unusedDependencies: Property<Severity>
+    val unusedInject: Property<Severity>
     val unusedMembersInjectionMethods: Property<Severity>
     val unusedModules: Property<Severity>
 }
@@ -22,6 +23,7 @@ internal fun LightsaberExtension.getArguments() = mapOf(
     "Lightsaber.CheckUnusedBindsInstances" to unusedBindsInstances.toArgument(),
     "Lightsaber.CheckUnusedBindsAndProvides" to unusedBindsAndProvides.toArgument(),
     "Lightsaber.CheckUnusedDependencies" to unusedDependencies.toArgument(),
+    "Lightsaber.CheckUnusedInject" to unusedInject.toArgument(),
     "Lightsaber.CheckUnusedMembersInjectionMethods" to unusedMembersInjectionMethods.toArgument(),
     "Lightsaber.CheckUnusedModules" to unusedModules.toArgument(),
 )

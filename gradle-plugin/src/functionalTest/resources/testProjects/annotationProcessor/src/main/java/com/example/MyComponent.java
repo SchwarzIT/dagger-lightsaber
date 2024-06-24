@@ -5,4 +5,5 @@ import dagger.Component;
 @Component(modules = {MyModule.class})
 interface MyComponent {
     int myInt();
+    Foo foo();
 }

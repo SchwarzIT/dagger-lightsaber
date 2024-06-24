@@ -3,7 +3,9 @@ package schwarz.it.lightsaber.utils
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import dagger.spi.model.DaggerProcessingEnv
+import schwarz.it.lightsaber.Issue
 import java.io.OutputStream
+import java.io.PrintWriter
 import javax.annotation.processing.Filer
 import javax.tools.StandardLocation
 
@@ -12,7 +14,15 @@ internal interface FileGenerator {
 
     companion object {
         operator fun invoke(processingEnv: DaggerProcessingEnv): FileGenerator {
-            return processingEnv.fold({ FileGeneratorJavac(it.filer) }, { FileGeneratorKsp(it.codeGenerator) })
+            return processingEnv.fold({ FileGenerator(it.filer) }, { FileGenerator(it.codeGenerator) })
+        }
+
+        operator fun invoke(codeGenerator: CodeGenerator): FileGenerator {
+            return FileGeneratorKsp(codeGenerator)
+        }
+
+        operator fun invoke(filer: Filer): FileGenerator {
+            return FileGeneratorJavac(filer)
         }
     }
 }
@@ -29,4 +39,10 @@ private class FileGeneratorKsp(private val codeGenerator: CodeGenerator) : FileG
     override fun createFile(packageName: String, fileName: String, extension: String): OutputStream {
         return codeGenerator.createNewFile(Dependencies.ALL_FILES, packageName, fileName, extension)
     }
+}
+
+internal fun FileGenerator.writeFile(fileName: String, issues: List<Issue>) {
+    this.createFile("schwarz.it.lightsaber", fileName, "lightsaber")
+        .let(::PrintWriter)
+        .use { writer -> issues.forEach { writer.println("${it.codePosition}: ${it.message} [${it.rule}]") } }
 }

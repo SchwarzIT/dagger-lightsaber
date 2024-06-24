@@ -27,6 +27,7 @@ dependencies {
     compileOnly(libs.dagger.spi)
     compileOnly(libs.google.auto.service)
     kapt(libs.google.auto.service)
+    compileOnly(libs.ksp.api)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
