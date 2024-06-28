@@ -15,7 +15,9 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
       - name: Run tests
         run: ./gradlew test functionalTest
       - name: Publish Test Report
@@ -30,7 +32,9 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
       - name: Check that the publish plugin works
         run: ./gradlew publishToMavenLocal
   staticAnalysis:
@@ -40,6 +44,8 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
       - name: Run static analysis
         run: ./gradlew spotlessCheck
