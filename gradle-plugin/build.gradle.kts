@@ -66,6 +66,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
                     "ktlint_standard_property-naming" to "disabled",
                     "ktlint_standard_discouraged-comment-location" to "disabled",
                     "ktlint_standard_no-empty-file" to "disabled",
+                    "ktlint_standard_function-expression-body" to "disabled",
                 )
             )
     }
