@@ -3,15 +3,12 @@
 package schwarz.it.lightsaber
 
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
-import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.converter.ArgumentConverter
 import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.truth.assertThat
-import schwarz.it.lightsaber.utils.KaptKotlinCompiler
+import schwarz.it.lightsaber.utils.AbstractCompilerArgumentConverter
 import schwarz.it.lightsaber.utils.KotlinCompiler
-import schwarz.it.lightsaber.utils.KspKotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 
 internal class LightsaberBindingGraphPluginTest {
@@ -92,14 +89,5 @@ internal class LightsaberBindingGraphPluginTest {
         assertThat(compilation.result).succeeded()
     }
 
-    private class CompilerArgumentConverter : ArgumentConverter {
-        override fun convert(source: Any, context: ParameterContext): Any {
-            source as String
-            return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.UnusedModules)
-                "ksp" -> KspKotlinCompiler(Rule.UnusedModules)
-                else -> error("Unknown compiler of type $source")
-            }
-        }
-    }
+    private class CompilerArgumentConverter : AbstractCompilerArgumentConverter(Rule.UnusedModules)
 }

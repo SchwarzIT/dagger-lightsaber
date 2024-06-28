@@ -1,16 +1,13 @@
 package schwarz.it.lightsaber.checkers
 
-import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.converter.ArgumentConverter
 import org.junit.jupiter.params.converter.ConvertWith
 import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.createSource
+import schwarz.it.lightsaber.utils.AbstractCompilerArgumentConverter
 import schwarz.it.lightsaber.utils.CompilationResult
 import schwarz.it.lightsaber.utils.FindingInfo
-import schwarz.it.lightsaber.utils.KaptKotlinCompiler
 import schwarz.it.lightsaber.utils.KotlinCompiler
-import schwarz.it.lightsaber.utils.KspKotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertHasFindings
@@ -550,16 +547,7 @@ internal class UnusedBindsAndProvidesKtTest {
         compilation.assertNoFindings()
     }
 
-    private class CompilerArgumentConverter : ArgumentConverter {
-        override fun convert(source: Any, context: ParameterContext): Any {
-            source as String
-            return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.UnusedBindAndProvides)
-                "ksp" -> KspKotlinCompiler(Rule.UnusedBindAndProvides)
-                else -> error("Unknown compiler of type $source")
-            }
-        }
-    }
+    private class CompilerArgumentConverter : AbstractCompilerArgumentConverter(Rule.UnusedBindAndProvides)
 }
 
 private fun CompilationResult.assertUnusedBindsAndProvides(
