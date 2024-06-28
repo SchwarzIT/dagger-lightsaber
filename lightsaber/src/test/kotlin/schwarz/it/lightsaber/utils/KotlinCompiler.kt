@@ -3,10 +3,11 @@
 package schwarz.it.lightsaber.utils
 
 import com.google.common.truth.Truth.assertThat
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import com.tschuchort.compiletesting.kspArgs
+import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
@@ -24,14 +25,13 @@ internal interface KotlinCompiler {
 internal class KaptKotlinCompiler(
     vararg rules: Rule,
 ) : KotlinCompiler {
-
     private val compiler = KotlinCompilation().apply {
+        languageVersion = "1.9"
         inheritClassPath = true
         annotationProcessors = listOf(
             ComponentProcessor.withTestPlugins(LightsaberBindingGraphPlugin()),
         )
         kaptArgs = getLightsaberArguments(*rules)
-        kspWithCompilation = true
         verbose = false
     }
 
@@ -50,11 +50,12 @@ internal class KspKotlinCompiler(
     vararg rules: Rule,
 ) : KotlinCompiler {
     private val compiler = KotlinCompilation().apply {
+        languageVersion = "1.9"
         inheritClassPath = true
-        symbolProcessorProviders = listOf(
-            KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()),
+        symbolProcessorProviders = mutableListOf(
+            KspComponentProcessor.Provider.withTestPlugins(LightsaberBindingGraphPlugin()).toSymbolProcessorProvider(),
         )
-        kspArgs = getLightsaberArguments(*rules)
+        kspProcessorOptions = getLightsaberArguments(*rules)
         kspWithCompilation = true
         verbose = false
     }
@@ -68,6 +69,10 @@ internal class KspKotlinCompiler(
             CompilationResult.Type.Ksp,
         )
     }
+}
+
+private fun KspComponentProcessor.Provider.toSymbolProcessorProvider(): SymbolProcessorProvider {
+    return SymbolProcessorProvider(::create)
 }
 
 enum class Rule {
