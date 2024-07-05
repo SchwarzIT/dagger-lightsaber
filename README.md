@@ -46,7 +46,7 @@ lightsaber {
   unusedInjects = Severity.Error
   unusedMembersInjection = Severity.Error
   unusedModules = Severity.Error
-  unusedScope = Severity.Error
+  unusedScopes = Severity.Error
 }
 ```
 

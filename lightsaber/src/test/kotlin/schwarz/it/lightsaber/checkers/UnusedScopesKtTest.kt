@@ -15,7 +15,7 @@ import schwarz.it.lightsaber.utils.assertHasFinding
 import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
-internal class UnusedScopeKtTest {
+internal class UnusedScopesKtTest {
 
     @ParameterizedTest
     @CsvSource("kapt", "ksp")
@@ -59,7 +59,7 @@ internal class UnusedScopeKtTest {
 
         val compilation = compiler.compile(foo)
 
-        compilation.assertUnusedScope(
+        compilation.assertUnusedScopes(
             message = "The `@javax.inject.Singleton` scope is unused because `test.Foo` doesn't contain any constructor annotated with `@Inject`.",
             line = line,
             column = column,
@@ -78,7 +78,7 @@ internal class UnusedScopeKtTest {
                 import javax.inject.Singleton
 
                 @Singleton 
-                @Suppress("UnusedScope")
+                @Suppress("UnusedScopes")
                 class Foo 
             """.trimIndent(),
         )
@@ -153,7 +153,7 @@ internal class UnusedScopeKtTest {
 
         val compilation = compiler.compile(foo, annotation)
 
-        compilation.assertUnusedScope(
+        compilation.assertUnusedScopes(
             message = "The `@test.MyAnnotation` scope is unused because `test.Foo` doesn't contain any constructor annotated with `@Inject`.",
             line = line,
             column = column,
@@ -202,20 +202,20 @@ internal class UnusedScopeKtTest {
         override fun convert(source: Any, context: ParameterContext): Any {
             source as String
             return when (source) {
-                "kapt" -> KaptKotlinCompiler(Rule.UnusedScope)
-                "ksp" -> KspKotlinCompiler(Rule.UnusedScope)
+                "kapt" -> KaptKotlinCompiler(Rule.UnusedScopes)
+                "ksp" -> KspKotlinCompiler(Rule.UnusedScopes)
                 else -> error("Unknown compiler of type $source")
             }
         }
     }
 }
 
-private fun CompilationResult.assertUnusedScope(message: String, line: Int, column: Int?) {
+private fun CompilationResult.assertUnusedScopes(message: String, line: Int, column: Int?) {
     assertHasFinding(
         message = message,
         line = line,
         column = column,
-        ruleName = "UnusedScope",
+        ruleName = "UnusedScopes",
         fileName = sourcesDir.resolve("test/Foo.${type.extension}").toString(),
     )
 }

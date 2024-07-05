@@ -87,7 +87,7 @@ enum class Rule {
     UnusedInject,
     UnusedMembersInjectionMethods,
     UnusedModules,
-    UnusedScope,
+    UnusedScopes,
 }
 
 internal data class CompilationResult(
