@@ -25,7 +25,7 @@ Add the plugin to your project:
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("io.github.schwarzit.lightsaber") version "0.0.15"
+    id("io.github.schwarzit.lightsaber") version "0.0.16"
 }
 ```
 
