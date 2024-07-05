@@ -77,7 +77,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
     }
 }
 
-fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
+private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
     if (!check) return emptyList()
 
     return rule()
