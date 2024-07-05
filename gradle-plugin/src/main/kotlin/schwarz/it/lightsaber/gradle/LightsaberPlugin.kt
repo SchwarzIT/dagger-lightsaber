@@ -30,6 +30,7 @@ private fun Project.apply() {
         unusedInject.convention(Severity.Error)
         unusedMembersInjectionMethods.convention(Severity.Error)
         unusedModules.convention(Severity.Error)
+        unusedScopes.convention(Severity.Error)
     }
 
     withDaggerCompiler { processor ->
@@ -80,5 +81,6 @@ private fun Rule.toPropertySeverity(extension: LightsaberExtension): Property<Se
         Rule.UnusedInject -> extension.unusedInject
         Rule.UnusedMembersInjectionMethods -> extension.unusedMembersInjectionMethods
         Rule.UnusedModules -> extension.unusedModules
+        Rule.UnusedScopes -> extension.unusedScopes
     }
 }

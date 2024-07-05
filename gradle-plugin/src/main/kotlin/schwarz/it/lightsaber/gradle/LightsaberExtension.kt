@@ -10,6 +10,7 @@ interface LightsaberExtension {
     val unusedInject: Property<Severity>
     val unusedMembersInjectionMethods: Property<Severity>
     val unusedModules: Property<Severity>
+    val unusedScopes: Property<Severity>
 }
 
 enum class Severity {
@@ -26,6 +27,7 @@ internal fun LightsaberExtension.getArguments() = mapOf(
     "Lightsaber.CheckUnusedInject" to unusedInject.toArgument(),
     "Lightsaber.CheckUnusedMembersInjectionMethods" to unusedMembersInjectionMethods.toArgument(),
     "Lightsaber.CheckUnusedModules" to unusedModules.toArgument(),
+    "Lightsaber.CheckUnusedScopes" to unusedScopes.toArgument(),
 )
 
 private fun Property<Severity>.toArgument(): Boolean {

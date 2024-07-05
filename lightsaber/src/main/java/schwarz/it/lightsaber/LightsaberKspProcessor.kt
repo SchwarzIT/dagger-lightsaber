@@ -6,6 +6,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import schwarz.it.lightsaber.checkers.UnusedInjectKsp
+import schwarz.it.lightsaber.checkers.UnusedScopeKsp
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
 
@@ -16,6 +17,9 @@ internal class LightsaberKspProcessor(
     private val rules: Set<Pair<String, LightsaberKspRule>> = buildSet {
         if (config.checkUnusedInject) {
             add("UnusedInject" to UnusedInjectKsp())
+        }
+        if (config.checkUnusedScope) {
+            add("UnusedScope" to UnusedScopeKsp())
         }
     }
 
@@ -49,6 +53,7 @@ class LightsaberKspProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         val config = AnnotationProcessorConfig(
             checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
+            checkUnusedScope = environment.options["Lightsaber.CheckUnusedScope"] != "false",
         )
         return LightsaberKspProcessor(FileGenerator(environment.codeGenerator), config)
     }
@@ -56,4 +61,5 @@ class LightsaberKspProcessorProvider : SymbolProcessorProvider {
 
 internal data class AnnotationProcessorConfig(
     val checkUnusedInject: Boolean,
+    val checkUnusedScope: Boolean,
 )
