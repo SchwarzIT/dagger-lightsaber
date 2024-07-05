@@ -8,6 +8,7 @@ import dagger.spi.model.hasAnnotation
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.LightsaberJavacRule
 import schwarz.it.lightsaber.LightsaberKspRule
+import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
 import javax.annotation.processing.RoundEnvironment
@@ -58,6 +59,7 @@ internal class UnusedScopeKsp : LightsaberKspRule {
                 Finding(
                     "The `@$annotationName` scope is unused because `${classDeclaration.qualifiedName!!.asString()}` doesn't contain any constructor annotated with `@Inject`.",
                     classDeclaration.location.toCodePosition(),
+                    classDeclaration::hasSuppress,
                 )
             }
     }
@@ -107,6 +109,7 @@ internal class UnusedScopeJavac(
                 Finding(
                     "The `@$annotationName` scope is unused because `${classDeclaration}` doesn't contain any constructor annotated with `@Inject`.",
                     elements.getCodePosition(classDeclaration),
+                    classDeclaration::hasSuppress
                 )
             }
     }

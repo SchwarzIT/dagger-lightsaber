@@ -67,6 +67,30 @@ internal class UnusedScopeKtTest {
     }
 
     @ParameterizedTest
+    @CsvSource("kapt,5,14", "ksp,6,")
+    fun withSuppress(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import javax.inject.Singleton
+
+                @Singleton 
+                @Suppress("UnusedScope")
+                class Foo 
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
     @CsvSource("kapt", "ksp")
     fun customScopeWithInject_NoErrors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
