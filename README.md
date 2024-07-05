@@ -13,6 +13,7 @@ This plugin contains several rules:
 - Unused `@BindsInstance`
 - Unused `@Provides` or `@Binds` inside `@Module`s
 - Unused `@Component(dependencies)`
+- Unused `@Inject`
 - Unused member injection methods (`Component.inject(Foo)`)
 - Unused `@Module`s
 
@@ -41,6 +42,7 @@ lightsaber {
   unusedBindsInstances = Severity.Error
   unusedBindsAndProvides = Severity.Error
   unusedDependencies = Severity.Error
+  unusedInjects = Severity.Error
   unusedMembersInjection = Severity.Error
   unusedModules = Severity.Error
 }

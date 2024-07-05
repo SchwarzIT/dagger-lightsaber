@@ -13,17 +13,17 @@ import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
-import java.io.PrintWriter
+import schwarz.it.lightsaber.utils.writeFile
 
 @AutoService(BindingGraphPlugin::class)
-public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
+public class LightsaberDaggerProcessor : BindingGraphPlugin {
     override fun pluginName(): String {
         return "Lightsaber"
     }
 
     private lateinit var daggerProcessingEnv: DaggerProcessingEnv
     private lateinit var fileGenerator: FileGenerator
-    private lateinit var config: LightsaberConfig
+    private lateinit var config: DaggerConfig
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
         val issues = listOf(
@@ -49,15 +49,11 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
-        fileGenerator.createFile("schwarz.it.lightsaber", bindingGraph.getQualifiedName(), "lightsaber")
-            .let(::PrintWriter)
-            .use { writer ->
-                issues.forEach { writer.println(it.getMessage()) }
-            }
+        fileGenerator.writeFile(bindingGraph.getQualifiedName(), issues)
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
-        this.config = LightsaberConfig(
+        this.config = DaggerConfig(
             checkEmptyComponents = options["Lightsaber.CheckEmptyComponents"] != "false",
             checkUnusedBindsInstances = options["Lightsaber.CheckUnusedBindsInstances"] != "false",
             checkUnusedBindsAndProvides = options["Lightsaber.CheckUnusedBindsAndProvides"] != "false",
@@ -79,10 +75,6 @@ public class LightsaberBindingGraphPlugin : BindingGraphPlugin {
             "Lightsaber.CheckUnusedModules",
         )
     }
-
-    private fun Issue.getMessage(): String {
-        return "$codePosition: $message [$rule]"
-    }
 }
 
 private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>): List<Issue> {
@@ -93,13 +85,7 @@ private fun runRule(check: Boolean, ruleName: String, rule: () -> List<Finding>)
         .map { Issue(it.codePosition, it.message, ruleName) }
 }
 
-private data class Issue(
-    val codePosition: CodePosition,
-    val message: String,
-    val rule: String,
-)
-
-internal data class LightsaberConfig(
+private data class DaggerConfig(
     val checkEmptyComponents: Boolean,
     val checkUnusedBindsInstances: Boolean,
     val checkUnusedBindsAndProvides: Boolean,
