@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 0.0.15 (2024-07-05)
+- ADD: New rule UnusedInject
+- ADD: New rule UnusedScope
+
 ## Version 0.0.14 (2024-05-24)
 - CHANGE: Rename EmptyComponent to EmptyComponents and UnusedBindInstance to UnusedBindsInstances
 - ADD: Allow to suppress issues with the annotation `@Suppress`
