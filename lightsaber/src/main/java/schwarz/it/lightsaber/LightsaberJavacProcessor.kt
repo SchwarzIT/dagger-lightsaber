@@ -11,33 +11,24 @@ import javax.annotation.processing.SupportedAnnotationTypes
 import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import javax.lang.model.util.Elements
 
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 class LightsaberJavacProcessor : AbstractProcessor() {
-    private lateinit var config: AnnotationProcessorConfig
-    private lateinit var elements: Elements
     private lateinit var fileGenerator: FileGenerator
+    private lateinit var rules: Set<Pair<String, LightsaberJavacRule>>
 
-    private val rules: Set<Pair<String, LightsaberJavacRule>> by lazy {
-        buildSet {
-            if (config.checkUnusedInject) {
+    override fun init(processingEnv: ProcessingEnvironment) {
+        fileGenerator = FileGenerator(processingEnv.filer)
+        val elements = processingEnv.elementUtils
+        rules = buildSet {
+            if (processingEnv.options["Lightsaber.CheckUnusedInject"] != "false") {
                 add("UnusedInject" to UnusedInjectJavac(elements))
             }
-            if (config.checkUnusedScope) {
+            if (processingEnv.options["Lightsaber.CheckUnusedScope"] != "false") {
                 add("UnusedScope" to UnusedScopeJavac(elements))
             }
         }
-    }
-
-    override fun init(processingEnv: ProcessingEnvironment) {
-        config = AnnotationProcessorConfig(
-            checkUnusedInject = processingEnv.options["Lightsaber.CheckUnusedInject"] != "false",
-            checkUnusedScope = processingEnv.options["Lightsaber.CheckUnusedScope"] != "false",
-        )
-        elements = processingEnv.elementUtils
-        fileGenerator = FileGenerator(processingEnv.filer)
     }
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
