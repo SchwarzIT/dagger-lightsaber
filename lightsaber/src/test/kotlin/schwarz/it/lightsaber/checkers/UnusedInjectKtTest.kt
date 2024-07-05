@@ -130,7 +130,6 @@ internal class UnusedInjectKtTest {
 
                 @Module
                 class MyModule {
-                                    
                     @Provides
                     fun provideFoo() = Foo()
                 }
