@@ -67,11 +67,9 @@ internal class UnusedScopeKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,5,14", "ksp,6,")
+    @CsvSource("kapt", "ksp")
     fun withSuppress(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
-        line: Int,
-        column: Int?,
     ) {
         val foo = createSource(
             """
@@ -95,7 +93,6 @@ internal class UnusedScopeKtTest {
     fun customScopeWithInject_NoErrors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
     ) {
-
         val foo = createSource(
             """
                 package test
@@ -131,7 +128,6 @@ internal class UnusedScopeKtTest {
         line: Int,
         column: Int?,
     ) {
-
         val foo = createSource(
             """
                 package test

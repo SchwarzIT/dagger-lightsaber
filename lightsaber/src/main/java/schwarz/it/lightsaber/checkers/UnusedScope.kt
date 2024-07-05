@@ -92,7 +92,6 @@ internal class UnusedScopeJavac(
                 .plus(Singleton::class.qualifiedName!!)
                 .flatMap { roundEnv.getElementsAnnotatedWith(elements.getTypeElement(it)) },
         )
-
     }
 
     override fun computeFindings(): List<Finding> {
@@ -107,9 +106,9 @@ internal class UnusedScopeJavac(
                     }
 
                 Finding(
-                    "The `@$annotationName` scope is unused because `${classDeclaration}` doesn't contain any constructor annotated with `@Inject`.",
+                    "The `@$annotationName` scope is unused because `$classDeclaration` doesn't contain any constructor annotated with `@Inject`.",
                     elements.getCodePosition(classDeclaration),
-                    classDeclaration::hasSuppress
+                    classDeclaration::hasSuppress,
                 )
             }
     }
