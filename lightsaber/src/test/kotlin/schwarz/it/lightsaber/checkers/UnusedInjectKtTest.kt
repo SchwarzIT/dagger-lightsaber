@@ -141,7 +141,6 @@ internal class UnusedInjectKtTest {
                 package test
 
                 import javax.inject.Inject
-                 
                 class Foo @Suppress("UnusedInject") @Inject constructor()
             """.trimIndent(),
         )
