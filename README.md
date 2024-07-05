@@ -16,6 +16,7 @@ This plugin contains several rules:
 - Unused `@Inject`
 - Unused member injection methods (`Component.inject(Foo)`)
 - Unused `@Module`s
+- Unused Scopes (for example: `@Singleton`)
 
 ## How to use it
 
@@ -45,6 +46,7 @@ lightsaber {
   unusedInjects = Severity.Error
   unusedMembersInjection = Severity.Error
   unusedModules = Severity.Error
+  unusedScope = Severity.Error
 }
 ```
 

@@ -32,6 +32,7 @@ enum class Rule {
     UnusedInject,
     UnusedMembersInjectionMethods,
     UnusedModules,
+    UnusedScopes,
 }
 
 internal fun String.toIssue(severities: Map<Rule, Severity>): Issue? {
