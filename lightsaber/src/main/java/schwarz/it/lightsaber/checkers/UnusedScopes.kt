@@ -20,7 +20,7 @@ import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.util.Elements
 
-internal class UnusedScopeKsp : LightsaberKspRule {
+internal class UnusedScopesKsp : LightsaberKspRule {
 
     private val declarations = mutableListOf<KSClassDeclaration>()
     private val annotations = mutableSetOf(Singleton::class.qualifiedName!!)
@@ -65,7 +65,7 @@ internal class UnusedScopeKsp : LightsaberKspRule {
     }
 }
 
-internal class UnusedScopeJavac(
+internal class UnusedScopesJavac(
     private val elements: Elements,
 ) : LightsaberJavacRule {
     private val declarations: MutableList<Element> = mutableListOf()

@@ -1,7 +1,7 @@
 package schwarz.it.lightsaber
 
 import schwarz.it.lightsaber.checkers.UnusedInjectJavac
-import schwarz.it.lightsaber.checkers.UnusedScopeJavac
+import schwarz.it.lightsaber.checkers.UnusedScopesJavac
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
 import javax.annotation.processing.AbstractProcessor
@@ -25,8 +25,8 @@ class LightsaberJavacProcessor : AbstractProcessor() {
             if (processingEnv.options["Lightsaber.CheckUnusedInject"] != "false") {
                 add("UnusedInject" to UnusedInjectJavac(elements))
             }
-            if (processingEnv.options["Lightsaber.CheckUnusedScope"] != "false") {
-                add("UnusedScope" to UnusedScopeJavac(elements))
+            if (processingEnv.options["Lightsaber.CheckUnusedScopes"] != "false") {
+                add("UnusedScopes" to UnusedScopesJavac(elements))
             }
         }
     }
