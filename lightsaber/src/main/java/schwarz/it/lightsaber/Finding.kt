@@ -16,9 +16,7 @@ import javax.lang.model.util.Elements
 data class Finding(
     val message: String,
     val codePosition: CodePosition,
-    val suppression: Suppression = object : Suppression {
-        override fun hasSuppress(key: String) = false
-    },
+    val suppression: Suppression,
 )
 
 data class CodePosition(
