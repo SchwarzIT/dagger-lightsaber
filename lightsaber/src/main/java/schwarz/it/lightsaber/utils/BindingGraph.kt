@@ -93,6 +93,25 @@ internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(daggerProces
         )
 }
 
+internal fun BindingGraph.ComponentNode.getScopeCodePosition(
+    daggerProcessingEnv: DaggerProcessingEnv,
+    scopeName: String,
+): CodePosition {
+    return componentPath().currentComponent()
+        .fold(
+            { element ->
+                val annotationMirror = element.findAnnotationMirrors(scopeName)
+                daggerProcessingEnv.getElements().getCodePosition(element, annotationMirror, null)
+            },
+            { classDeclaration ->
+                classDeclaration.annotations
+                    .single { it.annotationType.resolve().declaration.qualifiedName!!.asString() == scopeName }
+                    .location
+                    .toCodePosition()
+            },
+        )
+}
+
 @OptIn(KspExperimental::class)
 internal fun BindingGraph.ComponentNode.getComponentFactoriesAndBuilders(): List<FactoryOrBuilder> {
     return componentPath()

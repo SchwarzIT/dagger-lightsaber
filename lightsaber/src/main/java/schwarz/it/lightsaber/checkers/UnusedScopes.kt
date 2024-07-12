@@ -1,11 +1,15 @@
 package schwarz.it.lightsaber.checkers
 
+import com.google.common.graph.ImmutableNetwork
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import dagger.Component
 import dagger.Subcomponent
+import dagger.spi.model.Binding
+import dagger.spi.model.BindingGraph
+import dagger.spi.model.DaggerProcessingEnv
 import dagger.spi.model.hasAnnotation
 import schwarz.it.lightsaber.Finding
 import schwarz.it.lightsaber.LightsaberJavacRule
@@ -13,6 +17,8 @@ import schwarz.it.lightsaber.LightsaberKspRule
 import schwarz.it.lightsaber.domain.hasSuppress
 import schwarz.it.lightsaber.getCodePosition
 import schwarz.it.lightsaber.toCodePosition
+import schwarz.it.lightsaber.utils.allSuccessors
+import schwarz.it.lightsaber.utils.getScopeCodePosition
 import schwarz.it.lightsaber.utils.isAnnotatedWith
 import javax.annotation.processing.RoundEnvironment
 import javax.inject.Inject
@@ -21,6 +27,30 @@ import javax.inject.Singleton
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.util.Elements
+import kotlin.jvm.optionals.getOrNull
+
+internal fun checkUnusedScopes(
+    bindingGraph: BindingGraph,
+    daggerProcessingEnv: DaggerProcessingEnv,
+): List<Finding> {
+    @Suppress("UnstableApiUsage")
+    val network: ImmutableNetwork<BindingGraph.Node, BindingGraph.Edge> = bindingGraph.network()
+
+    return bindingGraph.componentNodes()
+        .flatMap { component -> component.scopes().map { scope -> component to scope } }
+        .filter { (component, scope) ->
+            network.allSuccessors(component)
+                .filterIsInstance<Binding>()
+                .none { it.scope().getOrNull() == scope }
+        }
+        .map { (component, scope) ->
+            Finding(
+                "The scope `$scope` on component `$component` is not used.",
+                component.getScopeCodePosition(daggerProcessingEnv, scope.scopeAnnotation()!!.annotationTypeElement()!!.toString()),
+                component.componentPath().currentComponent()::hasSuppress,
+            )
+        }
+}
 
 internal class UnusedScopesKsp : LightsaberKspRule {
     private val scopes: MutableSet<String> = mutableSetOf(Singleton::class.qualifiedName!!)
