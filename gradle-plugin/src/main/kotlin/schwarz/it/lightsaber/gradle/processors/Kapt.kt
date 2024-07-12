@@ -3,11 +3,11 @@ package schwarz.it.lightsaber.gradle.processors
 import com.android.build.api.variant.Variant
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.configurationcache.extensions.capitalized
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.tasks.BaseKapt
 import schwarz.it.lightsaber.gradle.LightsaberExtension
 import schwarz.it.lightsaber.gradle.LightsaberTask
+import schwarz.it.lightsaber.gradle.capitalized
 import schwarz.it.lightsaber.gradle.getArguments
 import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask

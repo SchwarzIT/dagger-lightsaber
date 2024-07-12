@@ -5,9 +5,9 @@ import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.configurationcache.extensions.capitalized
 import schwarz.it.lightsaber.gradle.LightsaberExtension
 import schwarz.it.lightsaber.gradle.LightsaberTask
+import schwarz.it.lightsaber.gradle.capitalized
 import schwarz.it.lightsaber.gradle.getArguments
 import schwarz.it.lightsaber.gradle.lightsaberVersion
 import schwarz.it.lightsaber.gradle.registerTask
