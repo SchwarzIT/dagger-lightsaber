@@ -195,6 +195,32 @@ internal class UnusedScopesKtTest {
         compilation.assertNoFindings()
     }
 
+    @ParameterizedTest
+    @CsvSource("kapt,Component", "kapt,Subcomponent", "ksp,Component", "ksp,Subcomponent")
+    fun noReportAComponentNorSubcomponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        type: String,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import dagger.Component
+                import dagger.Subcomponent
+                import javax.inject.Singleton
+
+                @$type
+                @Singleton
+                interface MyComponent
+            """.trimIndent(),
+        )
+
+        val compilation = compiler
+            .compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
     private class CompilerArgumentConverter : AbstractCompilerArgumentConverter(Rule.UnusedScopes)
 }
 
