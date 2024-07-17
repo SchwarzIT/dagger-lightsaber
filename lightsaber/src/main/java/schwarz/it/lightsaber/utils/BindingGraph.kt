@@ -53,8 +53,8 @@ internal fun BindingGraph.ComponentNode.getModulesCodePosition(daggerProcessingE
     return componentPath().currentComponent()
         .fold(
             { element ->
-                val annotationMirror = element.findAnnotationMirrors("Component")
-                    ?: element.findAnnotationMirrors("Subcomponent")!!
+                val annotationMirror = element.findAnnotationMirrors(Component::class.qualifiedName!!)
+                    ?: element.findAnnotationMirrors(Subcomponent::class.qualifiedName!!)!!
                 daggerProcessingEnv.getElements().getCodePosition(
                     element,
                     annotationMirror,
@@ -63,7 +63,10 @@ internal fun BindingGraph.ComponentNode.getModulesCodePosition(daggerProcessingE
             },
             { classDeclaration ->
                 classDeclaration.annotations
-                    .single { it.shortName.asString() == "Component" || it.shortName.asString() == "Subcomponent" }
+                    .single {
+                        val annotationQualifiedName = it.annotationType.resolve().declaration.qualifiedName!!.asString()
+                        annotationQualifiedName == Component::class.qualifiedName!! || annotationQualifiedName == Subcomponent::class.qualifiedName!!
+                    }
                     .location
                     .toCodePosition()
             },
@@ -74,7 +77,7 @@ internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(daggerProces
     return componentPath().currentComponent()
         .fold(
             { element ->
-                val annotationMirror = element.findAnnotationMirrors("Component")!!
+                val annotationMirror = element.findAnnotationMirrors(Component::class.qualifiedName!!)!!
                 daggerProcessingEnv.getElements().getCodePosition(
                     element,
                     annotationMirror,
@@ -83,7 +86,7 @@ internal fun BindingGraph.ComponentNode.getDependenciesCodePosition(daggerProces
             },
             { classDeclaration ->
                 classDeclaration.annotations
-                    .single { it.shortName.asString() == "Component" }
+                    .single { it.annotationType.resolve().declaration.qualifiedName!!.asString() == Component::class.qualifiedName!! }
                     .location
                     .toCodePosition()
             },

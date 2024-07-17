@@ -13,9 +13,7 @@ internal fun <T : Annotation> Element.isAnnotatedWith(klass: KClass<T>): Boolean
 }
 
 internal fun TypeElement.findAnnotationMirrors(annotationName: String): AnnotationMirror? {
-    return annotationMirrors.singleOrNull { annotationMirror ->
-        annotationMirror.annotationType.asElement().simpleName.toString() == annotationName
-    }
+    return annotationMirrors.singleOrNull { it.annotationType.toString() == annotationName }
 }
 
 internal fun AnnotationMirror.getAnnotationValue(key: String): AnnotationValue {

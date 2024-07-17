@@ -80,7 +80,7 @@ private value class ModuleJavac(private val value: TypeElement) : Module {
     }
 
     override fun getIncludesCodePosition(daggerProcessingEnv: DaggerProcessingEnv): CodePosition {
-        val annotationMirror = value.findAnnotationMirrors("Module")!!
+        val annotationMirror = value.findAnnotationMirrors(dagger.Module::class.qualifiedName!!)!!
         return daggerProcessingEnv.getElements().getCodePosition(
             value,
             annotationMirror,
