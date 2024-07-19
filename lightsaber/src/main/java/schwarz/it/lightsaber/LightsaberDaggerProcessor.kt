@@ -11,6 +11,7 @@ import schwarz.it.lightsaber.checkers.checkUnusedBindsInstances
 import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
+import schwarz.it.lightsaber.checkers.checkUnusedScopes
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
 import schwarz.it.lightsaber.utils.writeFile
@@ -45,6 +46,9 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             runRule(config.checkUnusedModules, "UnusedModules") {
                 checkUnusedModules(bindingGraph, daggerProcessingEnv)
             },
+            runRule(config.checkUnusedScopes, "UnusedScopes") {
+                checkUnusedScopes(bindingGraph, daggerProcessingEnv)
+            },
         )
             .flatten()
             .ifEmpty { return }
@@ -60,6 +64,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             checkUnusedDependencies = options["Lightsaber.CheckUnusedDependencies"] != "false",
             checkUnusedMembersInjectionMethods = options["Lightsaber.CheckUnusedMembersInjectionMethods"] != "false",
             checkUnusedModules = options["Lightsaber.CheckUnusedModules"] != "false",
+            checkUnusedScopes = options["Lightsaber.CheckUnusedScopes"] != "false",
         )
         this.daggerProcessingEnv = processingEnv
         this.fileGenerator = FileGenerator(processingEnv)
@@ -73,6 +78,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             "Lightsaber.CheckUnusedDependencies",
             "Lightsaber.CheckUnusedMembersInjectionMethods",
             "Lightsaber.CheckUnusedModules",
+            "Lightsaber.CheckUnusedScopes",
         )
     }
 }
@@ -92,4 +98,5 @@ private data class DaggerConfig(
     val checkUnusedDependencies: Boolean,
     val checkUnusedMembersInjectionMethods: Boolean,
     val checkUnusedModules: Boolean,
+    val checkUnusedScopes: Boolean,
 )

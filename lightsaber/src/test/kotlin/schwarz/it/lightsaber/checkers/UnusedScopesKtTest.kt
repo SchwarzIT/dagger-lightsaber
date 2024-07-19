@@ -6,9 +6,11 @@ import org.junit.jupiter.params.provider.CsvSource
 import schwarz.it.lightsaber.createSource
 import schwarz.it.lightsaber.utils.AbstractCompilerArgumentConverter
 import schwarz.it.lightsaber.utils.CompilationResult
+import schwarz.it.lightsaber.utils.FindingInfo
 import schwarz.it.lightsaber.utils.KotlinCompiler
 import schwarz.it.lightsaber.utils.Rule
 import schwarz.it.lightsaber.utils.assertHasFinding
+import schwarz.it.lightsaber.utils.assertHasFindings
 import schwarz.it.lightsaber.utils.assertNoFindings
 import schwarz.it.lightsaber.utils.extension
 
@@ -207,11 +209,16 @@ internal class UnusedScopesKtTest {
 
                 import dagger.Component
                 import dagger.Subcomponent
+                import javax.inject.Inject
                 import javax.inject.Singleton
 
                 @$type
                 @Singleton
-                interface MyComponent
+                interface MyComponent {
+                    val bar: Bar
+                }
+
+                @Singleton class Bar @Inject constructor()
             """.trimIndent(),
         )
 
@@ -221,15 +228,230 @@ internal class UnusedScopesKtTest {
         compilation.assertNoFindings()
     }
 
+    @ParameterizedTest
+    @CsvSource("kapt,3,1", "ksp,7,")
+    fun noScopeNeededOnComponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import dagger.Component
+                import javax.inject.Inject
+                import javax.inject.Singleton
+
+                @Singleton
+                @Component
+                interface MyComponent {
+                    val foo: Foo
+                }
+
+                class Foo @Inject constructor(bar: Bar)
+
+                class Bar @Inject constructor()
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertUnusedScopes(
+            "The scope `@javax.inject.Singleton` on component `test.MyComponent` is not used.",
+            line,
+            column,
+            "MyComponent",
+        )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,3,1", "ksp,8,")
+    fun noCustomScopeNeededOnComponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import dagger.Component
+                import javax.inject.Inject
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @MyAnnotation
+                @Component
+                interface MyComponent {
+                    val foo: Foo
+                }
+
+                class Foo @Inject constructor(bar: Bar)
+
+                class Bar @Inject constructor()
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertUnusedScopes(
+            "The scope `@test.MyAnnotation` on component `test.MyComponent` is not used.",
+            line,
+            column,
+            "MyComponent",
+        )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,3,1", "ksp,8,")
+    fun noMultipleScopeNeededOnComponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import dagger.Component
+                import javax.inject.Inject
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @Singleton
+                @MyAnnotation
+                @Component
+                interface MyComponent {
+                    val foo: Foo
+                }
+
+                class Foo @Inject constructor(bar: Bar)
+
+                class Bar @Inject constructor()
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertHasFindings(
+            compilation.finding(
+                "The scope `@javax.inject.Singleton` on component `test.MyComponent` is not used.",
+                line,
+                column,
+            ),
+            compilation.finding(
+                "The scope `@test.MyAnnotation` on component `test.MyComponent` is not used.",
+                line + 1,
+                column,
+            ),
+        )
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt", "ksp")
+    fun noFindingsOnComponent(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import dagger.Component
+                import javax.inject.Inject
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @Singleton
+                @MyAnnotation
+                @Component
+                interface MyComponent {
+                    val foo: Foo
+                }
+
+                @Singleton
+                class Foo @Inject constructor(bar: Bar)
+
+                @MyAnnotation
+                class Bar @Inject constructor()
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertNoFindings()
+    }
+
+    @ParameterizedTest
+    @CsvSource("kapt,3,1", "ksp,8,")
+    fun onlyOneFinding(
+        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
+        line: Int,
+        column: Int?,
+    ) {
+        val foo = createSource(
+            """
+                package test
+
+                import dagger.Component
+                import javax.inject.Inject
+                import javax.inject.Scope
+                import javax.inject.Singleton
+
+                @Singleton
+                @MyAnnotation
+                @Component
+                interface MyComponent {
+                    val foo: Foo
+                }
+
+                class Foo @Inject constructor(bar: Bar)
+
+                @MyAnnotation
+                class Bar @Inject constructor()
+
+                @Scope
+                annotation class MyAnnotation
+            """.trimIndent(),
+        )
+
+        val compilation = compiler.compile(foo)
+
+        compilation.assertUnusedScopes(
+            "The scope `@javax.inject.Singleton` on component `test.MyComponent` is not used.",
+            line,
+            column,
+            "MyComponent",
+        )
+    }
+
     private class CompilerArgumentConverter : AbstractCompilerArgumentConverter(Rule.UnusedScopes)
 }
 
-private fun CompilationResult.assertUnusedScopes(message: String, line: Int, column: Int?) {
+private fun CompilationResult.assertUnusedScopes(message: String, line: Int, column: Int?, filename: String = "Foo") {
     assertHasFinding(
         message = message,
         line = line,
         column = column,
         ruleName = "UnusedScopes",
-        fileName = sourcesDir.resolve("test/Foo.${type.extension}").toString(),
+        fileName = sourcesDir.resolve("test/$filename.${type.extension}").toString(),
     )
 }
+
+private fun CompilationResult.finding(message: String, line: Int, column: Int?) =
+    FindingInfo(
+        message = message,
+        line = line,
+        column = column,
+        ruleName = "UnusedScopes",
+        fileName = sourcesDir.resolve("test/MyComponent.${type.extension}").toString(),
+    )
