@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 0.0.17 (2024-07-05)
+- FIX: UnusedScopes false positives on components with scopes
+- ADD: Flag scopes not used on components
+
+
 ## Version 0.0.16 (2024-07-05)
 - ADD: New rule UnusedInject
 - ADD: New rule UnusedScopes
