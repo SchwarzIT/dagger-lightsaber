@@ -46,7 +46,10 @@ internal fun checkUnusedScopes(
         .map { (component, scope) ->
             Finding(
                 "The scope `$scope` on component `$component` is not used.",
-                component.getScopeCodePosition(daggerProcessingEnv, scope.scopeAnnotation()!!.annotationTypeElement()!!.toString()),
+                component.getScopeCodePosition(
+                    daggerProcessingEnv,
+                    scope.scopeAnnotation()!!.annotationTypeElement()!!.toString(),
+                ),
                 component.componentPath().currentComponent()::hasSuppress,
             )
         }
@@ -87,7 +90,10 @@ internal class UnusedScopesKsp : LightsaberKspRule {
                 val annotationName = scopes.find { classDeclaration.hasAnnotation(it) }
                 Finding(
                     "The `@$annotationName` scope is unused because `${classDeclaration.qualifiedName!!.asString()}` doesn't contain any constructor annotated with `@Inject`.",
-                    classDeclaration.location.toCodePosition(),
+                    classDeclaration.annotations
+                        .single { it.annotationType.resolve().declaration.qualifiedName!!.asString() == annotationName }
+                        .location
+                        .toCodePosition(),
                     classDeclaration::hasSuppress,
                 )
             }

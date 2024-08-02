@@ -40,7 +40,10 @@ internal class UnusedInjectKsp : LightsaberKspRule {
                 val injectName = inject.parent as KSClassDeclaration
                 Finding(
                     "The @Inject in `${injectName.qualifiedName!!.asString()}` constructor is unused because there is a @Provides defined in `${parent.qualifiedName!!.asString()}.${provide.simpleName.getShortName()}`.",
-                    inject.location.toCodePosition(),
+                    inject.annotations
+                        .single { it.annotationType.resolve().declaration.qualifiedName!!.asString() == Inject::class.qualifiedName!! }
+                        .location
+                        .toCodePosition(),
                     inject::hasSuppress,
                 )
             }
