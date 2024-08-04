@@ -39,7 +39,7 @@ internal class UnusedScopesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,5,14", "ksp,6,")
+    @CsvSource("kapt,5,14", "ksp,5,")
     fun singletonNoInject_Errors(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
@@ -121,7 +121,7 @@ internal class UnusedScopesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,5,14", "ksp,6,")
+    @CsvSource("kapt,5,14", "ksp,5,")
     fun customScopeNoInject_Error(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         line: Int,
