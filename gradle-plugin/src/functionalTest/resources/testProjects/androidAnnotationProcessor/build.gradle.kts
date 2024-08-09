@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.application") version "8.5.1"
+    id("com.android.application") version "8.5.2"
     id("io.github.schwarzit.lightsaber")
 }
 
