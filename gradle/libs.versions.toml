@@ -6,7 +6,7 @@ kctfork = "0.5.1"
 ksp = "1.9.25-1.0.20"
 
 [libraries]
-android_gradle_plugin = { module = "com.android.tools.build:gradle", version = "8.0.0" }
+android_gradle_plugin = { module = "com.android.tools.build:gradle", version = "8.5.2" }
 dagger_spi = { module = "com.google.dagger:dagger-spi", version.ref = "dagger" }
 dagger_compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 google_auto_service = { module = "com.google.auto.service:auto-service", version = "1.1.1" }
