@@ -30,7 +30,7 @@ class JvmCompilationResultSubject(
 
     fun succeeded() {
         if (actual!!.exitCode != KotlinCompilation.ExitCode.OK) {
-            failWithoutActual(Fact.simpleFact("The compilation failed"))
+            failWithoutActual(Fact.simpleFact("The compilation failed with message:\n${actual.messages}"))
         }
     }
 }
