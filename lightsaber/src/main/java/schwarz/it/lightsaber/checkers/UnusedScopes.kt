@@ -55,6 +55,13 @@ internal fun checkUnusedScopes(
         }
 }
 
+private val ignoreAnnotatedWith = listOf(
+    Component::class.qualifiedName!!,
+    Subcomponent::class.qualifiedName!!,
+    "com.squareup.anvil.annotations.MergeComponent",
+    "com.squareup.anvil.annotations.MergeSubcomponent",
+)
+
 internal class UnusedScopesKsp : LightsaberKspRule {
     private val scopes: MutableSet<String> = mutableSetOf(Singleton::class.qualifiedName!!)
     private val declarations: MutableList<KSClassDeclaration> = mutableListOf()
@@ -72,8 +79,7 @@ internal class UnusedScopesKsp : LightsaberKspRule {
                 .asSequence()
                 .flatMap { resolver.getSymbolsWithAnnotation(it) }
                 .filterIsInstance<KSClassDeclaration>()
-                .filterNot { it.hasAnnotation(Component::class.qualifiedName!!) }
-                .filterNot { it.hasAnnotation(Subcomponent::class.qualifiedName!!) },
+                .filterNot { declaration -> ignoreAnnotatedWith.any { declaration.hasAnnotation(it) } },
         )
 
         injects.addAll(
@@ -117,8 +123,7 @@ internal class UnusedScopesJavac(
             scopes
                 .asSequence()
                 .flatMap { roundEnv.getElementsAnnotatedWith(elements.getTypeElement(it)) }
-                .filterNot { it.isAnnotatedWith(Component::class) }
-                .filterNot { it.isAnnotatedWith(Subcomponent::class) },
+                .filterNot { element -> ignoreAnnotatedWith.any { element.isAnnotatedWith(it) } },
         )
 
         injects.addAll(

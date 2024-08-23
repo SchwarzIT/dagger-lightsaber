@@ -198,7 +198,7 @@ internal class UnusedScopesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,Component", "kapt,Subcomponent", "ksp,Component", "ksp,Subcomponent")
+    @CsvSource("kapt,Component", "kapt,Subcomponent", "kapt,MergeComponent(Singleton::class)", "kapt,MergeSubcomponent(Singleton::class)", "ksp,Component", "ksp,Subcomponent")
     fun noReportAComponentNorSubcomponent(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
         type: String,
@@ -207,6 +207,8 @@ internal class UnusedScopesKtTest {
             """
                 package test
 
+                import com.squareup.anvil.annotations.MergeComponent
+                import com.squareup.anvil.annotations.MergeSubcomponent
                 import dagger.Component
                 import dagger.Subcomponent
                 import javax.inject.Inject
