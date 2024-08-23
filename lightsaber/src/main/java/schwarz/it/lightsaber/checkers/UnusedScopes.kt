@@ -58,6 +58,8 @@ internal fun checkUnusedScopes(
 private val ignoreAnnotatedWith = listOf(
     Component::class.qualifiedName!!,
     Subcomponent::class.qualifiedName!!,
+    "com.squareup.anvil.annotations.MergeComponent",
+    "com.squareup.anvil.annotations.MergeSubcomponent",
 )
 
 internal class UnusedScopesKsp : LightsaberKspRule {
