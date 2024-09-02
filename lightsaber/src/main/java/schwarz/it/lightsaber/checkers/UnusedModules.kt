@@ -27,10 +27,11 @@ internal fun checkUnusedModules(
                         codePosition = { component.getModulesCodePosition(daggerProcessingEnv) },
                     )
                 }
-                .map { (errorMessage, codePosition) ->
+                .filterNot { it.module.toString().startsWith("anvil.module.") }
+                .map {
                     Finding(
-                        errorMessage,
-                        codePosition,
+                        it.message,
+                        it.codePosition,
                         component.componentPath().currentComponent()::hasSuppress,
                     )
                 }
@@ -43,16 +44,16 @@ private fun getErrorMessages(
     daggerProcessingEnv: DaggerProcessingEnv,
     codePosition: () -> CodePosition,
     path: List<String> = emptyList(),
-): List<Pair<String, CodePosition>> {
+): List<UnusedModuleFinding> {
     return buildList {
         if (!used.contains(node.value)) {
             val usedChildren = findUsedChildren(used, node)
             add(
-                generateMessage(
-                    usedChildren.map { it.value },
+                UnusedModuleFinding(
+                    generateMessage(usedChildren.map { it.value }, node.value, path),
+                    codePosition.invoke(),
                     node.value,
-                    path,
-                ) to codePosition.invoke(),
+                ),
             )
             val newPath = path.plus(node.value.toString())
             addAll(
@@ -82,6 +83,8 @@ private fun getErrorMessages(
         }
     }
 }
+
+data class UnusedModuleFinding(val message: String, val codePosition: CodePosition, val module: Module)
 
 private fun generateMessage(
     usedChildren: List<Module>,
