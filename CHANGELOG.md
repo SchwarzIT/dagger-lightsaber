@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 0.0.18 (2024-09-06)
+- ADD: Initial support for Anvil. (If you find any issue with Anvil please report it) 
+- CHANGE: Improve code position in error messages
+
+
 ## Version 0.0.17 (2024-07-05)
 - FIX: UnusedScopes false positives on components with scopes
 - ADD: Flag scopes not used on components

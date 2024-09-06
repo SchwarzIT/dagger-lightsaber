@@ -2,6 +2,10 @@
 
 Lightsaber is a [Dagger 2][dagger] plugin that detects unused code in your `Module`s, `Component`s and `Subcomponent`s
 
+## Works with
+- [Dagger 2][dagger] (kapt, ksp and javac annotation processor)
+- [Anvil][anvil] (kapt)
+
 ## What to expect
 
 ```
@@ -25,7 +29,7 @@ Add the plugin to your project:
 ```kotlin
 // build.gradle.kts
 plugins {
-    id("io.github.schwarzit.lightsaber") version "0.0.17"
+    id("io.github.schwarzit.lightsaber") version "0.0.18"
 }
 ```
 
@@ -72,3 +76,4 @@ Clone the repo and execute:
 ```
 
   [dagger]: https://dagger.dev/
+  [anvil]: https://github.com/square/anvil
