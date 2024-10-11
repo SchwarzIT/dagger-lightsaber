@@ -7,13 +7,9 @@ import schwarz.it.lightsaber.utils.writeFile
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
-import javax.annotation.processing.SupportedAnnotationTypes
-import javax.annotation.processing.SupportedSourceVersion
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 
-@SupportedAnnotationTypes("*")
-@SupportedSourceVersion(SourceVersion.RELEASE_11)
 class LightsaberJavacProcessor : AbstractProcessor() {
     private lateinit var fileGenerator: FileGenerator
     private lateinit var rules: Set<Pair<String, LightsaberJavacRule>>
@@ -49,6 +45,12 @@ class LightsaberJavacProcessor : AbstractProcessor() {
 
         return false
     }
+
+    override fun getSupportedOptions() = setOf("Lightsaber.CheckUnusedInject", "Lightsaber.CheckUnusedScopes")
+
+    override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
+
+    override fun getSupportedAnnotationTypes() = setOf("*")
 }
 
 interface LightsaberJavacRule {

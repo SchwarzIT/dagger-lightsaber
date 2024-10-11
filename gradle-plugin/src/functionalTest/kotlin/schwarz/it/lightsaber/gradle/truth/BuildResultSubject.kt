@@ -36,6 +36,10 @@ class BuildResultSubject(
         check("getOutput()").that(actual?.output).contains(output)
     }
 
+    fun doesNotContain(output: String) {
+        check("getOutput()").that(actual?.output).doesNotContain(output)
+    }
+
     internal object Factory : Subject.Factory<BuildResultSubject, BuildResult> {
         override fun createSubject(metadata: FailureMetadata, actual: BuildResult?): BuildResultSubject {
             return BuildResultSubject(metadata, actual)
