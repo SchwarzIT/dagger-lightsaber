@@ -1,9 +1,9 @@
 [versions]
-kotlin = "1.9.25"
+kotlin = "2.0.21"
 dagger = "2.48.1"
 junit_jupiter = "5.11.3"
 kctfork = "0.5.1"
-ksp = "1.9.25-1.0.20"
+ksp = "2.0.21-1.0.26"
 anvil = "2.4.9"
 
 [libraries]
