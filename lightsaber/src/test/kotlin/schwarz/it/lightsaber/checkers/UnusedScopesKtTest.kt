@@ -449,11 +449,10 @@ private fun CompilationResult.assertUnusedScopes(message: String, line: Int, col
     )
 }
 
-private fun CompilationResult.finding(message: String, line: Int, column: Int?) =
-    FindingInfo(
-        message = message,
-        line = line,
-        column = column,
-        ruleName = "UnusedScopes",
-        fileName = sourcesDir.resolve("test/MyComponent.${type.extension}").toString(),
-    )
+private fun CompilationResult.finding(message: String, line: Int, column: Int?) = FindingInfo(
+    message = message,
+    line = line,
+    column = column,
+    ruleName = "UnusedScopes",
+    fileName = sourcesDir.resolve("test/MyComponent.${type.extension}").toString(),
+)
