@@ -1,6 +1,5 @@
 package schwarz.it.lightsaber.gradle
 
-import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
@@ -56,7 +55,7 @@ private fun Project.apply() {
 }
 
 private fun Project.androidPluginApplied(): Boolean {
-    return extensions.findByType(BaseExtension::class.java) != null
+    return extensions.findByName("android") != null
 }
 
 internal fun Project.registerTask(

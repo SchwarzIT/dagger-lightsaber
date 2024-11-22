@@ -1,6 +1,5 @@
 package schwarz.it.lightsaber.gradle.processors
 
-import com.android.build.api.variant.Variant
 import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.gradle.api.Project
@@ -14,9 +13,9 @@ import schwarz.it.lightsaber.gradle.registerTask
 
 internal fun Project.registerKspTask(
     extension: LightsaberExtension,
-    variant: Variant? = null,
+    variant: String? = null,
 ): TaskProvider<LightsaberTask> {
-    val variantName = variant?.name?.capitalized()
+    val variantName = variant?.capitalized()
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
         val taskProvider = provider {

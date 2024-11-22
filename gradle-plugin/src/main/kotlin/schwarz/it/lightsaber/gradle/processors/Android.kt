@@ -21,9 +21,9 @@ fun Project.applyAndroidAnnotationProcessor(extension: LightsaberExtension) {
             androidComponents.onVariants { variant ->
                 withDaggerCompiler { processor ->
                     val lightsaberVariantCheck = when (processor) {
-                        Processor.AnnotationProcessor -> registerAnnotationProcessorTask(extension, variant)
-                        Processor.Kapt -> registerKaptTask(extension, variant)
-                        Processor.Ksp -> registerKspTask(extension, variant)
+                        Processor.AnnotationProcessor -> registerAnnotationProcessorTask(extension, variant.name)
+                        Processor.Kapt -> registerKaptTask(extension, variant.name)
+                        Processor.Ksp -> registerKspTask(extension, variant.name)
                     }
 
                     lightsaberVariantCheck.configure {
