@@ -1,6 +1,5 @@
 package schwarz.it.lightsaber.gradle.processors
 
-import com.android.build.api.variant.Variant
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
@@ -13,9 +12,9 @@ import schwarz.it.lightsaber.gradle.registerTask
 
 internal fun Project.registerAnnotationProcessorTask(
     extension: LightsaberExtension,
-    variant: Variant? = null,
+    variant: String? = null,
 ): TaskProvider<LightsaberTask> {
-    val variantName = variant?.name?.capitalized()
+    val variantName = variant?.capitalized()
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
         val taskProvider = provider {
