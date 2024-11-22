@@ -2,7 +2,6 @@
 
 import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
