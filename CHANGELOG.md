@@ -1,7 +1,11 @@
 # CHANGELOG
 
+## Version 0.0.19 (2024-11-22)
+- FIX: crash with `NoClassDefFoundError` on projects that doesn't apply the android gradle plugin (#270)
+
+
 ## Version 0.0.18 (2024-09-06)
-- ADD: Initial support for Anvil. (If you find any issue with Anvil please report it) 
+- ADD: Initial support for Anvil. (If you find any issue with Anvil please report it)
 - CHANGE: Improve code position in error messages
 
 
