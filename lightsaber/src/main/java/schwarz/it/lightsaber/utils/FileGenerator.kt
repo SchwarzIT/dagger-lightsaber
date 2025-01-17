@@ -1,48 +1,21 @@
 package schwarz.it.lightsaber.utils
 
-import com.google.devtools.ksp.processing.CodeGenerator
-import com.google.devtools.ksp.processing.Dependencies
-import dagger.spi.model.DaggerProcessingEnv
 import schwarz.it.lightsaber.Issue
 import java.io.OutputStream
 import java.io.PrintWriter
-import javax.annotation.processing.Filer
-import javax.tools.StandardLocation
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.outputStream
 
-internal interface FileGenerator {
-    fun createFile(packageName: String, fileName: String, extension: String): OutputStream
-
-    companion object {
-        operator fun invoke(processingEnv: DaggerProcessingEnv): FileGenerator {
-            return processingEnv.fold({ FileGenerator(it.filer) }, { FileGenerator(it.codeGenerator) })
-        }
-
-        operator fun invoke(codeGenerator: CodeGenerator): FileGenerator {
-            return FileGeneratorKsp(codeGenerator)
-        }
-
-        operator fun invoke(filer: Filer): FileGenerator {
-            return FileGeneratorJavac(filer)
-        }
-    }
-}
-
-private class FileGeneratorJavac(private val filer: Filer) : FileGenerator {
-    override fun createFile(packageName: String, fileName: String, extension: String): OutputStream {
-        return filer
-            .createResource(StandardLocation.CLASS_OUTPUT, packageName, "$fileName.$extension")
-            .openOutputStream()
-    }
-}
-
-private class FileGeneratorKsp(private val codeGenerator: CodeGenerator) : FileGenerator {
-    override fun createFile(packageName: String, fileName: String, extension: String): OutputStream {
-        return codeGenerator.createNewFile(Dependencies.ALL_FILES, packageName, fileName, extension)
+internal class FileGenerator(private val path: Path) {
+    fun createFile(fileName: String): OutputStream {
+        path.createDirectories()
+        return path.resolve(fileName).outputStream()
     }
 }
 
 internal fun FileGenerator.writeFile(fileName: String, issues: List<Issue>) {
-    this.createFile("schwarz.it.lightsaber", fileName, "lightsaber")
+    this.createFile("$fileName.lightsaber")
         .let(::PrintWriter)
         .use { writer -> issues.forEach { writer.println("${it.codePosition}: ${it.message} [${it.rule}]") } }
 }

@@ -18,16 +18,27 @@ internal fun Project.registerKspTask(
     val variantName = variant?.capitalized()
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
+        val lightsaberOutputDir = lightsaberOutputDir("ksp")
         val taskProvider = provider {
             tasks.withType(KspTaskJvm::class.java)
                 .matching { it.name.startsWith("ksp${variantName.orEmpty()}") }
+                .apply {
+                    configureEach { kspTask ->
+                        val sourceSet = kspTask.name
+                            .removePrefix("kapt")
+                            .removeSuffix("Kotlin")
+                            .ifEmpty { "main" }
+                            .replaceFirstChar { it.lowercaseChar() }
+                        val output = lightsaberOutputDir.map { it.dir(sourceSet) }
+                        kspTask.commandLineArgumentProviders.add(LightsaberArgumentProvider(output, ksp = true))
+
+                        kspTask.outputs.dir(output)
+                    }
+                }
         }
         task.dependsOn(taskProvider)
 
-        task.source = taskProvider.get()
-            .map { fileTree(it.destination.get().resolve("resources/schwarz/it/lightsaber")).asFileTree }
-            .reduce { acc, fileTree -> acc.plus(fileTree) }
-            .matching { it.include("*.lightsaber") }
+        task.source += fileTree(lightsaberOutputDir)
     }
     return lightsaberCheck
 }

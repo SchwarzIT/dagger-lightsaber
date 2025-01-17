@@ -18,16 +18,28 @@ internal fun Project.registerKaptTask(
     val variantName = variant?.capitalized()
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
+        val lightsaberOutputDir = lightsaberOutputDir("kapt")
         val taskProvider = provider {
             tasks.withType(BaseKapt::class.java)
                 .matching { it.name.startsWith("kapt${variantName.orEmpty()}") }
+                .apply {
+                    configureEach { kaptTask ->
+                        val sourceSet = kaptTask.name
+                            .removePrefix("kapt")
+                            .removeSuffix("Kotlin")
+                            .ifEmpty { "main" }
+                            .replaceFirstChar { it.lowercaseChar() }
+                        val output = lightsaberOutputDir.map { it.dir(sourceSet) }
+                        kaptTask.annotationProcessorOptionProviders
+                            .add(listOf(LightsaberArgumentProvider(output)))
+
+                        kaptTask.outputs.dir(output)
+                    }
+                }
         }
         task.dependsOn(taskProvider)
 
-        task.source = taskProvider.get()
-            .map { fileTree(it.classesDir.dir("schwarz/it/lightsaber")).asFileTree }
-            .reduce { acc, fileTree -> acc.plus(fileTree) }
-            .matching { it.include("*.lightsaber") }
+        task.source += fileTree(lightsaberOutputDir)
     }
     return lightsaberCheck
 }

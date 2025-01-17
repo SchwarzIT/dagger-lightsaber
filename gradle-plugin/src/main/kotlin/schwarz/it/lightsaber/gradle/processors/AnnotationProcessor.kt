@@ -17,16 +17,27 @@ internal fun Project.registerAnnotationProcessorTask(
     val variantName = variant?.capitalized()
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
+        val lightsaberOutputDir = lightsaberOutputDir("annotationProcessor")
         val taskProvider = provider {
             tasks.withType(JavaCompile::class.java)
                 .matching { it.name.startsWith("compile${variantName.orEmpty()}") }
+                .apply {
+                    configureEach { javacTask ->
+                        val sourceSet = javacTask.name
+                            .removePrefix("kapt")
+                            .removeSuffix("Kotlin")
+                            .ifEmpty { "main" }
+                            .replaceFirstChar { it.lowercaseChar() }
+                        val output = lightsaberOutputDir.map { it.dir(sourceSet) }
+                        javacTask.options.compilerArgumentProviders.add(LightsaberArgumentProvider(output))
+
+                        javacTask.outputs.dir(output)
+                    }
+                }
         }
         task.dependsOn(taskProvider)
 
-        task.source = taskProvider.get()
-            .map { fileTree(it.destinationDirectory.dir("schwarz/it/lightsaber")).asFileTree }
-            .reduce { acc, fileTree -> acc.plus(fileTree) }
-            .matching { it.include("*.lightsaber") }
+        task.source += fileTree(lightsaberOutputDir)
     }
     return lightsaberCheck
 }
