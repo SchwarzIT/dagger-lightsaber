@@ -19,12 +19,8 @@ internal fun Project.registerKaptTask(
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
         val taskProvider = provider {
-            if (variant == null) {
-                tasks.withType(BaseKapt::class.java)
-            } else {
-                tasks.withType(BaseKapt::class.java)
-                    .matching { it.name.startsWith("kapt$variantName") }
-            }
+            tasks.withType(BaseKapt::class.java)
+                .matching { it.name.startsWith("kapt${variantName.orEmpty()}") }
         }
         task.dependsOn(taskProvider)
 

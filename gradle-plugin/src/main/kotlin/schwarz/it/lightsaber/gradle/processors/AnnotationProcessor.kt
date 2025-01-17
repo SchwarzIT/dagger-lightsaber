@@ -18,12 +18,8 @@ internal fun Project.registerAnnotationProcessorTask(
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
         val taskProvider = provider {
-            if (variantName == null) {
-                tasks.withType(JavaCompile::class.java)
-            } else {
-                tasks.withType(JavaCompile::class.java)
-                    .matching { it.name.startsWith("compile$variantName") }
-            }
+            tasks.withType(JavaCompile::class.java)
+                .matching { it.name.startsWith("compile${variantName.orEmpty()}") }
         }
         task.dependsOn(taskProvider)
 

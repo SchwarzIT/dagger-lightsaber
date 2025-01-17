@@ -19,12 +19,8 @@ internal fun Project.registerKspTask(
     val lightsaberCheck = registerTask(extension, variantName.orEmpty())
     lightsaberCheck.configure { task ->
         val taskProvider = provider {
-            if (variantName == null) {
-                tasks.withType(KspTaskJvm::class.java)
-            } else {
-                tasks.withType(KspTaskJvm::class.java)
-                    .matching { it.name.startsWith("ksp$variantName") }
-            }
+            tasks.withType(KspTaskJvm::class.java)
+                .matching { it.name.startsWith("ksp${variantName.orEmpty()}") }
         }
         task.dependsOn(taskProvider)
 
