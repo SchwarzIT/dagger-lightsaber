@@ -11,7 +11,6 @@ import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.PluginOption
 import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.kspProcessorOptions
-import com.tschuchort.compiletesting.kspSourcesDir
 import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
 import dagger.internal.codegen.ComponentProcessor
@@ -74,7 +73,7 @@ internal class KaptKotlinCompiler(
         compiler.sources = sourceFiles.asList()
         return CompilationResult(
             compiler.compile(),
-            findGeneratedFiles(compiler.classesDir),
+            compiler.workingDir.resolve("lightsaber").listFiles().orEmpty().asList(),
             compiler.kaptStubsDir,
             CompilationResult.Type.Kapt,
         )
@@ -100,7 +99,7 @@ internal class KspKotlinCompiler(
         compiler.sources = sourceFiles.asList()
         return CompilationResult(
             compiler.compile(),
-            findGeneratedFiles(compiler.kspSourcesDir),
+            compiler.workingDir.resolve("lightsaber").listFiles().orEmpty().asList(),
             compiler.workingDir.resolve("sources"),
             CompilationResult.Type.Ksp,
         )
@@ -140,18 +139,12 @@ internal val CompilationResult.Type.extension
         CompilationResult.Type.Ksp -> "kt"
     }
 
-private fun findGeneratedFiles(file: File): List<File> {
-    return file
-        .walkTopDown()
-        .filter { it.isFile }
-        .toList()
-}
-
-private fun getLightsaberArguments(
+private fun KotlinCompilation.getLightsaberArguments(
     vararg rules: Rule,
 ): MutableMap<String, String> {
     return Rule.entries
         .associate { "Lightsaber.Check${it.name}" to (it in rules).toString() }
+        .plus("Lightsaber.path" to workingDir.resolve("lightsaber").absolutePath)
         .toMutableMap()
 }
 

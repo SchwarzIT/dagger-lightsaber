@@ -15,6 +15,7 @@ import schwarz.it.lightsaber.checkers.checkUnusedScopes
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
 import schwarz.it.lightsaber.utils.writeFile
+import kotlin.io.path.Path
 
 @AutoService(BindingGraphPlugin::class)
 public class LightsaberDaggerProcessor : BindingGraphPlugin {
@@ -67,7 +68,8 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             checkUnusedScopes = options["Lightsaber.CheckUnusedScopes"] != "false",
         )
         this.daggerProcessingEnv = processingEnv
-        this.fileGenerator = FileGenerator(processingEnv)
+        val path = checkNotNull(options["Lightsaber.path"]) { "Lightsaber.path argument not provided" }
+        this.fileGenerator = FileGenerator(Path(path))
     }
 
     override fun supportedOptions(): Set<String> {
@@ -79,6 +81,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             "Lightsaber.CheckUnusedMembersInjectionMethods",
             "Lightsaber.CheckUnusedModules",
             "Lightsaber.CheckUnusedScopes",
+            "Lightsaber.path",
         )
     }
 }

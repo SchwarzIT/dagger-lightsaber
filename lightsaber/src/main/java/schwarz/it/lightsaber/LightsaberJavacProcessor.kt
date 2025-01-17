@@ -9,13 +9,15 @@ import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
+import kotlin.io.path.Path
 
 class LightsaberJavacProcessor : AbstractProcessor() {
     private lateinit var fileGenerator: FileGenerator
     private lateinit var rules: Set<Pair<String, LightsaberJavacRule>>
 
     override fun init(processingEnv: ProcessingEnvironment) {
-        fileGenerator = FileGenerator(processingEnv.filer)
+        val path = checkNotNull(processingEnv.options["Lightsaber.path"]) { "Lightsaber.path argument not provided" }
+        fileGenerator = FileGenerator(Path(path))
         val elements = processingEnv.elementUtils
         rules = buildSet {
             if (processingEnv.options["Lightsaber.CheckUnusedInject"] != "false") {
@@ -46,7 +48,11 @@ class LightsaberJavacProcessor : AbstractProcessor() {
         return false
     }
 
-    override fun getSupportedOptions() = setOf("Lightsaber.CheckUnusedInject", "Lightsaber.CheckUnusedScopes")
+    override fun getSupportedOptions() = setOf(
+        "Lightsaber.CheckUnusedInject",
+        "Lightsaber.CheckUnusedScopes",
+        "Lightsaber.path",
+    )
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 

@@ -2,6 +2,9 @@ package schwarz.it.lightsaber.gradle.processors
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
+import org.gradle.process.CommandLineArgumentProvider
 
 enum class Processor { AnnotationProcessor, Kapt, Ksp }
 
@@ -39,3 +42,12 @@ private fun Dependency.isAtLeastVersion(major: Int, minor: Int): Boolean {
 
 private const val MAJOR = 2
 private const val MINOR = 48
+
+internal fun Project.lightsaberOutputDir(tech: String) = layout.buildDirectory.dir("generated/lightsaber/$tech")
+
+internal class LightsaberArgumentProvider(
+    private val outputDir: Provider<Directory>,
+    private val ksp: Boolean = false,
+) : CommandLineArgumentProvider {
+    override fun asArguments() = listOf("${if (ksp) "" else "-A"}Lightsaber.path=${outputDir.get().asFile.path}")
+}

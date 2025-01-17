@@ -63,6 +63,74 @@ class LightsaberPluginIntegrationTest {
     }
 
     @Test
+    fun annotationProcessor_cache() {
+        val runner = GradleRunner.create()
+            .withProjectDirFromResources("annotationProcessor")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck", "--build-cache")
+
+        runner.buildAndFail()
+
+        runner.projectDir.resolve("build/generated/lightsaber").deleteRecursively()
+
+        val buildResult = runner.buildAndFail()
+
+        assertThat(buildResult).hasTask(":compileJava").hasOutcome(TaskOutcome.FROM_CACHE)
+        assertThat(buildResult).hasTask(":compileTestJava")
+        assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
+
+        assertThat(buildResult).contains("MyModule.java:15:17: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("Foo.java:5:8: The @Inject in `com.example.Foo` constructor is unused because there is a @Provides defined in `com.example.MyModule.foo`. [UnusedInject]")
+        assertThat(buildResult).contains("> Analysis failed with 2 errors")
+        assertThat(buildResult).doesNotContain("warning:")
+    }
+
+    @Test
+    fun kapt_cache() {
+        val runner = GradleRunner.create()
+            .withProjectDirFromResources("kapt")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck", "--build-cache")
+
+        runner.buildAndFail()
+
+        runner.projectDir.resolve("build/generated/lightsaber").deleteRecursively()
+
+        val buildResult = runner.buildAndFail()
+
+        assertThat(buildResult).hasTask(":kaptKotlin").hasOutcome(TaskOutcome.FROM_CACHE)
+        assertThat(buildResult).hasTask(":kaptTestKotlin")
+        assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
+
+        assertThat(buildResult).contains("MyModule.java:26:27: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("Foo.java:4:14: The @Inject in `com.example.Foo` constructor is unused because there is a @Provides defined in `com.example.MyModule.Companion.provideFoo`. [UnusedInject]")
+        assertThat(buildResult).contains("> Analysis failed with 2 errors")
+        assertThat(buildResult).doesNotContain("warning:")
+    }
+
+    @Test
+    fun ksp_cache() {
+        val runner = GradleRunner.create()
+            .withProjectDirFromResources("ksp")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck", "--build-cache")
+
+        runner.buildAndFail()
+
+        runner.projectDir.resolve("build/generated/lightsaber").deleteRecursively()
+
+        val buildResult = runner.buildAndFail()
+
+        assertThat(buildResult).hasTask(":kspKotlin").hasOutcome(TaskOutcome.FROM_CACHE)
+        assertThat(buildResult).hasTask(":kspTestKotlin")
+        assertThat(buildResult).hasTask(":lightsaberCheck").hasOutcome(TaskOutcome.FAILED)
+
+        assertThat(buildResult).contains("MyComponent.kt:24: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
+        assertThat(buildResult).contains("MyComponent.kt:33: The @Inject in `com.example.Foo` constructor is unused because there is a @Provides defined in `com.example.MyModule.Companion.provideFoo`. [UnusedInject]")
+        assertThat(buildResult).contains("> Analysis failed with 2 errors")
+    }
+
+    @Test
     fun androidAnnotationProcessor() {
         val buildResult = GradleRunner.create()
             .withProjectDirFromResources("androidAnnotationProcessor")

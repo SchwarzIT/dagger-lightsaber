@@ -9,6 +9,7 @@ import schwarz.it.lightsaber.checkers.UnusedInjectKsp
 import schwarz.it.lightsaber.checkers.UnusedScopesKsp
 import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
+import kotlin.io.path.Path
 
 internal class LightsaberKspProcessor(
     private val fileGenerator: FileGenerator,
@@ -55,7 +56,8 @@ class LightsaberKspProcessorProvider : SymbolProcessorProvider {
             checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
             checkUnusedScopes = environment.options["Lightsaber.CheckUnusedScopes"] != "false",
         )
-        return LightsaberKspProcessor(FileGenerator(environment.codeGenerator), config)
+        val path = checkNotNull(environment.options["Lightsaber.path"]) { "Lightsaber.path argument not provided" }
+        return LightsaberKspProcessor(FileGenerator(Path(path)), config)
     }
 }
 
