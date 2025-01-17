@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 0.0.20 (2025-01-17)
+- FIX: Don't add `.lightsaber` files inside the classpath (#288)
+
+
 ## Version 0.0.19 (2024-11-22)
 - FIX: crash with `NoClassDefFoundError` on projects that doesn't apply the android gradle plugin (#270)
 
