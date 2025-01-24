@@ -14,9 +14,11 @@ import kotlin.io.path.Path
 class LightsaberJavacProcessor : AbstractProcessor() {
     private lateinit var fileGenerator: FileGenerator
     private lateinit var rules: Set<Pair<String, LightsaberJavacRule>>
+    private var enabled: Boolean = false
 
     override fun init(processingEnv: ProcessingEnvironment) {
-        val path = checkNotNull(processingEnv.options["Lightsaber.path"]) { "Lightsaber.path argument not provided" }
+        val path = processingEnv.options["Lightsaber.path"] ?: return
+        enabled = true
         fileGenerator = FileGenerator(Path(path))
         val elements = processingEnv.elementUtils
         rules = buildSet {
@@ -30,6 +32,7 @@ class LightsaberJavacProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
+        if (!enabled) return false
         rules.forEach { (_, rule) -> rule.process(roundEnv) }
 
         if (roundEnv.processingOver()) {

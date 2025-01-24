@@ -26,8 +26,10 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
     private lateinit var daggerProcessingEnv: DaggerProcessingEnv
     private lateinit var fileGenerator: FileGenerator
     private lateinit var config: DaggerConfig
+    private var enabled: Boolean = false
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
+        if (!enabled) return
         val issues = listOf(
             runRule(config.checkEmptyComponents, "EmptyComponents") {
                 checkEmptyComponents(bindingGraph, daggerProcessingEnv)
@@ -58,6 +60,8 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
+        val path = options["Lightsaber.path"] ?: return
+        enabled = true
         this.config = DaggerConfig(
             checkEmptyComponents = options["Lightsaber.CheckEmptyComponents"] != "false",
             checkUnusedBindsInstances = options["Lightsaber.CheckUnusedBindsInstances"] != "false",
@@ -68,7 +72,6 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             checkUnusedScopes = options["Lightsaber.CheckUnusedScopes"] != "false",
         )
         this.daggerProcessingEnv = processingEnv
-        val path = checkNotNull(options["Lightsaber.path"]) { "Lightsaber.path argument not provided" }
         this.fileGenerator = FileGenerator(Path(path))
     }
 
