@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 0.0.21 (2025-01-24)
+- FIX: Don't crash with "Lightsaber.path argument not provided". (#294)
+
+
 ## Version 0.0.20 (2025-01-17)
 - FIX: Don't add `.lightsaber` files inside the classpath (#288)
 
