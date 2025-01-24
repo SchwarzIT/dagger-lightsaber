@@ -37,6 +37,7 @@ testing {
 
             dependencies {
                 implementation(libs.junit.jupiter.api)
+                implementation(libs.junit.jupiter.params)
                 implementation(libs.truth)
             }
         }

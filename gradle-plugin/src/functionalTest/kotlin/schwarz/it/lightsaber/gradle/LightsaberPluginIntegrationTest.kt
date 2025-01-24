@@ -189,7 +189,7 @@ class LightsaberPluginIntegrationTest {
  * Copy project files from `resources` to temporary directories for isolation.
  * This helps with the incremental build (up-to-date checks).
  */
-private fun GradleRunner.withProjectDirFromResources(resourcePath: String) = apply {
+internal fun GradleRunner.withProjectDirFromResources(resourcePath: String) = apply {
     val resourceDir = File(javaClass.classLoader.getResource("testProjects/$resourcePath")!!.file)
     val projectDir = Files.createTempDirectory(resourcePath).toFile()
     resourceDir.copyRecursively(projectDir)

@@ -52,12 +52,18 @@ interface LightsaberKspRule {
 
 class LightsaberKspProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+        val path = environment.options["Lightsaber.path"] ?: return NoOpSymbolProcessor
         val config = AnnotationProcessorConfig(
             checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
             checkUnusedScopes = environment.options["Lightsaber.CheckUnusedScopes"] != "false",
         )
-        val path = checkNotNull(environment.options["Lightsaber.path"]) { "Lightsaber.path argument not provided" }
         return LightsaberKspProcessor(FileGenerator(Path(path)), config)
+    }
+}
+
+private object NoOpSymbolProcessor : SymbolProcessor {
+    override fun process(resolver: Resolver): List<KSAnnotated> {
+        return emptyList()
     }
 }
 
