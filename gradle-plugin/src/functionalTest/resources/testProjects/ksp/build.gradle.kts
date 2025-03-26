@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    id("com.google.devtools.ksp") version "1.9.25-1.0.20"
+    kotlin("jvm") version "2.1.20"
+    id("com.google.devtools.ksp") version "2.1.20-1.0.32"
     id("io.github.schwarzit.lightsaber")
 }
 
