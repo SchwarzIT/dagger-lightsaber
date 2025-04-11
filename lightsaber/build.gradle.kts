@@ -31,6 +31,7 @@ dependencies {
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.launcher)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.dagger.compiler)
     testImplementation(libs.truth)
