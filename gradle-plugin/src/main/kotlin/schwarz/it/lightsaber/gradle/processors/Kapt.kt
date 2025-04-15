@@ -48,7 +48,7 @@ internal fun Project.configureLightsaberKapt(extension: LightsaberExtension) {
     dependencies.add("kapt", "io.github.schwarzit:lightsaber:$lightsaberVersion")
     extensions.configure(KaptExtension::class.java) {
         it.arguments {
-            extension.getArguments().forEach { (key, value) -> arg(key, value) }
+            extension.getArguments().forEach { (key, value) -> arg(key, value.toString()) }
         }
     }
 }
