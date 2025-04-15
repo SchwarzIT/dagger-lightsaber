@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("kapt") version "1.9.25"
+    kotlin("jvm") version "2.0.21"
+    kotlin("kapt") version "2.0.21"
     id("io.github.schwarzit.lightsaber")
 }
 
