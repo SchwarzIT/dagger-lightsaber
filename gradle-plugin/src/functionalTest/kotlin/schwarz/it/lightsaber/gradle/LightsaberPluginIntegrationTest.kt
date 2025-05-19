@@ -184,11 +184,11 @@ class LightsaberPluginIntegrationTest {
     }
 }
 
-// From https://github.com/detekt/detekt/blob/92a5aa5624d8d7bd20ee70ed24cfccc208b25fdb/detekt-gradle-plugin/src/testFixtures/kotlin/io/gitlab/arturbosch/detekt/testkit/GradleRunnerExtensions.kt#L7-L16
 /**
  * Copy project files from `resources` to temporary directories for isolation.
  * This helps with the incremental build (up-to-date checks).
  */
+// From https://github.com/detekt/detekt/blob/92a5aa5624d8d7bd20ee70ed24cfccc208b25fdb/detekt-gradle-plugin/src/testFixtures/kotlin/io/gitlab/arturbosch/detekt/testkit/GradleRunnerExtensions.kt#L7-L16
 internal fun GradleRunner.withProjectDirFromResources(resourcePath: String) = apply {
     val resourceDir = File(javaClass.classLoader.getResource("testProjects/$resourcePath")!!.file)
     val projectDir = Files.createTempDirectory(resourcePath).toFile()
