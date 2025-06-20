@@ -113,7 +113,7 @@ private fun KspComponentProcessor.Provider.toSymbolProcessorProvider(): SymbolPr
 enum class Rule {
     EmptyComponents,
     UnusedBindsInstances,
-    UnusedBindAndProvides,
+    UnusedBindsAndProvides,
     UnusedDependencies,
     UnusedInject,
     UnusedMembersInjectionMethods,
