@@ -38,6 +38,18 @@ internal fun KSAnnotated.hasSuppress(key: String): Boolean {
     return getDeclaredStringArguments(Suppress::class, "names").any { key in it }
 }
 
+@OptIn(KspExperimental::class)
+internal fun KSAnnotated.getSuppression(): Suppression = if (!isAnnotationPresent(Suppress::class)) {
+    object : Suppression {
+        override fun hasSuppress(key: String) = false
+    }
+} else {
+    val list = getDeclaredStringArguments(Suppress::class, "names")
+    object : Suppression {
+        override fun hasSuppress(key: String) = key in list
+    }
+}
+
 private fun KSAnnotated.getDeclaredStringArguments(kClass: KClass<*>, argument: String): List<String> {
     val modules = annotations
         .single { it.shortName.asString() == kClass.simpleName }
