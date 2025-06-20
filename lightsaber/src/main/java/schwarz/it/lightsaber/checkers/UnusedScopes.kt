@@ -4,7 +4,6 @@ import com.google.common.graph.ImmutableNetwork
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import dagger.Component
 import dagger.Subcomponent
 import dagger.spi.model.Binding
@@ -27,6 +26,7 @@ import javax.inject.Singleton
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.util.Elements
+import kotlin.collections.filterNot
 import kotlin.jvm.optionals.getOrNull
 
 internal fun checkUnusedScopes(
@@ -64,8 +64,8 @@ private val ignoreAnnotatedWith = listOf(
 
 internal class UnusedScopesKsp : LightsaberKspRule {
     private val scopes: MutableSet<String> = mutableSetOf(Singleton::class.qualifiedName!!)
-    private val declarations: MutableList<KSClassDeclaration> = mutableListOf()
-    private val injects: MutableList<KSType> = mutableListOf()
+    private val declarations: MutableList<Pair<KSClassDeclaration, String>> = mutableListOf()
+    private val injects: MutableSet<String> = mutableSetOf()
 
     override fun process(resolver: Resolver) {
         scopes.addAll(
@@ -79,20 +79,21 @@ internal class UnusedScopesKsp : LightsaberKspRule {
                 .asSequence()
                 .flatMap { resolver.getSymbolsWithAnnotation(it) }
                 .filterIsInstance<KSClassDeclaration>()
-                .filterNot { declaration -> ignoreAnnotatedWith.any { declaration.hasAnnotation(it) } },
+                .filterNot { declaration -> ignoreAnnotatedWith.any { declaration.hasAnnotation(it) } }
+                .map { it to it.asStarProjectedType().declaration.qualifiedName!!.asString() },
         )
 
         injects.addAll(
             resolver.getSymbolsWithAnnotation(Inject::class.qualifiedName!!)
                 .filterIsInstance<KSFunctionDeclaration>()
-                .map { it.returnType!!.resolve() },
+                .map { it.returnType!!.resolve().declaration.qualifiedName!!.asString() },
         )
     }
 
     override fun computeFindings(): List<Finding> {
         return declarations
-            .filterNot { it.asStarProjectedType() in injects }
-            .map { classDeclaration ->
+            .filterNot { (_, type) -> type in injects }
+            .map { (classDeclaration, _) ->
                 val annotationName = scopes.find { classDeclaration.hasAnnotation(it) }
                 Finding(
                     "The `@$annotationName` scope is unused because `${classDeclaration.qualifiedName!!.asString()}` doesn't contain any constructor annotated with `@Inject`.",
