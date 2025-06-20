@@ -732,7 +732,7 @@ class LightsaberPluginTest {
         @EnumSource(Processor::class)
         fun android(processor: Processor) {
             try {
-                createAndroidProject {
+                createAndroidProject(AndroidProject.Application) {
                     dependencies {
                         processor.configuration(daggerCompiler("2.47"))
                     }
@@ -773,7 +773,7 @@ private fun createProject(block: Project.() -> Unit): Project {
 }
 
 private fun createAndroidProject(
-    type: AndroidProject = AndroidProject.Application,
+    type: AndroidProject,
     block: Project.() -> Unit,
 ): Project {
     val project = ProjectBuilder.builder()
