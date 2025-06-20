@@ -547,7 +547,7 @@ internal class UnusedBindsAndProvidesKtTest {
         compilation.assertNoFindings()
     }
 
-    private class CompilerArgumentConverter : AbstractCompilerArgumentConverter(Rule.UnusedBindAndProvides)
+    private class CompilerArgumentConverter : AbstractCompilerArgumentConverter(Rule.UnusedBindsAndProvides)
 }
 
 private fun CompilationResult.assertUnusedBindsAndProvides(
