@@ -60,7 +60,7 @@ class LightsaberPluginTest {
     }
 
     @ParameterizedTest
-    @EnumSource(names = ["Ksp1"])
+    @EnumSource(names = ["Ksp1", "Ksp2"])
     fun lightsaberWithDaggerCompiler_ksp(processor: Processor) {
         val project = createProject(processor)
 
@@ -451,7 +451,7 @@ class LightsaberPluginTest {
 
     @Nested
     @ParameterizedClass
-    @EnumSource(names = ["Ksp1"])
+    @EnumSource(names = ["Ksp1", "Ksp2"])
     inner class AndroidKsp(val processor: Processor) {
 
         @ParameterizedTest
@@ -690,6 +690,14 @@ private fun createProject(
             }
         }
 
+        Processor.Ksp2 -> {
+            project.pluginManager.apply(KotlinPluginWrapper::class.java)
+            project.pluginManager.apply(KspGradleSubplugin::class.java)
+            project.extensions.configure<KspExtension> {
+                useKsp2.set(true)
+            }
+        }
+
         null -> {
             project.pluginManager.apply(KotlinPluginWrapper::class.java)
         }
@@ -739,6 +747,14 @@ private fun createAndroidProject(
             }
         }
 
+        Processor.Ksp2 -> {
+            project.pluginManager.apply(KotlinAndroidPluginWrapper::class.java)
+            project.pluginManager.apply(KspGradleSubplugin::class.java)
+            project.extensions.configure<KspExtension> {
+                useKsp2.set(true)
+            }
+        }
+
         null -> {
             project.pluginManager.apply(KotlinAndroidPluginWrapper::class.java)
         }
@@ -768,6 +784,7 @@ enum class Processor(val configuration: String) {
     AnnotationProcessor("annotationProcessor"),
     Kapt("kapt"),
     Ksp1("ksp"),
+    Ksp2("ksp"),
 }
 
 private fun Project.evaluate() {

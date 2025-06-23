@@ -3,6 +3,8 @@ package schwarz.it.lightsaber.gradle
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import schwarz.it.lightsaber.gradle.truth.assertThat
 import java.io.File
 import java.nio.file.Files
@@ -45,10 +47,11 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).doesNotContain("warning:")
     }
 
-    @Test
-    fun ksp() {
+    @ParameterizedTest
+    @ValueSource(strings = ["ksp1", "ksp2"])
+    fun ksp(resourcePath: String) {
         val buildResult = GradleRunner.create()
-            .withProjectDirFromResources("ksp1")
+            .withProjectDirFromResources(resourcePath)
             .withPluginClasspath()
             .withArguments("lightsaberCheck")
             .buildAndFail()
@@ -108,10 +111,11 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).doesNotContain("warning:")
     }
 
-    @Test
-    fun ksp_cache() {
+    @ParameterizedTest
+    @ValueSource(strings = ["ksp1", "ksp2"])
+    fun ksp_cache(resourcePath: String) {
         val runner = GradleRunner.create()
-            .withProjectDirFromResources("ksp1")
+            .withProjectDirFromResources(resourcePath)
             .withPluginClasspath()
             .withArguments("lightsaberCheck", "--build-cache")
 
@@ -166,10 +170,11 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).doesNotContain("warning:")
     }
 
-    @Test
-    fun androidKsp() {
+    @ParameterizedTest
+    @ValueSource(strings = ["androidKsp1", "androidKsp2"])
+    fun androidKsp(resourcePath: String) {
         val buildResult = GradleRunner.create()
-            .withProjectDirFromResources("androidKsp1")
+            .withProjectDirFromResources(resourcePath)
             .withPluginClasspath()
             .withArguments("lightsaberCheck")
             .buildAndFail()
