@@ -25,7 +25,7 @@ internal fun Project.registerKspTask(
                 .apply {
                     configureEach { kspTask ->
                         val sourceSet = kspTask.name
-                            .removePrefix("kapt")
+                            .removePrefix("ksp")
                             .removeSuffix("Kotlin")
                             .ifEmpty { "main" }
                             .replaceFirstChar { it.lowercaseChar() }
