@@ -8,7 +8,7 @@ import java.io.File
 class LightsaberPluginOtherTasksTest {
 
     @ParameterizedTest
-    @ValueSource(strings = ["annotationProcessor", "kapt", "ksp", "androidAnnotationProcessor", "androidKapt", "androidKsp"])
+    @ValueSource(strings = ["annotationProcessor", "kapt", "ksp1", "androidAnnotationProcessor", "androidKapt", "androidKsp1"])
     fun `Execute test task correctly`(resourcePath: String) {
         val dir: File
         GradleRunner.create()

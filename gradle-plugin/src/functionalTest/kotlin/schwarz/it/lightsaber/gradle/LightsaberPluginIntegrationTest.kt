@@ -48,7 +48,7 @@ class LightsaberPluginIntegrationTest {
     @Test
     fun ksp() {
         val buildResult = GradleRunner.create()
-            .withProjectDirFromResources("ksp")
+            .withProjectDirFromResources("ksp1")
             .withPluginClasspath()
             .withArguments("lightsaberCheck")
             .buildAndFail()
@@ -111,7 +111,7 @@ class LightsaberPluginIntegrationTest {
     @Test
     fun ksp_cache() {
         val runner = GradleRunner.create()
-            .withProjectDirFromResources("ksp")
+            .withProjectDirFromResources("ksp1")
             .withPluginClasspath()
             .withArguments("lightsaberCheck", "--build-cache")
 
@@ -169,7 +169,7 @@ class LightsaberPluginIntegrationTest {
     @Test
     fun androidKsp() {
         val buildResult = GradleRunner.create()
-            .withProjectDirFromResources("androidKsp")
+            .withProjectDirFromResources("androidKsp1")
             .withPluginClasspath()
             .withArguments("lightsaberCheck")
             .buildAndFail()

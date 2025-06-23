@@ -4,6 +4,11 @@ plugins {
     id("io.github.schwarzit.lightsaber")
 }
 
+@OptIn(com.google.devtools.ksp.KspExperimental::class)
+ksp {
+    useKsp2.set(false)
+}
+
 dependencies {
     implementation("com.google.dagger:dagger:2.48.1")
     ksp("com.google.dagger:dagger-compiler:2.48.1")
