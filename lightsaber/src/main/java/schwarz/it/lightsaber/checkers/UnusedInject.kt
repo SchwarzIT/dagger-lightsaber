@@ -31,7 +31,10 @@ internal class UnusedInjectKsp : LightsaberKspRule {
         )
         resolver.getSymbolsWithAnnotation(Provides::class.qualifiedName!!)
             .filterIsInstance<KSFunctionDeclaration>()
-            .map { it.returnType!!.resolve().declaration.qualifiedName!!.asString() to it }
+            .mapNotNull { functionDeclaration ->
+                functionDeclaration.returnType!!.resolve().declaration.qualifiedName?.asString()
+                    ?.let { it to functionDeclaration }
+            }
             .toMap(provides)
     }
 
