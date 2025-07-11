@@ -32,6 +32,7 @@ internal fun Project.registerAnnotationProcessorTask(
                         javacTask.options.compilerArgumentProviders.add(LightsaberArgumentProvider(output))
 
                         javacTask.outputs.dir(output)
+                        javacTask.doFirst { output.get().asFile.deleteRecursively() }
                     }
                 }
         }

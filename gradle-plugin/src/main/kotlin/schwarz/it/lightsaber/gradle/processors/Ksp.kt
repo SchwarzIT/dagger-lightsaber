@@ -36,6 +36,7 @@ internal fun Project.registerKspTask(
                                 kspTask.commandLineArgumentProviders.add(LightsaberArgumentProvider(output, ksp = true))
 
                                 kspTask.outputs.dir(output)
+                                kspTask.doFirst { output.get().asFile.deleteRecursively() }
                             }
                         }
                 } else {
