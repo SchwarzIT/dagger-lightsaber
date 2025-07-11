@@ -4,7 +4,7 @@ dagger = "2.48.1"
 junit_jupiter = "5.13.3"
 kctfork = "0.6.0"
 ksp = "2.0.21-1.0.28"
-anvil = "2.4.9"
+anvil = "2.6.0"
 
 [libraries]
 android_gradle_plugin = { module = "com.android.tools.build:gradle", version = "8.0.0" }
