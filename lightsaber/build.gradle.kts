@@ -1,5 +1,3 @@
-import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
-
 plugins {
     id("kotlin-kapt")
     alias(libs.plugins.kotlin.jvm)
@@ -59,7 +57,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 
 mavenPublishing {
-    publishToMavenCentral(S01)
+    publishToMavenCentral()
     coordinates(group.toString(), "lightsaber", version.toString())
 
     pom {

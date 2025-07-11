@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.vanniktech.maven.publish.SonatypeHost.Companion.S01
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 
 plugins {
@@ -122,7 +121,7 @@ sourceSets {
 }
 
 mavenPublishing {
-    publishToMavenCentral(S01)
+    publishToMavenCentral()
     coordinates(group.toString(), "lightsaber-gradle-plugin", version.toString())
 
     pom {
