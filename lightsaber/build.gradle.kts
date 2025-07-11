@@ -35,8 +35,6 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.kctfork.core)
     testImplementation(libs.kctfork.ksp)
-    testImplementation(libs.anvil.annotations)
-    testImplementation(libs.anvil.compiler)
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
