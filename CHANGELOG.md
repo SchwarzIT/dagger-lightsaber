@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 0.0.22 (2025-07-11)
+- ADD: Support for KSP2
+- FIX: JavaC: when running lighsaber with issues in a module and after fix all of them they do not go away
+
 ## Version 0.0.21 (2025-01-24)
 - FIX: Don't crash with "Lightsaber.path argument not provided". (#294)
 
