@@ -135,6 +135,55 @@ class LightsaberPluginIntegrationTest {
     }
 
     @Test
+    fun annotationProcessor_fixed() {
+        val runner = GradleRunner.create()
+            .withProjectDirFromResources("annotationProcessor")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck")
+
+        runner.buildAndFail()
+
+        runner.projectDir.resolve("src/main/java/com/example/MyModule.java").let {
+            it.writeText(it.readLines().removeAt(12..22).joinToString("\n"))
+        }
+
+        runner.build()
+    }
+
+    @Test
+    fun kapt_fixed() {
+        val runner = GradleRunner.create()
+            .withProjectDirFromResources("kapt")
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck", "--build-cache")
+
+        runner.buildAndFail()
+
+        runner.projectDir.resolve("src/main/kotlin/MyComponent.kt").let {
+            it.writeText(it.readLines().removeAt(22..29).joinToString("\n"))
+        }
+
+        runner.build()
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["ksp1", "ksp2"])
+    fun ksp_fixed(resourcePath: String) {
+        val runner = GradleRunner.create()
+            .withProjectDirFromResources(resourcePath)
+            .withPluginClasspath()
+            .withArguments("lightsaberCheck", "--build-cache")
+
+        runner.buildAndFail()
+
+        runner.projectDir.resolve("src/main/kotlin/MyComponent.kt").let {
+            it.writeText(it.readLines().removeAt(22..29).joinToString("\n"))
+        }
+
+        runner.build()
+    }
+
+    @Test
     fun androidAnnotationProcessor() {
         val buildResult = GradleRunner.create()
             .withProjectDirFromResources("androidAnnotationProcessor")
@@ -187,6 +236,11 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).contains("MyComponent.kt:22: The @Provides `myLong` declared in `com.example.MyModule` is not used. [UnusedBindsAndProvides]")
         assertThat(buildResult).contains("> Analysis failed with 1 error")
     }
+}
+
+private fun <T> List<T>.removeAt(range: IntRange) = buildList<T> {
+    addAll(this@removeAt.subList(0, range.first))
+    addAll(this@removeAt.subList(range.last, this@removeAt.size))
 }
 
 /**
