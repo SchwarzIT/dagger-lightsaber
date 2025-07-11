@@ -21,7 +21,7 @@ import javax.lang.model.util.Elements
 
 internal class UnusedInjectKsp : LightsaberKspRule {
     private val injects: MutableList<InjectInfo> = mutableListOf()
-    private val provides: MutableSet<Pair<KSFunctionDeclaration, String>> = mutableSetOf()
+    private val provides: MutableMap<String, KSFunctionDeclaration> = mutableMapOf()
 
     override fun process(resolver: Resolver) {
         injects.addAll(
@@ -29,27 +29,26 @@ internal class UnusedInjectKsp : LightsaberKspRule {
                 .filterIsInstance<KSFunctionDeclaration>()
                 .map(::InjectInfo),
         )
-        provides.addAll(
-            resolver.getSymbolsWithAnnotation(Provides::class.qualifiedName!!)
-                .filterIsInstance<KSFunctionDeclaration>()
-                .map { it to it.returnType!!.resolve().declaration.qualifiedName!!.asString() },
-        )
+        resolver.getSymbolsWithAnnotation(Provides::class.qualifiedName!!)
+            .filterIsInstance<KSFunctionDeclaration>()
+            .mapNotNull { functionDeclaration ->
+                functionDeclaration.returnType!!.resolve().declaration.qualifiedName?.asString()
+                    ?.let { it to functionDeclaration }
+            }
+            .toMap(provides)
     }
 
     override fun computeFindings(): List<Finding> {
-        val providesKsTypes = provides.map { (_, type) -> type }.toSet()
-        return injects
-            .filter { it.type in providesKsTypes }
-            .map {
-                val provide = provides.first { (_, providesType) -> providesType == it.type }.first
-                val parent = provide.parent as KSClassDeclaration
-                val injectName = it.inject.parent as KSClassDeclaration
-                Finding(
-                    "The @Inject in `${injectName.qualifiedName!!.asString()}` constructor is unused because there is a @Provides defined in `${parent.qualifiedName!!.asString()}.${provide.simpleName.getShortName()}`.",
-                    it.codePosition,
-                    it.hasSuppress,
-                )
-            }
+        return injects.mapNotNull {
+            val provide = provides[it.type] ?: return@mapNotNull null
+            val parent = provide.parent as KSClassDeclaration
+            val injectName = it.inject.parent as KSClassDeclaration
+            Finding(
+                "The @Inject in `${injectName.qualifiedName!!.asString()}` constructor is unused because there is a @Provides defined in `${parent.qualifiedName!!.asString()}.${provide.simpleName.getShortName()}`.",
+                it.codePosition,
+                it.hasSuppress,
+            )
+        }
     }
 }
 
