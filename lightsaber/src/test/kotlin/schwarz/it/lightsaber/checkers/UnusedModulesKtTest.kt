@@ -231,34 +231,6 @@ internal class UnusedModulesKtTest {
     }
 
     @ParameterizedTest
-    @CsvSource("kapt,4,29")
-    fun anvil(
-        @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,
-        line: Int,
-        column: Int?,
-    ) {
-        val component = createSource(
-            """
-                package test
-
-                import com.squareup.anvil.annotations.MergeComponent
-                import javax.inject.Singleton
-
-                @MergeComponent(Singleton::class, modules = [MyModule::class])
-                interface MyComponent
-            """.trimIndent(),
-        )
-
-        val compilation = compiler.compile(component, module)
-
-        compilation.assertUnusedModules(
-            message = "The @Module `test.MyModule` is not used.",
-            line = line,
-            column = column,
-        )
-    }
-
-    @ParameterizedTest
     @CsvSource("kapt,3,29", "ksp,5,")
     fun includeModules1(
         @ConvertWith(CompilerArgumentConverter::class) compiler: KotlinCompiler,

@@ -4,7 +4,6 @@ dagger = "2.56"
 junit_jupiter = "5.13.3"
 kctfork = "0.8.0"
 ksp = "2.2.0-2.0.2"
-anvil = "2.5.1"
 
 [libraries]
 android_gradle_plugin = { module = "com.android.tools.build:gradle", version = "8.0.0" }
@@ -22,8 +21,6 @@ ksp_gradle_plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle
 ksp_api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 kotlin_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ktlint = { module = "com.pinterest.ktlint:ktlint-cli", version = "1.7.0" }
-anvil_annotations = { module = "com.squareup.anvil:annotations", version.ref = "anvil" }
-anvil_compiler = { module = "com.squareup.anvil:compiler", version.ref = "anvil" }
 
 [plugins]
 kotlin_plugin = { id = "org.jetbrains.kotlin", version.ref = "kotlin" }
