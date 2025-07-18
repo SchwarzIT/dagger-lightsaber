@@ -5,6 +5,6 @@ plugins {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.53")
-    kapt("com.google.dagger:dagger-compiler:2.53")
+    implementation("com.google.dagger:dagger:2.54")
+    kapt("com.google.dagger:dagger-compiler:2.54")
 }
