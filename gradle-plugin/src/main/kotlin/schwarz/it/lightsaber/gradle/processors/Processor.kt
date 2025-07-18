@@ -41,7 +41,7 @@ private fun Dependency.isAtLeastVersion(major: Int, minor: Int): Boolean {
 }
 
 private const val MAJOR = 2
-private const val MINOR = 54
+private const val MINOR = 56
 
 internal fun Project.lightsaberOutputDir(tech: String) = layout.buildDirectory.dir("generated/lightsaber/$tech")
 

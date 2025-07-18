@@ -637,7 +637,7 @@ class LightsaberPluginTest {
                 assertThat(e)
                     .hasCauseThat()
                     .hasMessageThat()
-                    .isEqualTo("This version of lightsaber only supports dagger 2.54 or greater")
+                    .isEqualTo("This version of lightsaber only supports dagger 2.56 or greater")
             }
         }
 
@@ -652,7 +652,7 @@ class LightsaberPluginTest {
                     .hasCauseThat()
                     .hasCauseThat()
                     .hasMessageThat()
-                    .isEqualTo("This version of lightsaber only supports dagger 2.54 or greater")
+                    .isEqualTo("This version of lightsaber only supports dagger 2.56 or greater")
             }
         }
     }
@@ -666,7 +666,7 @@ private fun Project.androidComponents(block: (AndroidComponentsExtension<*, *, *
 
 private fun createProject(
     processor: Processor?,
-    version: String = "2.54",
+    version: String = "2.56",
     block: Project.() -> Unit = { /* no-op */ },
 ): Project {
     val project = ProjectBuilder.builder()
@@ -719,7 +719,7 @@ private fun createProject(
 private fun createAndroidProject(
     type: AndroidProject,
     processor: Processor?,
-    version: String = "2.54",
+    version: String = "2.56",
     block: Project.() -> Unit = { /* no-op */ },
 ): Project {
     val project = ProjectBuilder.builder()
