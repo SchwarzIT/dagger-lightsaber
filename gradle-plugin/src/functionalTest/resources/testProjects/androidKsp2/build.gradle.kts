@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application") version "8.11.1"
     id("io.github.schwarzit.lightsaber")
-    kotlin("android") version "2.0.21"
-    id("com.google.devtools.ksp") version "2.0.21-1.0.28"
+    kotlin("android") version "2.1.21"
+    id("com.google.devtools.ksp") version "2.1.21-2.0.2"
 }
 
 @OptIn(com.google.devtools.ksp.KspExperimental::class)
@@ -21,6 +21,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.48.1")
-    ksp("com.google.dagger:dagger-compiler:2.48.1")
+    implementation("com.google.dagger:dagger:2.53")
+    ksp("com.google.dagger:dagger-compiler:2.53")
 }
