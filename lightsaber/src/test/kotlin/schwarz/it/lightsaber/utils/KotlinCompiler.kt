@@ -53,11 +53,6 @@ internal class KaptKotlinCompiler(
             ),
             PluginOption(
                 pluginId = anvilCommandLineProcessor.pluginId,
-                optionName = "src-gen-dir",
-                optionValue = File(workingDir, "build/anvil").absolutePath,
-            ),
-            PluginOption(
-                pluginId = anvilCommandLineProcessor.pluginId,
                 optionName = "generate-dagger-factories",
                 optionValue = "false",
             ),
@@ -65,6 +60,36 @@ internal class KaptKotlinCompiler(
                 pluginId = anvilCommandLineProcessor.pluginId,
                 optionName = "generate-dagger-factories-only",
                 optionValue = "false",
+            ),
+            PluginOption(
+                pluginId = anvilCommandLineProcessor.pluginId,
+                optionName = "src-gen-dir",
+                optionValue = File(workingDir, "build/anvil").absolutePath,
+            ),
+            PluginOption(
+                pluginId = anvilCommandLineProcessor.pluginId,
+                optionName = "track-source-files",
+                optionValue = "false",
+            ),
+            PluginOption(
+                pluginId = anvilCommandLineProcessor.pluginId,
+                optionName = "ir-merges-file",
+                optionValue = "true",
+            ),
+            PluginOption(
+                pluginId = anvilCommandLineProcessor.pluginId,
+                optionName = "anvil-cache-dir",
+                optionValue = File(workingDir, "build/anvil-cache").absolutePath,
+            ),
+            PluginOption(
+                pluginId = anvilCommandLineProcessor.pluginId,
+                optionName = "gradle-project-dir",
+                optionValue = workingDir.absolutePath,
+            ),
+            PluginOption(
+                pluginId = anvilCommandLineProcessor.pluginId,
+                optionName = "gradle-build-dir",
+                optionValue = File(workingDir, "build/anvil-gradle-build").absolutePath,
             ),
         )
     }
