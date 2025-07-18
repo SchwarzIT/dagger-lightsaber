@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.1.21"
-    kotlin("kapt") version "2.1.21"
+    kotlin("jvm") version "2.2.0"
+    kotlin("kapt") version "2.2.0"
     id("io.github.schwarzit.lightsaber")
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.53")
-    kapt("com.google.dagger:dagger-compiler:2.53")
+    implementation("com.google.dagger:dagger:2.56")
+    kapt("com.google.dagger:dagger-compiler:2.56")
 }

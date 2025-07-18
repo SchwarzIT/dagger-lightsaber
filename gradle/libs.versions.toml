@@ -1,9 +1,9 @@
 [versions]
-kotlin = "2.1.21"
-dagger = "2.53"
+kotlin = "2.2.0"
+dagger = "2.56"
 junit_jupiter = "5.13.3"
-kctfork = "0.6.0"
-ksp = "2.1.21-2.0.2"
+kctfork = "0.8.0"
+ksp = "2.2.0-2.0.2"
 
 [libraries]
 android_gradle_plugin = { module = "com.android.tools.build:gradle", version = "8.0.0" }

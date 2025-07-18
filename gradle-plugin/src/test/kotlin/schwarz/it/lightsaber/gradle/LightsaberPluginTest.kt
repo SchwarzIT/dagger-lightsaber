@@ -631,13 +631,13 @@ class LightsaberPluginTest {
         @EnumSource(Processor::class)
         fun noAndroid(processor: Processor) {
             try {
-                createProject(processor, version = "2.52")
+                createProject(processor, version = "2.53.1")
                 fail("wtf?")
             } catch (e: GradleException) {
                 assertThat(e)
                     .hasCauseThat()
                     .hasMessageThat()
-                    .isEqualTo("This version of lightsaber only supports dagger 2.53 or greater")
+                    .isEqualTo("This version of lightsaber only supports dagger 2.56 or greater")
             }
         }
 
@@ -645,14 +645,14 @@ class LightsaberPluginTest {
         @EnumSource(Processor::class)
         fun android(processor: Processor) {
             try {
-                createAndroidProject(AndroidProject.Application, processor, version = "2.52")
+                createAndroidProject(AndroidProject.Application, processor, version = "2.53.1")
                 fail("wtf?")
             } catch (e: GradleException) {
                 assertThat(e)
                     .hasCauseThat()
                     .hasCauseThat()
                     .hasMessageThat()
-                    .isEqualTo("This version of lightsaber only supports dagger 2.53 or greater")
+                    .isEqualTo("This version of lightsaber only supports dagger 2.56 or greater")
             }
         }
     }
@@ -666,7 +666,7 @@ private fun Project.androidComponents(block: (AndroidComponentsExtension<*, *, *
 
 private fun createProject(
     processor: Processor?,
-    version: String = "2.53",
+    version: String = "2.56",
     block: Project.() -> Unit = { /* no-op */ },
 ): Project {
     val project = ProjectBuilder.builder()
@@ -719,7 +719,7 @@ private fun createProject(
 private fun createAndroidProject(
     type: AndroidProject,
     processor: Processor?,
-    version: String = "2.53",
+    version: String = "2.56",
     block: Project.() -> Unit = { /* no-op */ },
 ): Project {
     val project = ProjectBuilder.builder()

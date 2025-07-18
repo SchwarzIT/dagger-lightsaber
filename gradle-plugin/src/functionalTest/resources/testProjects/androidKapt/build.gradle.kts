@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application") version "8.11.1"
     id("io.github.schwarzit.lightsaber")
-    kotlin("android") version "2.1.21"
-    kotlin("kapt") version "2.1.21"
+    kotlin("android") version "2.2.0"
+    kotlin("kapt") version "2.2.0"
 }
 
 android {
@@ -16,6 +16,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.53")
-    kapt("com.google.dagger:dagger-compiler:2.53")
+    implementation("com.google.dagger:dagger:2.56")
+    kapt("com.google.dagger:dagger-compiler:2.56")
 }
