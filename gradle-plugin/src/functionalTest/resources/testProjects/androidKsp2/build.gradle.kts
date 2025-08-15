@@ -2,7 +2,7 @@ plugins {
     id("com.android.application") version "8.12.0"
     id("io.github.schwarzit.lightsaber")
     kotlin("android") version "2.2.10"
-    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
 }
 
 @OptIn(com.google.devtools.ksp.KspExperimental::class)
