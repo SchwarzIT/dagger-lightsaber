@@ -16,6 +16,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.56")
-    kapt("com.google.dagger:dagger-compiler:2.56")
+    implementation("com.google.dagger:dagger:2.57.1")
+    kapt("com.google.dagger:dagger-compiler:2.57.1")
 }
