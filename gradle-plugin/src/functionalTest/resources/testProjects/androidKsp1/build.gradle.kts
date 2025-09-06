@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.application") version "8.12.2"
+    id("com.android.application") version "8.13.0"
     id("io.github.schwarzit.lightsaber")
     kotlin("android") version "2.2.10"
     id("com.google.devtools.ksp") version "2.2.10-2.0.2"
