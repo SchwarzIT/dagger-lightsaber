@@ -14,7 +14,7 @@ junit_jupiter_api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit_jupiter_engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit_jupiter" }
 junit_jupiter_params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit_jupiter" }
 junit_launcher = { module = "org.junit.platform:junit-platform-launcher" }
-truth = { module = "com.google.truth:truth", version = "1.4.4" }
+truth = { module = "com.google.truth:truth", version = "1.4.5" }
 kctfork_core = { module = "dev.zacsweers.kctfork:core", version.ref = "kctfork" }
 kctfork_ksp = { module = "dev.zacsweers.kctfork:ksp", version.ref = "kctfork" }
 ksp_gradle_plugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-plugin", version.ref = "ksp" }
