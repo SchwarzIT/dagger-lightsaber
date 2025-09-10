@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 dagger = "2.57.1"
 junit_jupiter = "5.13.4"
 kctfork = "0.8.0"
