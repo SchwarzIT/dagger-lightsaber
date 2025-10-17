@@ -30,8 +30,8 @@ internal fun Project.registerKaptTask(
                             .ifEmpty { "main" }
                             .replaceFirstChar { it.lowercaseChar() }
                         val output = lightsaberOutputDir.map { it.dir(sourceSet) }
-                        kaptTask.annotationProcessorOptionProviders
-                            .add(listOf(LightsaberArgumentProvider(output)))
+                        kaptTask.annotationProcessorOptionsProviders
+                            .add(LightsaberArgumentProvider(output))
 
                         kaptTask.outputs.dir(output)
                     }
