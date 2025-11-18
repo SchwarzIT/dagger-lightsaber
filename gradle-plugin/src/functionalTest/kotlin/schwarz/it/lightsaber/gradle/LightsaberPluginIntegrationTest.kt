@@ -3,8 +3,6 @@ package schwarz.it.lightsaber.gradle
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import schwarz.it.lightsaber.gradle.truth.assertThat
 import java.io.File
 import java.nio.file.Files

@@ -26,7 +26,6 @@ import javax.inject.Singleton
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.util.Elements
-import kotlin.collections.filterNot
 import kotlin.jvm.optionals.getOrNull
 
 internal fun checkUnusedScopes(
