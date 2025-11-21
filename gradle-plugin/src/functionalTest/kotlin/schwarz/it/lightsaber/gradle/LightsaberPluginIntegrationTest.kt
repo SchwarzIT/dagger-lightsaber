@@ -47,11 +47,10 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).doesNotContain("warning:")
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["ksp1", "ksp2"])
-    fun ksp(resourcePath: String) {
+    @Test
+    fun ksp() {
         val buildResult = GradleRunner.create()
-            .withProjectDirFromResources(resourcePath)
+            .withProjectDirFromResources("ksp")
             .withPluginClasspath()
             .withArguments("lightsaberCheck")
             .buildAndFail()
@@ -111,11 +110,10 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).doesNotContain("warning:")
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["ksp1", "ksp2"])
-    fun ksp_cache(resourcePath: String) {
+    @Test
+    fun ksp_cache() {
         val runner = GradleRunner.create()
-            .withProjectDirFromResources(resourcePath)
+            .withProjectDirFromResources("ksp")
             .withPluginClasspath()
             .withArguments("lightsaberCheck", "--build-cache")
 
@@ -166,11 +164,10 @@ class LightsaberPluginIntegrationTest {
         runner.build()
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["ksp1", "ksp2"])
-    fun ksp_fixed(resourcePath: String) {
+    @Test
+    fun ksp_fixed() {
         val runner = GradleRunner.create()
-            .withProjectDirFromResources(resourcePath)
+            .withProjectDirFromResources("ksp")
             .withPluginClasspath()
             .withArguments("lightsaberCheck", "--build-cache")
 
@@ -219,11 +216,10 @@ class LightsaberPluginIntegrationTest {
         assertThat(buildResult).doesNotContain("warning:")
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["androidKsp1", "androidKsp2"])
-    fun androidKsp(resourcePath: String) {
+    @Test
+    fun androidKsp() {
         val buildResult = GradleRunner.create()
-            .withProjectDirFromResources(resourcePath)
+            .withProjectDirFromResources("androidKsp")
             .withPluginClasspath()
             .withArguments("lightsaberCheck")
             .buildAndFail()

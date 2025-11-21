@@ -2,7 +2,6 @@ package schwarz.it.lightsaber.gradle.processors
 
 import com.google.devtools.ksp.gradle.KspAATask
 import com.google.devtools.ksp.gradle.KspExtension
-import com.google.devtools.ksp.gradle.KspTaskJvm
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import schwarz.it.lightsaber.gradle.LightsaberExtension
@@ -21,41 +20,23 @@ internal fun Project.registerKspTask(
     lightsaberCheck.configure { task ->
         val lightsaberOutputDir = lightsaberOutputDir("ksp")
         task.dependsOn(
-            project.extensions.getByType(KspExtension::class.java).useKsp2.map { useKsp2 ->
-                if (useKsp2) {
-                    tasks.withType(KspAATask::class.java)
-                        .matching { it.name.startsWith("ksp${variantName.orEmpty()}") }
-                        .apply {
-                            configureEach { kspTask ->
-                                val sourceSet = kspTask.name
-                                    .removePrefix("ksp")
-                                    .removeSuffix("Kotlin")
-                                    .ifEmpty { "main" }
-                                    .replaceFirstChar { it.lowercaseChar() }
-                                val output = lightsaberOutputDir.map { it.dir(sourceSet) }
-                                kspTask.commandLineArgumentProviders.add(LightsaberArgumentProvider(output, ksp = true))
+            provider {
+                tasks.withType(KspAATask::class.java)
+                    .matching { it.name.startsWith("ksp${variantName.orEmpty()}") }
+                    .apply {
+                        configureEach { kspTask ->
+                            val sourceSet = kspTask.name
+                                .removePrefix("ksp")
+                                .removeSuffix("Kotlin")
+                                .ifEmpty { "main" }
+                                .replaceFirstChar { it.lowercaseChar() }
+                            val output = lightsaberOutputDir.map { it.dir(sourceSet) }
+                            kspTask.commandLineArgumentProviders.add(LightsaberArgumentProvider(output, ksp = true))
 
-                                kspTask.outputs.dir(output)
-                                kspTask.doFirst { output.get().asFile.deleteRecursively() }
-                            }
+                            kspTask.outputs.dir(output)
+                            kspTask.doFirst { output.get().asFile.deleteRecursively() }
                         }
-                } else {
-                    tasks.withType(KspTaskJvm::class.java)
-                        .matching { it.name.startsWith("ksp${variantName.orEmpty()}") }
-                        .apply {
-                            configureEach { kspTask ->
-                                val sourceSet = kspTask.name
-                                    .removePrefix("ksp")
-                                    .removeSuffix("Kotlin")
-                                    .ifEmpty { "main" }
-                                    .replaceFirstChar { it.lowercaseChar() }
-                                val output = lightsaberOutputDir.map { it.dir(sourceSet) }
-                                kspTask.commandLineArgumentProviders.add(LightsaberArgumentProvider(output, ksp = true))
-
-                                kspTask.outputs.dir(output)
-                            }
-                        }
-                }
+                    }
             },
         )
 
