@@ -15,13 +15,6 @@
       "matchPackagePrefixes": [
         "dev.zacsweers.kctfork:"
       ]
-    },
-    {
-      "groupName": "kotlin",
-      "matchPackagePrefixes": [
-        "org.jetbrains.kotlin",
-        "com.google.devtools.ksp"
-      ]
     }
   ]
 }
