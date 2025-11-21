@@ -5,11 +5,6 @@ plugins {
     id("com.google.devtools.ksp") version "2.3.3"
 }
 
-@OptIn(com.google.devtools.ksp.KspExperimental::class)
-ksp {
-    useKsp2.set(true)
-}
-
 android {
     compileSdk = 33
     namespace = "test.namespace"

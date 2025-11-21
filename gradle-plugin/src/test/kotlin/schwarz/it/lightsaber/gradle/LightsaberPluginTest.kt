@@ -12,6 +12,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.util.internal.AntUtil.createProject
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
@@ -59,10 +60,9 @@ class LightsaberPluginTest {
             .contains(LIGHTSABER)
     }
 
-    @ParameterizedTest
-    @EnumSource(names = ["Ksp2"])
-    fun lightsaberWithDaggerCompiler_ksp(processor: Processor) {
-        val project = createProject(processor)
+    @Test
+    fun lightsaberWithDaggerCompiler_ksp() {
+        val project = createProject(Processor.Ksp)
 
         assertThat(project).hasTask("check")
             .dependsOn("lightsaberCheck")
@@ -450,14 +450,12 @@ class LightsaberPluginTest {
     }
 
     @Nested
-    @ParameterizedClass
-    @EnumSource(names = ["Ksp2"])
-    inner class AndroidKsp(val processor: Processor) {
+    inner class AndroidKsp {
 
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_tasks(type: AndroidProject) {
-            val project = createAndroidProject(type, processor)
+            val project = createAndroidProject(type, Processor.Ksp)
 
             assertThat(project).hasTask("lightsaberCheck")
                 .hasDescription("Check for unused dagger code on the default variant.")
@@ -484,7 +482,7 @@ class LightsaberPluginTest {
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_check(type: AndroidProject) {
-            val project = createAndroidProject(type, processor)
+            val project = createAndroidProject(type, Processor.Ksp)
 
             assertThat(project).hasTask("check")
                 .dependsOn("lightsaberCheck")
@@ -494,7 +492,7 @@ class LightsaberPluginTest {
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_check_default(type: AndroidProject) {
-            val project = createAndroidProject(type, processor) {
+            val project = createAndroidProject(type, Processor.Ksp) {
                 extensions.configure<BaseExtension>("android") {
                     it.buildTypes.getByName("release") { buildType ->
                         buildType.isDefault = true
@@ -510,7 +508,7 @@ class LightsaberPluginTest {
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_tasks_1flavors(type: AndroidProject) {
-            val project = createAndroidProject(type, processor) {
+            val project = createAndroidProject(type, Processor.Ksp) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -559,7 +557,7 @@ class LightsaberPluginTest {
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_check_1flavors(type: AndroidProject) {
-            val project = createAndroidProject(type, processor) {
+            val project = createAndroidProject(type, Processor.Ksp) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -579,7 +577,7 @@ class LightsaberPluginTest {
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_check_1flavors_default(type: AndroidProject) {
-            val project = createAndroidProject(type, processor) {
+            val project = createAndroidProject(type, Processor.Ksp) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment")
                     it.productFlavors.register("staging") { flavor ->
@@ -600,7 +598,7 @@ class LightsaberPluginTest {
         @ParameterizedTest
         @EnumSource(AndroidProject::class)
         fun lightsaberWithDaggerCompiler_check_2flavors(type: AndroidProject) {
-            val project = createAndroidProject(type, processor) {
+            val project = createAndroidProject(type, Processor.Ksp) {
                 extensions.configure<BaseExtension>("android") {
                     it.flavorDimensions("environment", "store")
                     it.productFlavors.register("staging") { flavor ->
@@ -682,12 +680,9 @@ private fun createProject(
             project.pluginManager.apply(Kapt3GradleSubplugin::class.java)
         }
 
-        Processor.Ksp2 -> {
+        Processor.Ksp -> {
             project.pluginManager.apply(KotlinPluginWrapper::class.java)
             project.pluginManager.apply(KspGradleSubplugin::class.java)
-            project.extensions.configure<KspExtension> {
-                useKsp2.set(true)
-            }
         }
 
         null -> {
@@ -731,12 +726,9 @@ private fun createAndroidProject(
             project.pluginManager.apply(Kapt3GradleSubplugin::class.java)
         }
 
-        Processor.Ksp2 -> {
+        Processor.Ksp -> {
             project.pluginManager.apply(KotlinAndroidPluginWrapper::class.java)
             project.pluginManager.apply(KspGradleSubplugin::class.java)
-            project.extensions.configure<KspExtension> {
-                useKsp2.set(true)
-            }
         }
 
         null -> {
@@ -767,7 +759,7 @@ enum class AndroidProject { Application, Library }
 enum class Processor(val configuration: String) {
     AnnotationProcessor("annotationProcessor"),
     Kapt("kapt"),
-    Ksp2("ksp"),
+    Ksp("ksp"),
 }
 
 private fun Project.evaluate() {
