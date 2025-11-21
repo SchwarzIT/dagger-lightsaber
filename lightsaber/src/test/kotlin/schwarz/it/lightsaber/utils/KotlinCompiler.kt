@@ -10,6 +10,7 @@ import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.kspProcessorOptions
 import com.tschuchort.compiletesting.kspWithCompilation
 import com.tschuchort.compiletesting.symbolProcessorProviders
+import com.tschuchort.compiletesting.useKsp2
 import dagger.internal.codegen.ComponentProcessor
 import dagger.internal.codegen.KspComponentProcessor
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
@@ -27,7 +28,7 @@ internal class KaptKotlinCompiler(
     vararg rules: Rule,
 ) : KotlinCompiler {
     private val compiler = KotlinCompilation().apply {
-        languageVersion = "1.9"
+        languageVersion = "2.0"
         inheritClassPath = true
         annotationProcessors = listOf(
             ComponentProcessor.withTestPlugins(LightsaberDaggerProcessor()),
@@ -52,7 +53,8 @@ internal class KspKotlinCompiler(
     vararg rules: Rule,
 ) : KotlinCompiler {
     private val compiler = KotlinCompilation().apply {
-        languageVersion = "1.9"
+        languageVersion = "2.0"
+        useKsp2()
         inheritClassPath = true
         symbolProcessorProviders = mutableListOf(
             KspComponentProcessor.Provider.withTestPlugins(LightsaberDaggerProcessor()).toSymbolProcessorProvider(),
