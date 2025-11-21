@@ -4,7 +4,6 @@ import com.google.common.truth.FailureMetadata
 import com.google.common.truth.Subject
 import com.google.common.truth.Truth
 import org.gradle.api.Task
-import org.gradle.internal.impldep.org.bouncycastle.asn1.x500.style.RFC4519Style.description
 
 fun assertThat(actual: Task?): TaskSubject {
     return Truth.assertAbout(TaskSubject.Factory).that(actual)

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+- Bump Android Gradle Plugin minimum version support 8.0.0 to 8.2.0
+- Remove support for KSP1
+
 ## Version 0.0.22 (2025-07-11)
 - ADD: Support for KSP2
 - FIX: JavaC: when running lighsaber with issues in a module and after fix all of them they do not go away
