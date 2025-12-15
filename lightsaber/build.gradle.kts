@@ -55,7 +55,7 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 
 mavenPublishing {
-    publishToMavenCentral()
+    publishToMavenCentral(false)
     coordinates(group.toString(), "lightsaber", version.toString())
 
     pom {
