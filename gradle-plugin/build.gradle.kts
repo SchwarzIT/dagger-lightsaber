@@ -121,7 +121,7 @@ sourceSets {
 }
 
 mavenPublishing {
-    publishToMavenCentral()
+    publishToMavenCentral(false)
     coordinates(group.toString(), "lightsaber-gradle-plugin", version.toString())
 
     pom {
