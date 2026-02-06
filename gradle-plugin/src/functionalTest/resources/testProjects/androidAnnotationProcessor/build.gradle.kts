@@ -14,6 +14,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.59")
-    annotationProcessor("com.google.dagger:dagger-compiler:2.59")
+    implementation("com.google.dagger:dagger:2.59.1")
+    annotationProcessor("com.google.dagger:dagger-compiler:2.59.1")
 }
