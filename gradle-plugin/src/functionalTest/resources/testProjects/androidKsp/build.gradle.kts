@@ -16,6 +16,6 @@ android {
 }
 
 dependencies {
-    implementation("com.google.dagger:dagger:2.59.1")
-    ksp("com.google.dagger:dagger-compiler:2.59.1")
+    implementation("com.google.dagger:dagger:2.59.2")
+    ksp("com.google.dagger:dagger-compiler:2.59.2")
 }
