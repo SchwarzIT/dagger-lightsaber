@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application") version "8.13.2"
     id("io.github.schwarzit.lightsaber")
-    kotlin("android") version "2.2.20"
-    kotlin("kapt") version "2.2.20"
+    kotlin("android") version "2.3.10"
+    kotlin("kapt") version "2.3.10"
 }
 
 android {
