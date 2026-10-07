@@ -12,10 +12,8 @@ import schwarz.it.lightsaber.checkers.checkUnusedDependencies
 import schwarz.it.lightsaber.checkers.checkUnusedMembersInjectionMethods
 import schwarz.it.lightsaber.checkers.checkUnusedModules
 import schwarz.it.lightsaber.checkers.checkUnusedScopes
-import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.getQualifiedName
 import schwarz.it.lightsaber.utils.writeFile
-import kotlin.io.path.Path
 
 @AutoService(BindingGraphPlugin::class)
 public class LightsaberDaggerProcessor : BindingGraphPlugin {
@@ -24,12 +22,11 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
     }
 
     private lateinit var daggerProcessingEnv: DaggerProcessingEnv
-    private lateinit var fileGenerator: FileGenerator
     private lateinit var config: DaggerConfig
-    private var enabled: Boolean = false
+    private var reporting: Reporting? = null
 
     override fun visitGraph(bindingGraph: BindingGraph, diagnosticReporter: DiagnosticReporter) {
-        if (!enabled) return
+        val reporting = reporting ?: return
         val issues = listOf(
             runRule(config.checkEmptyComponents, "EmptyComponents") {
                 checkEmptyComponents(bindingGraph, daggerProcessingEnv)
@@ -56,12 +53,18 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             .flatten()
             .ifEmpty { return }
 
-        fileGenerator.writeFile(bindingGraph.getQualifiedName(), issues)
+        when (reporting) {
+            is Reporting.Files -> reporting.fileGenerator.writeFile(bindingGraph.getQualifiedName(), issues)
+
+            is Reporting.Diagnostics -> reporting.report(issues) { kind, message ->
+                diagnosticReporter.reportComponent(kind, bindingGraph.rootComponentNode(), message)
+            }
+        }
     }
 
     override fun init(processingEnv: DaggerProcessingEnv, options: MutableMap<String, String>) {
-        val path = options["Lightsaber.path"] ?: return
-        enabled = true
+        val reporting = options.toReporting() ?: return
+        this.reporting = reporting
         this.config = DaggerConfig(
             checkEmptyComponents = options["Lightsaber.CheckEmptyComponents"] != "false",
             checkUnusedBindsInstances = options["Lightsaber.CheckUnusedBindsInstances"] != "false",
@@ -72,7 +75,6 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             checkUnusedScopes = options["Lightsaber.CheckUnusedScopes"] != "false",
         )
         this.daggerProcessingEnv = processingEnv
-        this.fileGenerator = FileGenerator(Path(path))
     }
 
     override fun supportedOptions(): Set<String> {
@@ -84,8 +86,7 @@ public class LightsaberDaggerProcessor : BindingGraphPlugin {
             "Lightsaber.CheckUnusedMembersInjectionMethods",
             "Lightsaber.CheckUnusedModules",
             "Lightsaber.CheckUnusedScopes",
-            "Lightsaber.path",
-        )
+        ) + REPORTING_OPTIONS
     }
 }
 

@@ -1,5 +1,6 @@
 package schwarz.it.lightsaber
 
+import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
@@ -7,12 +8,12 @@ import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import schwarz.it.lightsaber.checkers.UnusedInjectKsp
 import schwarz.it.lightsaber.checkers.UnusedScopesKsp
-import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
-import kotlin.io.path.Path
+import javax.tools.Diagnostic
 
 internal class LightsaberKspProcessor(
-    private val fileGenerator: FileGenerator,
+    private val reporting: Reporting,
+    private val logger: KSPLogger,
     private val config: AnnotationProcessorConfig,
 ) : SymbolProcessor {
     private val rules: Set<Pair<String, LightsaberKspRule>> = buildSet {
@@ -38,8 +39,16 @@ internal class LightsaberKspProcessor(
                     .map { Issue(it.codePosition, it.message, name) }
             }
 
-        if (issues.isNotEmpty()) {
-            fileGenerator.writeFile("ksp", issues)
+        if (issues.isEmpty()) return
+        when (reporting) {
+            is Reporting.Files -> reporting.fileGenerator.writeFile("ksp", issues)
+
+            is Reporting.Diagnostics -> reporting.report(issues) { kind, message ->
+                when (kind) {
+                    Diagnostic.Kind.ERROR -> logger.error(message)
+                    else -> logger.warn(message)
+                }
+            }
         }
     }
 }
@@ -52,12 +61,12 @@ interface LightsaberKspRule {
 
 class LightsaberKspProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        val path = environment.options["Lightsaber.path"] ?: return NoOpSymbolProcessor
+        val reporting = environment.options.toReporting() ?: return NoOpSymbolProcessor
         val config = AnnotationProcessorConfig(
             checkUnusedInject = environment.options["Lightsaber.CheckUnusedInject"] != "false",
             checkUnusedScopes = environment.options["Lightsaber.CheckUnusedScopes"] != "false",
         )
-        return LightsaberKspProcessor(FileGenerator(Path(path)), config)
+        return LightsaberKspProcessor(reporting, environment.logger, config)
     }
 }
 

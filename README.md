@@ -54,6 +54,33 @@ lightsaber {
 }
 ```
 
+## Without the Gradle plugin
+
+The Gradle plugin is a thin wrapper: it adds the `io.github.schwarzit:lightsaber` artifact to your annotation processor
+classpath and reads the findings the processors write. Build systems without a Gradle plugin (Bazel, Maven, ...) can use
+the artifact directly and let Lightsaber report its findings as regular compiler diagnostics, so there is no output
+directory to collect:
+
+| Option | Value |
+| --- | --- |
+| `Lightsaber.Report` | `diagnostics` |
+| `Lightsaber.Severity.<Rule>` | `error` (default), `warning` or `ignore` |
+
+`<Rule>` is one of `EmptyComponents`, `UnusedBindsInstances`, `UnusedBindsAndProvides`, `UnusedDependencies`,
+`UnusedInject`, `UnusedMembersInjectionMethods`, `UnusedModules` or `UnusedScopes`. Pass the options to the processors
+that run Lightsaber (Dagger's own processor for the graph rules, plus the KSP or javac processor for `UnusedInject` and
+`UnusedScopes`), for example with KSP:
+
+```kotlin
+ksp {
+    arg("Lightsaber.Report", "diagnostics")
+    arg("Lightsaber.Severity.UnusedModules", "warning")
+}
+```
+
+An `error` finding fails the compilation, a `warning` is printed and the compilation continues. The rules can still be
+turned off with `Lightsaber.Check<Rule>=false`.
+
 ## Suppress
 
 Lightsaber supports the `@Suppress` annotation. If you want to suppress an issue, you only have to add the `@Suppress` annotation above the reported element with the rule name.
