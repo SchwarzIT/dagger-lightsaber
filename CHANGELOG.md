@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Unreleased
+- ADD: Report findings as compiler diagnostics with `Lightsaber.Report=diagnostics` and per rule `Lightsaber.Severity.<Rule>`, for builds without the Gradle plugin
+
 ## Version 0.0.22 (2025-07-11)
 - ADD: Support for KSP2
 - FIX: JavaC: when running lighsaber with issues in a module and after fix all of them they do not go away

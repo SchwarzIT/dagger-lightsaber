@@ -2,24 +2,22 @@ package schwarz.it.lightsaber
 
 import schwarz.it.lightsaber.checkers.UnusedInjectJavac
 import schwarz.it.lightsaber.checkers.UnusedScopesJavac
-import schwarz.it.lightsaber.utils.FileGenerator
 import schwarz.it.lightsaber.utils.writeFile
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import kotlin.io.path.Path
 
 class LightsaberJavacProcessor : AbstractProcessor() {
-    private lateinit var fileGenerator: FileGenerator
+    private lateinit var reporting: Reporting
     private lateinit var rules: Set<Pair<String, LightsaberJavacRule>>
     private var enabled: Boolean = false
 
     override fun init(processingEnv: ProcessingEnvironment) {
-        val path = processingEnv.options["Lightsaber.path"] ?: return
+        super.init(processingEnv)
+        reporting = processingEnv.options.toReporting() ?: return
         enabled = true
-        fileGenerator = FileGenerator(Path(path))
         val elements = processingEnv.elementUtils
         rules = buildSet {
             if (processingEnv.options["Lightsaber.CheckUnusedInject"] != "false") {
@@ -43,8 +41,12 @@ class LightsaberJavacProcessor : AbstractProcessor() {
                         .map { Issue(it.codePosition, it.message, name) }
                 }
 
-            if (issues.isNotEmpty()) {
-                fileGenerator.writeFile("javac", issues)
+            when (val reporting = reporting) {
+                is Reporting.Files -> if (issues.isNotEmpty()) reporting.fileGenerator.writeFile("javac", issues)
+
+                is Reporting.Diagnostics -> reporting.report(issues) { kind, message ->
+                    processingEnv.messager.printMessage(kind, message)
+                }
             }
         }
 
@@ -54,8 +56,7 @@ class LightsaberJavacProcessor : AbstractProcessor() {
     override fun getSupportedOptions() = setOf(
         "Lightsaber.CheckUnusedInject",
         "Lightsaber.CheckUnusedScopes",
-        "Lightsaber.path",
-    )
+    ) + REPORTING_OPTIONS
 
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
